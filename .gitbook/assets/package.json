@@ -1,0 +1,30 @@
+{
+  "name": "@coin-voyage/nextjs-app-example-custom-provider",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@coin-voyage/paykit": "latest",
+    "@tanstack/react-query": "5.64.1",
+    "@solana/wallet-adapter-react": "0.15.35",
+    "@mysten/dapp-kit": "0.14.48",
+    "wagmi": "2.14.8",
+    "lucide-react": "0.469.0",
+    "next": "14.2.21",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.7",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.1",
+    "autoprefixer": "10.4.14",
+    "postcss": "8.4.49",
+    "tailwindcss": "3.4.17",
+    "typescript": "5.7.3"
+  }
+}
