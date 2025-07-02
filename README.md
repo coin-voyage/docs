@@ -1,0 +1,2 @@
+# Coinvoyage Docs
+Initial commit.
