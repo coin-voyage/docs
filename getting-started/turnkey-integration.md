@@ -11,7 +11,7 @@ description: >-
 * Sign up at [CoinVoyage Dashboard](https://dashboard.coinvoyage.io)
 * Create an Organization in your dashboard
 
-
+<figure><img src="../.gitbook/assets/coinvoyage (1).png" alt=""><figcaption></figcaption></figure>
 
 ### Step 2: Get API Key
 
@@ -19,7 +19,7 @@ description: >-
 * Find your API key generated tied to the organization
 * Copy your COIN\_VOYAGE\_API\_KEY
 
-
+<figure><img src="../.gitbook/assets/coinvoyage (4).png" alt=""><figcaption></figcaption></figure>
 
 ### Step 3: Install Required Packages
 

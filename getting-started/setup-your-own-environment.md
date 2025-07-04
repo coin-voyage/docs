@@ -44,7 +44,7 @@ npm install @coin-voyage/paykit @tanstack/react-query
 
 #### [https://dashboard.coinvoyage.com](https://dashboard.coinvoyage.com)
 
-####
+
 
 ### Step 4: Create a .env.local file in your project root directory
 

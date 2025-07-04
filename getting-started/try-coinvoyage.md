@@ -11,12 +11,14 @@ description: >-
 * Sign up at [CoinVoyage Dashboard](https://dashboard.coinvoyage.io)
 * Create an Organization in your dashboard
 
-
+<figure><img src="../.gitbook/assets/coinvoyage (1).png" alt=""><figcaption></figcaption></figure>
 
 ### Step 2: Get API and Secret Key
 
 * Navigate to the Developer section in your dashboard
 * Find your API and Secret key generated tied to the organization
+
+<figure><img src="../.gitbook/assets/coinvoyage (4).png" alt=""><figcaption></figcaption></figure>
 
 
 
@@ -59,9 +61,9 @@ Go to: [https://example.coinvoyage.io](https://example.coinvoyage.io)
 * After testing both **Deposit** and **Sale**, return to your **CoinVoyage dashboard**.
 * Go to the **Transactions** tab to view full details of each transaction
 
+<figure><img src="../.gitbook/assets/coinvoyage (2).png" alt=""><figcaption></figcaption></figure>
 
-
-**📌 Notes:**
+&#x20;**Notes:**
 
 * You **must** have created a **settlement wallet** in your CoinVoyage dashboard before using SALE mode.
 * SALE requires a secure **Authorization header** (the demo site handles this for you).
