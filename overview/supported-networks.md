@@ -4,7 +4,7 @@ description: A list of all networks supported by CoinVoyage
 
 # Supported Networks
 
-## Chain Support
+### Chain Support
 
 Coinvoyage is constantly expanding network support. If you need support for a network not listed here, please [contact our team](mailto:help@coinvoyage.io).
 
