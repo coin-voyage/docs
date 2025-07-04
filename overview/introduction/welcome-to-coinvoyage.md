@@ -2,23 +2,29 @@
 
 
 
-## Overview
+### Overview
 
-## Seamless Cross-Chain Crypto Payments for Your Business
+#### Seamless Cross-Chain Crypto Payments for Your Business
 
-#### Coin Voyage, your answer to multi-chain crypto payments, allowing your business to accept crypto.
+Coin Voyage, your answer to multi-chain crypto payments, allowing your business to accept crypto.
 
-## Seamless Cross-Chain Crypto Payments for Your Business
 
-#### Coin Voyage, your answer to multi-chain crypto payments, allowing your business to accept crypto.
+
+#### Seamless Cross-Chain Crypto Payments for Your Business
+
+Coin Voyage, your answer to multi-chain crypto payments, allowing your business to accept crypto.
 
 ![a girl looking at her phone](https://www.coinvoyage.io/_next/image?url=%2Fimages%2Flanding-hero.webp\&w=1920\&q=75)![money exchange](https://www.coinvoyage.io/_next/image?url=%2Fimages%2Finfo-1.webp\&w=1080\&q=75)
 
-### Accept Payments, Settle Anywhere
+
+
+#### Accept Payments, Settle Anywhere
 
 Coin Voyage is the ultimate crypto payment solution for businesses. Whether you're an e-commerce store, a global payment processor, or a digital service provider, our technology empowers you to accept payments in multiple cryptocurrencies across SUI, Solana, and EVM networks.
 
-## Quick links
+
+
+### Quick links
 
 {% content-ref url="./" %}
 [.](./)
@@ -28,7 +34,7 @@ Coin Voyage is the ultimate crypto payment solution for businesses. Whether you'
 [our-features.md](../our-features.md)
 {% endcontent-ref %}
 
-## Get Started
+### Get Started
 
 We've put together some helpful guides for you to get setup with our product quickly and easily.
 
