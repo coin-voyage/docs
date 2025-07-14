@@ -1,7 +1,5 @@
 # Welcome to CoinVoyage
 
-
-
 ### Overview
 
 #### Seamless Cross-Chain Crypto Payments for Your Business
@@ -16,7 +14,7 @@ CoinVoyage, your answer to multi-chain crypto payments, allowing your business t
 
 #### Accept Payments, Settle Anywhere
 
-Coin Voyage is the ultimate crypto payment solution for businesses. Whether you're an e-commerce store, a global payment processor, or a digital service provider, our technology empowers you to accept payments in multiple cryptocurrencies across SUI, Solana, and EVM networks.
+Coin Voyage is the ultimate crypto payment solution for businesses. Whether you're an e-commerce store, a global payment processor, or a digital service provider, our technology empowers you to accept payments in multiple cryptocurrencies across BTC, SUI, Solana, and EVM networks.
 
 
 
@@ -44,8 +42,4 @@ We've put together some helpful guides for you to get setup with our product qui
 
 {% content-ref url="../../getting-started/setup-your-own-environment.md" %}
 [setup-your-own-environment.md](../../getting-started/setup-your-own-environment.md)
-{% endcontent-ref %}
-
-{% content-ref url="broken-reference" %}
-[Broken link](broken-reference)
 {% endcontent-ref %}

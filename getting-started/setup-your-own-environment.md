@@ -1,14 +1,10 @@
 # Setup your own environment
 
-## Pre-requistes
+## Prerequisites
 
 Before you begin, make sure you have:
 
 * [Node.js](https://nodejs.org/) version 20 or higher
-
-&#x20;      We recommend using [nvm](https://github.com/nvm-sh/nvm) to manage your Node.js versions
-
-* [pnpm](https://pnpm.io/installation) package manager installed
 * Coinvoyage API Key&#x20;
 
 

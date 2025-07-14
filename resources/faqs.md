@@ -21,42 +21,20 @@ In the CoinVoyage Dashboard:
 ### **What’s the difference between a Deposit and a Sale?**
 
 * **Deposit**: Direct crypto payment to your wallet. No authentication required.
-* **Sale**: Crypto collected by CoinVoyage and settled to your chosen wallet. Requires signature authentication using your API Key & Secret.
-
-
-
-### **Why do I get a 500 error on a Sale?**
-
-A `500 Internal Server Error` usually indicates:
-
-* Missing or invalid **Authorization** header for Sale requests.
-* Invalid **payload** (e.g., missing settlement account).
-* Internal issues that can be clarified by checking the response body or API logs.
-
-Refer to [Broken link](broken-reference "mention") for required parameters.
+* **Sale**: Cryptocurrency is routed through CoinVoyage and sent directly to your **settlement wallet**. This mode requires a **signature-based Authorization header** using your API Key & Secret for added security.
 
 
 
 ### **How do I generate the Authorization signature?**
 
-For `mode=SALE`, you must add the `Authorization` header:
+If you're using the **CoinVoyage PayKit package**, there's a built-in method to generate the required signature:
 
-1. Concatenate: `APIKey + APISecret + Timestamp`
-2. Hash with **SHA‑512**
-3. Send header as:
+```typescript
+const signature = apiClient.generateAuthorizationSignature(process.env.COIN_VOYAGE_API_SECRET);
 
-```sql
-Authorization: APIKey=...,signature=...,timestamp=...
 ```
 
-See SDK examples in our docs for Node.js & Python.
-
-
-
-### **My Solana transactions aren’t broadcasting,why?**
-
-Public Solana RPC endpoints (like `rpc.ankr.com`) often **do not allow broadcasting** transactions.\
-Use a **private RPC** (for example via QuickNode) to ensure your transactions reach the network and finalize successfully.
+Example: [GitHub – Pay Order Action](https://github.com/coin-voyage/examples/blob/main/nextjs-app/src/actions/pay-order.ts)
 
 
 
