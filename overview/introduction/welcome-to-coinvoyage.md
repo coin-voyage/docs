@@ -46,6 +46,6 @@ We've put together some helpful guides for you to get setup with our product qui
 [setup-your-own-environment.md](../../getting-started/setup-your-own-environment.md)
 {% endcontent-ref %}
 
-{% content-ref url="../../getting-started/troubleshooting.md" %}
-[troubleshooting.md](../../getting-started/troubleshooting.md)
+{% content-ref url="broken-reference" %}
+[Broken link](broken-reference)
 {% endcontent-ref %}

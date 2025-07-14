@@ -9,54 +9,27 @@ Before you begin, make sure you have:
 &#x20;      We recommend using [nvm](https://github.com/nvm-sh/nvm) to manage your Node.js versions
 
 * [pnpm](https://pnpm.io/installation) package manager installed
-* [CoinVoyage](https://console.privy.io/) Dashboard account for your application
 * Coinvoyage API Key&#x20;
 
 
 
-### &#x20;Step 1: Create a new Next.js project with TypeScript
-
-```bash
-// bash
-npx create-next-app@latest your-project-name --typescript
-cd your-project-name
-```
-
-When prompted, select the following options:
-
-* Would you like to use TypeScript? › Yes
-* Would you like to use ESLint? › Yes
-* Would you like to use Tailwind CSS? › Yes
-* Would you like your code inside a src/ directory? › Yes
-* Would you like to use App Router? (recommended) › Yes
-* Would you like to use Turbopack for next dev? › Yes
-* Would you like to customize the import alias (@/\* by default)? › No
-
-
-
-### Step 2: Install required dependencies
+### Step 1: Install required dependencies
 
 ```sh
 npm install @coin-voyage/paykit @tanstack/react-query
 ```
 
-### Step 3: Generate your API key from your CoinVoyage dashboard at&#x20;
+### Step 2: Generate your API key from your CoinVoyage dashboard at&#x20;
 
 #### [https://dashboard.coinvoyage.com](https://dashboard.coinvoyage.com)
 
-
-
-### Step 4: Create a .env.local file in your project root directory
-
-
-
-### Step 5: Add your API key to the .env.local file
+### Step 3: Need to add a secret key for SALE PayOrders
 
 ```
-NEXT_PUBLIC_COIN_VOYAGE_API_KEY=pk_your_actual_api_key_here
+COIN_VOYAGE_SECRET_KEY=...
 ```
 
-### Step 6: Create a DepositButton component in app/components/DepositButton.tsx with the PayKit integration
+### Step 4: Create a DepositButton component in app/components/DepositButton.tsx with the PayKit integration
 
 ```typescript
 //typescript
@@ -106,9 +79,7 @@ export default function DepositButton() {
 
 ```
 
-
-
-### Step 7: Import and use the DepositButton component in your main page (app/page.tsx)
+### Step 5: Import and use the DepositButton component in your main page (app/page.tsx)
 
 <pre class="language-typescript"><code class="lang-typescript"><strong>//typescript
 </strong>import DepositButton from "./components/DepositButton";
@@ -124,9 +95,7 @@ export default function Home() {
 
 </code></pre>
 
-
-
-### Step 8: Replace "0xYourWalletAddress" with your actual SUI wallet address in the DepositButton component
+### Step 6: Replace "0xYourWalletAddress" with your actual SUI wallet address in the DepositButton component
 
 Restart your development server completely
 

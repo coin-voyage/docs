@@ -28,7 +28,6 @@
 * [Turnkey Integration](getting-started/turnkey-integration.md)
 * [Try CoinVoyage](getting-started/try-coinvoyage.md)
 * [Setup your own environment](getting-started/setup-your-own-environment.md)
-* [Troubleshooting](getting-started/troubleshooting.md)
 
 ## Resources
 
