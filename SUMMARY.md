@@ -34,4 +34,4 @@
 
 * [FAQs](resources/faqs.md)
 * [Changelog](resources/changelog.md)
-* [Demo App](resources/demo-app.md)
+* [Open source example](resources/open-source-example.md)
