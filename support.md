@@ -14,4 +14,4 @@ description: Connect with the CoinVoyage community and get help
 
 ### Technical questions and integration help
 
-Contact our team at [info@coinvoyage.io](mailto:info@coinvoyage.io)
+Contact our team at [help@coinvoyage.io](mailto:help@coinvoyage.io)
