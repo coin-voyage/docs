@@ -6,11 +6,11 @@
 
 #### Seamless Cross-Chain Crypto Payments for Your Business
 
-Coin Voyage, your answer to multi-chain crypto payments, allowing your business to accept crypto.
+CoinVoyage, your answer to multi-chain crypto payments, allowing your business to accept crypto.
 
 
 
-![a girl looking at her phone](https://www.coinvoyage.io/_next/image?url=%2Fimages%2Flanding-hero.webp\&w=1920\&q=75)![money exchange](https://www.coinvoyage.io/_next/image?url=%2Fimages%2Finfo-1.webp\&w=1080\&q=75)
+<p align="center"><img src="https://www.coinvoyage.io/_next/image?url=%2Fimages%2Flanding-hero.webp&#x26;w=1920&#x26;q=75" alt="a girl looking at her phone" data-size="original"><img src="https://www.coinvoyage.io/_next/image?url=%2Fimages%2Finfo-1.webp&#x26;w=1080&#x26;q=75" alt="money exchange" data-size="original"></p>
 
 
 
