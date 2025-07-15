@@ -25,7 +25,7 @@ npm install @coin-voyage/paykit @tanstack/react-query
 NEXT_PUBLIC_COIN_VOYAGE_API_KEY=pk_your_actual_api_key_here
 ```
 
-### Add a secret key for SALE PayOrders
+### Add your secret key for SALE PayOrders
 
 ```
 COIN_VOYAGE_SECRET_KEY=...
