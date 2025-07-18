@@ -1,10 +1,8 @@
-# Welcome to CoinVoyage
+# Introduction
 
 ### Overview
 
-#### Seamless Cross-Chain Crypto Payments for Your Business
-
-CoinVoyage, your answer to multi-chain crypto payments, allowing your business to accept crypto.
+CoinVoyage enables seamless crypto payments into your app. Onboard users from any chain, any coin into your app with one click and maximize your conversion
 
 
 
@@ -18,28 +16,18 @@ Coin Voyage is the ultimate crypto payment solution for businesses. Whether you'
 
 
 
-### Quick links
-
-{% content-ref url="./" %}
-[.](./)
-{% endcontent-ref %}
-
-{% content-ref url="../our-features.md" %}
-[our-features.md](../our-features.md)
-{% endcontent-ref %}
-
 ### Get Started
 
 We've put together some helpful guides for you to get setup with our product quickly and easily.
 
-{% content-ref url="../../getting-started/turnkey-integration.md" %}
-[turnkey-integration.md](../../getting-started/turnkey-integration.md)
+{% content-ref url="../getting-started/quickstart.md" %}
+[quickstart.md](../getting-started/quickstart.md)
 {% endcontent-ref %}
 
-{% content-ref url="../../getting-started/try-coinvoyage.md" %}
-[try-coinvoyage.md](../../getting-started/try-coinvoyage.md)
+{% content-ref url="broken-reference" %}
+[Broken link](broken-reference)
 {% endcontent-ref %}
 
-{% content-ref url="../../getting-started/setup-your-own-environment.md" %}
-[setup-your-own-environment.md](../../getting-started/setup-your-own-environment.md)
+{% content-ref url="broken-reference" %}
+[Broken link](broken-reference)
 {% endcontent-ref %}

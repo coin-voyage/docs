@@ -14,9 +14,7 @@
 
 ## Overview
 
-* [Introduction](overview/introduction/README.md)
-  * [Welcome to CoinVoyage](overview/introduction/welcome-to-coinvoyage.md)
-* [Our Features](overview/our-features.md)
+* [Introduction](overview/introduction.md)
 * [Supported Networks](overview/supported-networks.md)
 
 ***
@@ -25,12 +23,26 @@
 
 ## Getting Started
 
-* [Turnkey Integration](getting-started/turnkey-integration.md)
-* [Try CoinVoyage](getting-started/try-coinvoyage.md)
-* [Setup your own environment](getting-started/setup-your-own-environment.md)
+* [Quickstart](getting-started/quickstart.md)
+* [SDK](getting-started/sdk/README.md)
+  * [Untitled](getting-started/sdk/untitled.md)
+  * [sale example](getting-started/sdk/sale-example.md)
+* [Webhooks](getting-started/webhooks.md)
+
+***
+
+* [verify webhook request](verify-webhook-request.md)
+
+## Dashboard
+
+* [categories that we have in dashboard](dashboard/categories-that-we-have-in-dashboard.md)
 
 ## Resources
 
 * [FAQs](resources/faqs.md)
 * [Changelog](resources/changelog.md)
 * [Open source example](resources/open-source-example.md)
+
+## Group 1
+
+* [Payment](group-1/payment.md)
