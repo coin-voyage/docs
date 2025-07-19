@@ -1,5 +1,4 @@
 ---
-description: Cryptocurrency payment processing API
 layout:
   width: default
   title:
@@ -16,5 +15,7 @@ layout:
     visible: true
 ---
 
-# API reference
+# Analytics
+
+### Analytics
 

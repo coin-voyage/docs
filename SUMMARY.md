@@ -14,7 +14,7 @@
 
 ## Overview
 
-* [Introduction](overview/introduction.md)
+* [CoinVoyage](overview/coinvoyage.md)
 * [Supported Networks](overview/supported-networks.md)
 
 ***
@@ -35,6 +35,10 @@
 
 ## Dashboard
 
+* [Analytics](dashboard/analytics.md)
+* [Transaction](dashboard/transaction.md)
+* [Settlement Currency](dashboard/settlement-currency.md)
+* [Refunds](dashboard/refunds.md)
 * [categories that we have in dashboard](dashboard/categories-that-we-have-in-dashboard.md)
 
 ## Resources

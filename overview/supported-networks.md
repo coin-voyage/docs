@@ -1,10 +1,26 @@
 ---
 description: A list of all networks supported by CoinVoyage
+layout:
+  width: default
+  title:
+    visible: false
+  description:
+    visible: false
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
 ---
 
 # Supported Networks
 
-### Chain Support
+### Supported Networks
+
+#### Chain Support
 
 Coinvoyage is constantly expanding network support. If you need support for a network not listed here, please [contact our team](mailto:help@coinvoyage.io).
 

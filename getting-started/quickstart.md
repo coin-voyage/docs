@@ -1,10 +1,25 @@
 ---
-description: >-
-  This guide will get you set up and ready to use CoinVoyage within minutes. 
-  This is the recommended flow for the best user experience.
+layout:
+  width: default
+  title:
+    visible: false
+  description:
+    visible: false
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
 ---
 
 # Quickstart
+
+### Quickstart
+
+This guide will get you set up and ready to use CoinVoyage within minutes. This is the recommended flow for the best user experience.
 
 To get started using **Coin Voyage**, import `@coin-voyage/paykit` into your project.
 
@@ -38,11 +53,9 @@ Head over to [Business Dashboard ](https://dashboard.coinvoyage.io/) and creat
 
 <figure><img src="../.gitbook/assets/coinvoyage (4).png" alt=""><figcaption></figcaption></figure>
 
-### &#x20;
+#### Usage <a href="#usage" id="usage"></a>
 
-### Usage <a href="#usage" id="usage"></a>
-
-Now that you have your app configured, you can use the `PayButton` component to allow users to pay, deposit, or make arbitrary contract calls in one click from any chain
+Now that you have your app configured, you can use the `PayButton` component to allow users to pay, deposit, or make arbitrary contract calls in one click from any chain.
 
 
 
@@ -92,8 +105,6 @@ export function DepositButton() {
 }
 
 ```
-
-
 
 
 
