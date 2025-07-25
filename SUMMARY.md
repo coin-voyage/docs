@@ -35,10 +35,11 @@
 
 ## Dashboard
 
-* [Untitled](dashboard/untitled.md)
+* [Introduction](dashboard/introduction.md)
 * [Analytics](dashboard/analytics.md)
 * [Transaction](dashboard/transaction.md)
 * [Settlement Currency](dashboard/settlement-currency.md)
+* [Developers](dashboard/developers.md)
 * [Refunds](dashboard/refunds.md)
 * [categories that we have in dashboard](dashboard/categories-that-we-have-in-dashboard.md)
 
