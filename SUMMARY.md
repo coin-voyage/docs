@@ -35,6 +35,7 @@
 
 ## Dashboard
 
+* [Untitled](dashboard/untitled.md)
 * [Analytics](dashboard/analytics.md)
 * [Transaction](dashboard/transaction.md)
 * [Settlement Currency](dashboard/settlement-currency.md)
