@@ -19,6 +19,8 @@ layout:
 
 ### Settlement Currency
 
-Merchants can set their preferred settlement currency per chain.  These funds are routed directly to the configured wallet without being held by CoinVoyage.
+You  can set your preferred settlement currency from the [Settlement tab](https://dashboard.coinvoyage.io/settlement).&#x20;
 
 <figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+
+These funds are routed directly to the configured wallet without being held by CoinVoyage.
