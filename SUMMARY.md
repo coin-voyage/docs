@@ -24,9 +24,14 @@
 ## Getting Started
 
 * [Quickstart](getting-started/quickstart.md)
-* [SDK](getting-started/sdk/README.md)
-  * [Untitled](getting-started/sdk/untitled.md)
-  * [sale example](getting-started/sdk/sale-example.md)
+* [SDK reference](getting-started/sdk-reference/README.md)
+  * [PayButton](getting-started/sdk-reference/paybutton.md)
+  * [WalletProvider](getting-started/sdk-reference/walletprovider.md)
+  * [PayKitProvider](getting-started/sdk-reference/paykitprovider.md)
+  * [usePayStatus](getting-started/sdk-reference/usepaystatus.md)
+  * [ApiClient](getting-started/sdk-reference/apiclient.md)
+  * [Themes & customization](getting-started/sdk-reference/themes-and-customization.md)
+  * [Example](getting-started/sdk-reference/example.md)
 * [Webhooks](getting-started/webhooks/README.md)
   * [Verify webhook request](getting-started/webhooks/verify-webhook-request.md)
   * [Page 1](getting-started/webhooks/page-1.md)
