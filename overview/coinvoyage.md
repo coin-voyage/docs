@@ -44,8 +44,8 @@ We've put together some helpful guides for you to get setup with our product qui
 [quickstart.md](../getting-started/quickstart.md)
 {% endcontent-ref %}
 
-{% content-ref url="broken-reference" %}
-[Broken link](broken-reference)
+{% content-ref url="../getting-started/sdk-reference/" %}
+[sdk-reference](../getting-started/sdk-reference/)
 {% endcontent-ref %}
 
 {% content-ref url="broken-reference" %}

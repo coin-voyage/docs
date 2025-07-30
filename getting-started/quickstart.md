@@ -19,7 +19,11 @@ layout:
 
 ### Quickstart
 
-This guide will get you set up and ready to use CoinVoyage within minutes. This is the recommended flow for the best user experience.
+This guide will get you set up and ready to use CoinVoyage within minutes.&#x20;
+
+
+
+#### Install Package&#x20;
 
 To get started using **Coin Voyage**, import `@coin-voyage/paykit` into your project.
 
@@ -51,7 +55,13 @@ bun add @coin-voyage/paykit @tanstack/react-query@^5.80.2
 
 Head over to [Business Dashboard ](https://dashboard.coinvoyage.io/) and create an Organization. Under the `Developer` section you’ll find a api key generated tied to the organization. Once you have an `COIN_VOYAGE_API_KEY` the next section shows you a basic implementation.
 
+{% hint style="info" %}
+Users need to create an API key if they haven’t already. You can do so by visiting the [CoinVoyage Dashboard](https://dashboard.coinvoyage.io/developers).
+{% endhint %}
+
 <figure><img src="../.gitbook/assets/coinvoyage (4).png" alt=""><figcaption></figcaption></figure>
+
+#### &#x20;<a href="#usage" id="usage"></a>
 
 #### Usage <a href="#usage" id="usage"></a>
 
@@ -59,7 +69,9 @@ Now that you have your app configured, you can use the `PayButton` component to 
 
 
 
-Here is an example of basic usage:  note : Deposit example
+#### Add `DepositButton` component
+
+Here is an example of basic usage: &#x20;
 
 ```typescript
 "use client"
