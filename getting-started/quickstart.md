@@ -73,7 +73,7 @@ Now that you have your app configured, you can use the `PayButton` component to 
 
 Here is an example of basic usage: &#x20;
 
-```typescript
+```tsx filename="components/deposit-button.tsx"
 "use client"
  
 import { PayButton, PayKitProvider, WalletProvider } from "@coin-voyage/paykit"
