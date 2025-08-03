@@ -19,8 +19,15 @@ layout:
 
 ### Transaction
 
-Transactions record every financial activity in your CoinVoyage account.&#x20;
+The [**Transactions**](https://dashboard.coinvoyage.io/transactions) tab logs each crypto payment or settlement event processed via CoinVoyage.
 
 <figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
-Use [Transactions](https://dashboard.coinvoyage.io/transactions) to view all your customer payments, including transaction hash,  value and current status. You can filter your transactions or export them if you want to use the data outside of CoinVoyage.
+* Use **search and filter** options to isolate specific transactions or orders.
+* **Click any row** to view a full transaction detail page, including on-chain metadata, status, and associated hashes.
+* The **top analytics summary** provides an overview of volume and activity trends.
+
+Use this tab to monitor transaction flow, debug failed or pending payments, or confirm successful on-chain settlements.
+
+#### Refunds
+
