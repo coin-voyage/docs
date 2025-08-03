@@ -50,8 +50,6 @@ Refunds are initiated from the **Transaction Detail** view and executed as on-ch
 Once sent, refund status updates in real-time. All refund transactions are shown under the **“Refund Transactions”** section of the original payment.
 
 {% hint style="info" %}
-Note:
-
 Refunds are executed **as a new on-chain transfer** and recorded as a linked child transaction under the original.
 
 
