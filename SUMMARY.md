@@ -43,7 +43,6 @@
 * [Transaction](dashboard/transaction.md)
 * [Settlement Currency](dashboard/settlement-currency.md)
 * [Developers](dashboard/developers.md)
-* [Refunds](dashboard/refunds.md)
 
 ## Resources
 
