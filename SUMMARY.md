@@ -43,6 +43,7 @@
 * [Transaction](dashboard/transaction.md)
 * [Settlement Currency](dashboard/settlement-currency.md)
 * [Developers](dashboard/developers.md)
+* [Invoices](dashboard/invoices.md)
 
 ## Resources
 
