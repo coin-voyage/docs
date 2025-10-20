@@ -26,7 +26,7 @@ The [Settlement](https://dashboard.coinvoyage.io/settlement) tab lets you define
 * For `mode = "DEPOSIT"`, the crypto asset is settled directly to the wallet specified in the `PayOrder` request.
 {% endhint %}
 
-<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/dashboard-add-settlement-currency.png" alt="Dashboard - Add Settlement Currency"><figcaption></figcaption></figure>
 
 When a payment is received in any supported cryptocurrency (e.g., BTC, ETH, SOL), CoinVoyage performs an automatic conversion and settlement to the configured asset and chain (e.g., USDT on Tron, ETH on Arbitrum).
 

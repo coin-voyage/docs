@@ -19,4 +19,4 @@ layout:
 
 ### INTRODUCTION
 
-The [Coivoyage dashboard](https://dashboard.coinvoyage.io/) is the user interface where you manage and configure your account. You can use the Dashboard to navigate account analytics, search transaction,  set preferred settlement currency and generate api keys.&#x20;
+The [CoinVoyage dashboard](https://dashboard.coinvoyage.io/) is the user interface where you manage and configure your account. You can use the Dashboard to navigate account analytics, search transaction,  set preferred settlement currency and generate API keys.

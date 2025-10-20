@@ -21,7 +21,7 @@ layout:
 
 The [**Transactions**](https://dashboard.coinvoyage.io/transactions) tab logs each crypto payment or settlement event processed via CoinVoyage.
 
-<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/dashboard-transactions.png" alt="Dashboard - Transactions"><figcaption></figcaption></figure>
 
 * Use **search and filter** options to isolate specific transactions or orders.
 * **Click any row** to view a full transaction detail page, including on-chain metadata, status, and associated hashes.
@@ -33,7 +33,7 @@ Use this tab to monitor transaction flow, debug failed or pending payments, or c
 
 Refunds are initiated from the **Transaction Detail** view and executed as on-chain transactions tied to the original payment.&#x20;
 
-<figure><img src="../.gitbook/assets/Screenshot 2025-08-03 144309.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/refund-payorder.png" alt="Create a Refund Payorder"><figcaption></figcaption></figure>
 
 * From a completed transaction, click **“Refund”** to launch the refund modal.
 *   **Inputs Required**:
