@@ -24,7 +24,7 @@ CoinVoyage enables seamless crypto payments into your app. Onboard users from an
 * **Intuitive**: Let your customers user any token on any chain
 * **Fast**: Payments complete in seconds
 * **Simple**: Pay in a single step from any wallet
-* **Secure**: No extra counterparties. Daimo never holds user funds.
+* **Secure**: No extra counterparties. CoinVoyage never holds user funds.
 
 
 
