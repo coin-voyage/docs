@@ -24,11 +24,11 @@
 ## Getting Started
 
 * [Quickstart](getting-started/quickstart.md)
-* [SDK reference](getting-started/sdk-reference.md)
-  * [ApiClient](getting-started/sdk-reference.md#api-client)
-  * [PayButton](getting-started/sdk-reference.md#paybutton)
+* [CoinVoyage PayKit SDK reference](getting-started/sdk-reference.md)
   * [PayKitProvider](getting-started/sdk-reference.md#paykitprovider)
   * [WalletProvider](getting-started/sdk-reference.md#walletprovider)
+  * [PayButton](getting-started/sdk-reference.md#paybutton)
+  * [ApiClient](getting-started/sdk-reference.md#api-client)
   * [usePayStatus](getting-started/sdk-reference.md#usepaystatus)
   * [Themes & customization](getting-started/sdk-reference.md#themes-and-customization)
 * [Webhooks](getting-started/webhooks/README.md)
