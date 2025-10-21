@@ -14,17 +14,13 @@
 
 ## Overview
 
-* [CoinVoyage](overview/coinvoyage.md)
+* [Introduction](overview/introduction.md)
+* [Quickstart](overview/quickstart.md)
 * [Supported Networks](overview/supported-networks.md)
-
-***
-
-* [Support](support.md)
 
 ## Getting Started
 
-* [Quickstart](getting-started/quickstart.md)
-* [CoinVoyage PayKit SDK reference](getting-started/sdk-reference.md)
+* [SDK reference](getting-started/sdk-reference.md)
   * [PayKitProvider](getting-started/sdk-reference.md#paykitprovider)
   * [WalletProvider](getting-started/sdk-reference.md#walletprovider)
   * [PayButton](getting-started/sdk-reference.md#paybutton)
@@ -47,9 +43,10 @@
 ## Resources
 
 * [FAQs](resources/faqs.md)
+* [Support](resources/support.md)
 * [Changelog](resources/changelog.md)
 * [Open source example](resources/open-source-example.md)
 
-## Group 1
+## Additional Examples
 
-* [Payment](group-1/payment.md)
+* [Payment](additional-examples/payment.md)

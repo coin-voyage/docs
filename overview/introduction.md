@@ -15,9 +15,9 @@ layout:
     visible: true
 ---
 
-# CoinVoyage
+# Introduction
 
-### CoinVoyage
+### Introduction
 
 CoinVoyage enables seamless crypto payments into your app. Onboard users from any chain, any coin into your app with one click and maximize your conversion
 
@@ -40,8 +40,8 @@ Whether you're an e-commerce store, a global payment processor, or a digital ser
 
 We've put together some helpful guides for you to get setup with our product quickly and easily.
 
-{% content-ref url="../getting-started/quickstart.md" %}
-[quickstart.md](../getting-started/quickstart.md)
+{% content-ref url="quickstart.md" %}
+[quickstart.md](quickstart.md)
 {% endcontent-ref %}
 
 {% content-ref url="../getting-started/sdk-reference.md" %}
