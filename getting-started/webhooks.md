@@ -1,24 +1,12 @@
 ---
-description: check dashboard
-layout:
-  width: default
-  title:
-    visible: false
-  description:
-    visible: false
-  tableOfContents:
-    visible: true
-  outline:
-    visible: true
-  pagination:
-    visible: true
-  metadata:
-    visible: true
+description: Webhooks for real-time PayOrder updates and event delivery.
 ---
 
-# Verify webhook request
+# Webhooks
 
-### Webhook Setup Guide
+
+
+#### Handling webhook events
 
 This example shows how to verify webhook signatures and handle incoming events.
 

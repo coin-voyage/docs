@@ -27,9 +27,8 @@
   * [ApiClient](getting-started/sdk-reference.md#api-client)
   * [usePayStatus](getting-started/sdk-reference.md#usepaystatus)
   * [Themes & customization](getting-started/sdk-reference.md#themes-and-customization)
-* [Webhooks](getting-started/webhooks/README.md)
-  * [Verify webhook request](getting-started/webhooks/verify-webhook-request.md)
-  * [Page 1](getting-started/webhooks/page-1.md)
+* [Webhooks](getting-started/webhooks.md)
+  * [Handling webhook events](getting-started/webhooks.md#handling-webhook-events)
 
 ## Dashboard
 
