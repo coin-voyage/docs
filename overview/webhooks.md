@@ -6,8 +6,9 @@ description: Webhooks for real-time PayOrder updates and event delivery.
 
 ### Introduction
 
-Webhooks allow you to receive real-time notifications about PayOrder events in your application. When a PayOrder changes status (e.g., payment received, completed, or refunded), CoinVoyage will send an HTTP POST request to your configured webhook endpoint with the event details.
+Webhooks allow you to receive real-time notifications about PayOrder events in your application. When a PayOrder changes status (e.g., payment received, completed, or refunded), a POST request is send to your configured webhook endpoint with the event details.
 
+\
 **Setting Up Webhooks**
 
 You can register and manage webhook endpoints in the [CoinVoyage Dashboard](https://dashboard.coinvoyage.io/developers) under the **Developers** section:
@@ -22,15 +23,15 @@ You can register and manage webhook endpoints in the [CoinVoyage Dashboard](http
 Your webhook endpoint must be publicly accessible and respond with a 2xx status code within 30 seconds to be considered successful.
 {% endhint %}
 
----
+***
 
 ### Webhook Events
 
 CoinVoyage sends the following webhook events to track the PayOrder lifecycle:
 
-<table><thead><tr><th width="280">Event Type</th><th>Description</th></tr></thead><tbody><tr><td><code>ORDER_CREATED</code></td><td>Triggered when a new PayOrder is created. This is the initial state when an order is first registered in the system.</td></tr><tr><td><code>ORDER_AWAITING_PAYMENT</code></td><td>Triggered when the PayOrder is ready and awaiting payment from the user. The deposit address is available at this stage.</td></tr><tr><td><code>ORDER_CONFIRMING</code></td><td>Triggered when payment has been received and is being confirmed on the blockchain. Includes the source transaction hash.</td></tr><tr><td><code>ORDER_EXECUTING</code></td><td>Triggered when the payment is confirmed and the order is being executed (processing the destination transfer or contract call).</td></tr><tr><td><code>ORDER_COMPLETED</code></td><td>Triggered when the PayOrder is successfully completed. The destination transaction hash is included in the payload.</td></tr><tr><td><code>ORDER_ERROR</code></td><td>Triggered when an error occurs during PayOrder processing. Includes error details and status information.</td></tr><tr><td><code>ORDER_REFUNDED</code></td><td>Triggered when funds are refunded to the user (e.g., if a destination call reverts). Includes the refund transaction hash and address.</td></tr></tbody></table>
+<table><thead><tr><th width="280">Event Type</th><th>Description</th></tr></thead><tbody><tr><td><code>payorder_created</code></td><td>Triggered when a new PayOrder is created. This is the initial state when an order is first registered in the system.</td></tr><tr><td><code>payorder_started</code></td><td>Triggered when the PayOrder is ready and awaiting payment from the user. The deposit address is available at this stage.</td></tr><tr><td><code>payorder_confirming</code></td><td>Triggered when payment has been received and is being confirmed on the blockchain. Includes the source transaction hash.</td></tr><tr><td><code>payorder_executing</code></td><td>Triggered when the payment is confirmed and the order is being executed (processing the destination transfer or contract call).</td></tr><tr><td><code>payorder_completed</code></td><td>Triggered when the PayOrder is successfully completed. The destination transaction hash is included in the payload.</td></tr><tr><td><code>payorder_error</code></td><td>Triggered when an error occurs during PayOrder processing. Includes error details and status information.</td></tr><tr><td><code>payorder_refunded</code></td><td>Triggered when funds are refunded to the user (e.g., if a destination call reverts). Includes the refund transaction hash and address.</td></tr></tbody></table>
 
----
+***
 
 ### Event Payload Structure
 
@@ -47,7 +48,7 @@ Each webhook event contains the following structure:
 
 **Event-Specific Fields**
 
-**`ORDER_CREATED`**
+**`payorder_created`**
 
 ```typescript
 {
@@ -56,7 +57,7 @@ Each webhook event contains the following structure:
 }
 ```
 
-**`ORDER_AWAITING_PAYMENT`**
+**`payorder_started`**
 
 ```typescript
 {
@@ -67,7 +68,7 @@ Each webhook event contains the following structure:
 }
 ```
 
-**`ORDER_CONFIRMING`**
+**`payorder_confirming`**
 
 ```typescript
 {
@@ -79,7 +80,7 @@ Each webhook event contains the following structure:
 }
 ```
 
-**`ORDER_EXECUTING`**
+**`payorder_executing`**
 
 ```typescript
 {
@@ -88,7 +89,7 @@ Each webhook event contains the following structure:
 }
 ```
 
-**`ORDER_COMPLETED`**
+**`payorder_completed`**
 
 ```typescript
 {
@@ -100,7 +101,7 @@ Each webhook event contains the following structure:
 }
 ```
 
-**`ORDER_ERROR`**
+**`payorder_error`**
 
 ```typescript
 {
@@ -111,7 +112,7 @@ Each webhook event contains the following structure:
 }
 ```
 
-**`ORDER_REFUNDED`**
+**`payorder_refunded`**
 
 ```typescript
 {
@@ -122,7 +123,7 @@ Each webhook event contains the following structure:
 }
 ```
 
----
+***
 
 ### Handling webhook events
 
@@ -160,7 +161,7 @@ export const POST = async (req: Request) => {
 
 Make sure to:
 
-- Replace 'your_webhook_secret' with your actual webhook secret
-- Implement proper error handling
-- Use HTTPS in production
-- Store the webhook secret securely
+* Replace 'your\_webhook\_secret' with your actual webhook secret
+* Implement proper error handling
+* Use HTTPS in production
+* Store the webhook secret securely
