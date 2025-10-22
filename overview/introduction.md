@@ -21,7 +21,7 @@ layout:
 
 CoinVoyage enables seamless crypto payments into your app. Onboard users from any chain, any coin into your app with one click and maximize your conversion
 
-* **Intuitive**: Let your customers user any token on any chain
+* **Intuitive**: Let your customers use any token on any chain
 * **Fast**: Payments complete in seconds
 * **Simple**: Pay in a single step from any wallet
 * **Secure**: No extra counterparties. CoinVoyage never holds user funds.
