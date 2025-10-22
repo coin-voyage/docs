@@ -23,7 +23,7 @@ This guide will get you set up and ready to use CoinVoyage within minutes.
 
 #### Install Package
 
-To get started using **Coin Voyage**, import `@coin-voyage/paykit` into your project.
+To get started using **CoinVoyage**, import `@coin-voyage/paykit` into your project.
 
 {% tabs %}
 {% tab title="npm" %}
@@ -117,4 +117,4 @@ export function DepositButton() {
 
 ```
 
-For more examples, check out the [CoinVoyage Demo](https://example.coinvoyage.io/) or find code examples on \[CoinVoyage Examples]\([https://github.com/coin-voyage/examples](https://github.com/coin-voyage/examples))
+For more examples, check out the [CoinVoyage Demo](https://example.coinvoyage.io/) or find code examples on ([https://github.com/coin-voyage/examples](https://github.com/coin-voyage/examples))

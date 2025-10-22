@@ -4,10 +4,10 @@ title: The PayKitProvider allows y...
 
 {% columns %}
 {% column %}
-**Chain Analytics** tab provides developers and merchants with a detailed, chain-level breakdown of their payment activity. It helps analyze which blockchains, tokens, and routes drive the most volume and transactions across your integration.
+The `PayKitProvider` allows you to directly configure the theme, style and more of the `PayModal` (see image). The `PayModal` takes the user through the payment process and is shown upon interaction with the `PayButton`
 {% endcolumn %}
 
 {% column %}
-<figure><img src="../assets/Screenshot_2025-09-25_at_10.28.34_AM.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../assets/paykit_modal.png" alt="" width="263"><figcaption></figcaption></figure>
 {% endcolumn %}
 {% endcolumns %}
