@@ -11,6 +11,16 @@
           kind: openapi
           spec: coinvoyageapi
     ```
+  * ```yaml
+    props:
+      models: true
+    type: builtin:openapi
+    dependencies:
+      spec:
+        ref:
+          kind: openapi
+          spec: coinvoyageapi
+    ```
 
 ## Overview
 
