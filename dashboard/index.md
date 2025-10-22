@@ -5,7 +5,7 @@ layout:
   title:
     visible: true
   description:
-    visible: true
+    visible: false
   tableOfContents:
     visible: true
   outline:
@@ -32,10 +32,6 @@ CoinVoyage's analytics provides a real-time and historical view of your payment 
 
 Through [analytics](https://dashboard.coinvoyage.io/) you can get an overview of your payment performance through key metrics and reports to help you track and analyze your payment performance. It includes total volume, payment method usage, conversation rate, customer preferences and trends, etc
 
-{% include "../.gitbook/includes/the-paykitprovider-allows-y....md" %}
-
-
-
 ### Transaction
 
 The [**Transactions**](https://dashboard.coinvoyage.io/transactions) tab logs each crypto payment or settlement event processed via CoinVoyage.
@@ -47,8 +43,6 @@ The [**Transactions**](https://dashboard.coinvoyage.io/transactions) tab logs ea
 * The **top analytics summary** provides an overview of volume and activity trends.
 
 Use this tab to monitor transaction flow, debug failed or pending payments, or confirm successful on-chain settlements.
-
-
 
 #### Refunds
 
@@ -74,8 +68,6 @@ Once sent, refund status updates in real-time. All refund transactions are shown
 Refunds are executed **as a new on-chain transfer** and recorded as a linked child transaction under the original.
 {% endhint %}
 
-
-
 #### Settlement Currencies
 
 The [Settlement](https://dashboard.coinvoyage.io/settlement) tab lets you define which **currency your payouts will be settled in**, regardless of the crypto asset the user pays with.
@@ -93,8 +85,6 @@ Merchants can configure **multiple settlement currencies across different chains
 
 All settlements are non-custodial and executed on-chain.
 
-
-
 #### Developers
 
 In the [**Developer** tab](https://dashboard.coinvoyage.io/developers) you can create, view, and rotate your **public API Key** and **Secret** securely to authenticate your integration.
@@ -103,13 +93,9 @@ In the [**Developer** tab](https://dashboard.coinvoyage.io/developers) you can c
 
 You can also set up and manage **webhook endpoints** and subscribe to events like payment confirmations or disputes.
 
-<figure><img src="../.gitbook/assets/dashboard-add-webhook" alt="Dashboard - Add Webhook"><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/Screenshot 2025-10-22 at 5.43.24 PM.png" alt="Dashboard - Add Webhook"><figcaption></figcaption></figure>
 
-Check out [Webhook](../getting-started/webhooks.md) for example
-
-
-
-
+Check out [Webhook](../overview/webhooks.md) for example
 
 #### Invoices
 
@@ -120,11 +106,5 @@ CoinVoyage now supports **invoices**, allowing merchants to generate crypto paym
 To get started, merchants first set up their **organization profile** in the dashboard, which defines their business details. Once the organization profile is configured, they can immediately begin creating invoices for their customers.
 
 The customer automatically receives an email containing the invoice details and this payment link, making it easy for them to complete the transaction in their chosen cryptocurrency while the merchant receives settlement in their preferred currency.
-
-<figure><img src="../.gitbook/assets/invoice-preview.png" alt="Invoice Detail - Invoice Preview"><figcaption></figcaption></figure>
-
-
-
-**Payment Link preview**
 
 <figure><img src="../.gitbook/assets/invoice-preview-payment-link.png" alt="Invoice Detail - Payment Link Preview"><figcaption></figcaption></figure>
