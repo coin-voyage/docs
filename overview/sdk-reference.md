@@ -474,7 +474,70 @@ await apiClient.processPayOrder("pay-order-id", "0xabcdef...");
 
 #### usePayStatus
 
-todo
+A React hook that returns the current payment status and ID, or `undefined` if there is no active payment. This hook allows you to track the payment lifecycle in your application.
+
+**Usage**
+
+```tsx
+import { usePayStatus } from "@coin-voyage/paykit";
+
+function PaymentTracker() {
+  const paymentStatus = usePayStatus();
+
+  if (!paymentStatus) {
+    return <div>No active payment</div>;
+  }
+
+  return (
+    <div>
+      <p>Payment ID: {paymentStatus.paymentId}</p>
+      <p>Status: {paymentStatus.status}</p>
+      
+      {paymentStatus.status === "payment_pending" && (
+        <p>Waiting for payment...</p>
+      )}
+      {paymentStatus.status === "payment_started" && (
+        <p>Processing your payment...</p>
+      )}
+      {paymentStatus.status === "payment_completed" && (
+        <p>✅ Payment successful!</p>
+      )}
+      {paymentStatus.status === "payment_bounced" && (
+        <p>⚠️ Payment bounced - funds refunded</p>
+      )}
+      {paymentStatus.status === "payment_expired" && (
+        <p>Payment expired</p>
+      )}
+      {paymentStatus.status === "payment_failed" && (
+        <p>❌ Payment failed</p>
+      )}
+    </div>
+  );
+}
+```
+
+**Return Value**
+
+Returns `{ paymentId: string; status: PaymentStatus } | undefined`
+
+- `paymentId`: The unique identifier of the PayOrder
+- `status`: The current payment status (see below)
+- Returns `undefined` if there is no active payment
+
+**Payment Status Values**
+
+<table><thead><tr><th width="220">Status</th><th>Description</th></tr></thead><tbody><tr><td><code>payment_pending</code></td><td>The user has not paid yet. The PayOrder is awaiting payment.</td></tr><tr><td><code>payment_started</code></td><td>The user has paid and the payment is in progress. This status typically lasts a few seconds while the transaction is being confirmed.</td></tr><tr><td><code>payment_completed</code></td><td>The final call or transfer succeeded. Payment completed successfully.</td></tr><tr><td><code>payment_bounced</code></td><td>The final call or transfer reverted. Funds were sent to the payment's configured refund address on the destination chain.</td></tr><tr><td><code>payment_expired</code></td><td>The payment expired before the user paid.</td></tr><tr><td><code>payment_failed</code></td><td>The payment failed for some reason.</td></tr></tbody></table>
+
+**Status Mapping**
+
+The hook maps internal `PayOrderStatus` values to user-friendly `PaymentStatus` values:
+
+- `AWAITING_PAYMENT`, `PENDING` → `payment_pending`
+- `AWAITING_CONFIRMATION` → `payment_started`
+- `EXECUTING_ORDER`, `COMPLETED` → `payment_completed`
+- `REFUNDED` → `payment_bounced`
+- `EXPIRED` → `payment_expired`
+- `FAILED` → `payment_failed`
 
 #### Themes & Customization
 
