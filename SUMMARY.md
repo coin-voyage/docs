@@ -11,7 +11,6 @@
           kind: openapi
           spec: test
     ```
-* [TEST](TEST.md)
 
 ## Overview
 
