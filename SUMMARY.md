@@ -25,6 +25,9 @@
   * [usePayStatus](overview/sdk-reference.md#usepaystatus)
   * [Themes & customization](overview/sdk-reference.md#themes-and-customization)
 * [Webhooks](overview/webhooks.md)
+  * [Introduction](overview/webhooks.md#introduction)
+  * [Webhook Events](overview/webhooks.md#webhook-events)
+  * [Event Payload Structure](overview/webhooks.md#event-payload-structure)
   * [Handling webhook events](overview/webhooks.md#handling-webhook-events)
 
 ## Dashboard
