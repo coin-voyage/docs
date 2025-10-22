@@ -42,7 +42,7 @@
 
 ## Dashboard
 
-* [Dashboard](dashboard/index.md)
+* [Overview](dashboard/index.md)
   * [Introduction](dashboard/index.md#introduction)
   * [Analytics](dashboard/index.md#analytics)
   * [Transaction](dashboard/index.md#transaction)

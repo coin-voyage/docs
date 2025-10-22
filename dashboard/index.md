@@ -1,12 +1,27 @@
 ---
 description: ...
+layout:
+  width: default
+  title:
+    visible: true
+  description:
+    visible: true
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
 ---
 
-# Payment Dashboard
+# Overview
 
-### INTRODUCTION
+### Introduction
 
-The [CoinVoyage dashboard](https://dashboard.coinvoyage.io/) is the user interface where you manage and configure your account. You can use the Dashboard to navigate account analytics, search transaction,  set preferred settlement currency and generate API keys.
+The [CoinVoyage dashboard](https://dashboard.coinvoyage.io/) is the user interface where you manage and configure your account. You can use the Dashboard to navigate account analytics, search transaction, set preferred settlement currency and generate API keys.
+
 
 
 ### Analytics
@@ -17,9 +32,8 @@ CoinVoyage's analytics provides a real-time and historical view of your payment 
 
 Through [analytics](https://dashboard.coinvoyage.io/) you can get an overview of your payment performance through key metrics and reports to help you track and analyze your payment performance. It includes total volume, payment method usage, conversation rate, customer preferences and trends, etc
 
-
-
 {% include "../.gitbook/includes/the-paykitprovider-allows-y....md" %}
+
 
 
 ### Transaction
@@ -34,9 +48,11 @@ The [**Transactions**](https://dashboard.coinvoyage.io/transactions) tab logs ea
 
 Use this tab to monitor transaction flow, debug failed or pending payments, or confirm successful on-chain settlements.
 
+
+
 #### Refunds
 
-Refunds are initiated from the **Transaction Detail** view and executed as on-chain transactions tied to the original payment.&#x20;
+Refunds are initiated from the **Transaction Detail** view and executed as on-chain transactions tied to the original payment.
 
 <figure><img src="../.gitbook/assets/refund-payorder.png" alt="Create a Refund Payorder"><figcaption></figcaption></figure>
 
@@ -56,12 +72,11 @@ Once sent, refund status updates in real-time. All refund transactions are shown
 
 {% hint style="info" %}
 Refunds are executed **as a new on-chain transfer** and recorded as a linked child transaction under the original.
-
-
 {% endhint %}
 
 
-### Settlement Currency
+
+#### Settlement Currencies
 
 The [Settlement](https://dashboard.coinvoyage.io/settlement) tab lets you define which **currency your payouts will be settled in**, regardless of the crypto asset the user pays with.
 
@@ -79,7 +94,8 @@ Merchants can configure **multiple settlement currencies across different chains
 All settlements are non-custodial and executed on-chain.
 
 
-### Developers
+
+#### Developers
 
 In the [**Developer** tab](https://dashboard.coinvoyage.io/developers) you can create, view, and rotate your **public API Key** and **Secret** securely to authenticate your integration.
 
@@ -92,7 +108,10 @@ You can also set up and manage **webhook endpoints** and subscribe to events lik
 Check out [Webhook](../getting-started/webhooks.md) for example
 
 
-### Invoices
+
+
+
+#### Invoices
 
 CoinVoyage now supports **invoices**, allowing merchants to generate crypto payment requests directly from the dashboard. From the dashboard, you can create an invoice by entering the amount, currency, customer details, description and optionally setting a due date.
 
@@ -104,6 +123,8 @@ The customer automatically receives an email containing the invoice details and 
 
 <figure><img src="../.gitbook/assets/invoice-preview.png" alt="Invoice Detail - Invoice Preview"><figcaption></figcaption></figure>
 
-Payment Link preview:
+
+
+**Payment Link preview**
 
 <figure><img src="../.gitbook/assets/invoice-preview-payment-link.png" alt="Invoice Detail - Payment Link Preview"><figcaption></figcaption></figure>
