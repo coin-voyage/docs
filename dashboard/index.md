@@ -1,11 +1,11 @@
 ---
-description: ...
+description: The hub for managing your organization, viewing payments and more.
 layout:
   width: default
   title:
     visible: true
   description:
-    visible: false
+    visible: true
   tableOfContents:
     visible: true
   outline:
@@ -20,7 +20,16 @@ layout:
 
 ### Introduction
 
-The [CoinVoyage dashboard](https://dashboard.coinvoyage.io/) is the user interface where you manage and configure your account. You can use the Dashboard to navigate account analytics, search transaction, set preferred settlement currency and generate API keys.
+The [CoinVoyage dashboard](https://dashboard.coinvoyage.io/)  is the hub for managing payments, monitoring performance, and configuring your organization account. It provides an intuitive interface for navigating analytics, tracking transactions, managing settlements, issuing refunds, and integrating developer tools.
+
+In the dashboard, you can:
+
+* **Analyze payments** in real time and over historical periods across supported chains and tokens.
+* **Search and review transactions** with full on-chain metadata, activity summaries, and detailed reporting.
+* **Initiate refunds** securely with full or partial amounts directly on-chain.
+* **Configure settlement currencies** to automatically convert received payments into your preferred assets and chains.
+* **Manage developer integrations**, including API key generation and webhook setup for payment confirmations or disputes.
+* **Generate and send invoices** directly to customers, simplifying crypto payment collection.
 
 
 
@@ -30,11 +39,11 @@ CoinVoyage's analytics provides a real-time and historical view of your payment 
 
 <figure><img src="../.gitbook/assets/cv2.png" alt=""><figcaption></figcaption></figure>
 
-Through [analytics](https://dashboard.coinvoyage.io/) you can get an overview of your payment performance through key metrics and reports to help you track and analyze your payment performance. It includes total volume, payment method usage, conversation rate, customer preferences and trends, etc
+Through [analytics](https://dashboard.coinvoyage.io/) you can get an overview of your payment performance through key metrics and reports to help you track and analyze your payment performance. It includes total volume, payment method usage, conversation rate, customer preferences and trends, etc.
 
 ### Transaction
 
-The [**Transactions**](https://dashboard.coinvoyage.io/transactions) tab logs each crypto payment or settlement event processed via CoinVoyage.
+The [**transactions**](https://dashboard.coinvoyage.io/transactions) tab logs each crypto payment or settlement event processed via CoinVoyage.
 
 <figure><img src="../.gitbook/assets/dashboard-transactions.png" alt="Dashboard - Transactions"><figcaption></figcaption></figure>
 
@@ -87,7 +96,7 @@ All settlements are non-custodial and executed on-chain.
 
 #### Developers
 
-In the [**Developer** tab](https://dashboard.coinvoyage.io/developers) you can create, view, and rotate your **public API Key** and **Secret** securely to authenticate your integration.
+In the [**Developer** **tab**](https://dashboard.coinvoyage.io/developers) you can create, view, and rotate your **public API Key** and **Secret** securely to authenticate your integration.
 
 <figure><img src="../.gitbook/assets/developers-api-keys.png" alt="Developers API Keys"><figcaption></figcaption></figure>
 
@@ -95,7 +104,7 @@ You can also set up and manage **webhook endpoints** and subscribe to events lik
 
 <figure><img src="../.gitbook/assets/Screenshot 2025-10-22 at 5.43.24 PM.png" alt="Dashboard - Add Webhook"><figcaption></figcaption></figure>
 
-Check out [Webhook](../overview/webhooks.md) for example
+Check out [Webhook](../overview/webhooks.md) for an example
 
 #### Invoices
 
