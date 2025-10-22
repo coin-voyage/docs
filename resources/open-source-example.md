@@ -15,8 +15,9 @@ layout:
     visible: true
 ---
 
-# Open source example
+# Example code
 
-### Open source example
+### Example code&#x20;
 
-All examples in this guide are 100% free and open-source. Clone the repository to quickly get started or try [live-demo app](https://github.com/coin-voyage/examples)
+We added a few examples in a [repository on github](https://github.com/coin-voyage/examples). If you have any questions don't hesitate to [reach out](support.md).
+

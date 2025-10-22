@@ -52,7 +52,7 @@
 * [FAQs](resources/faqs.md)
 * [Support](resources/support.md)
 * [Changelog](resources/changelog.md)
-* [Open source example](resources/open-source-example.md)
+* [Example code](resources/open-source-example.md)
 
 ## Additional Examples
 
