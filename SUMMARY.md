@@ -27,18 +27,15 @@
 * [Introduction](overview/introduction.md)
 * [Quickstart](overview/quickstart.md)
 * [Supported Networks](overview/supported-networks.md)
-
-## Getting Started
-
-* [SDK reference](getting-started/sdk-reference.md)
-  * [PayKitProvider](getting-started/sdk-reference.md#paykitprovider)
-  * [WalletProvider](getting-started/sdk-reference.md#walletprovider)
-  * [PayButton](getting-started/sdk-reference.md#paybutton)
-  * [ApiClient](getting-started/sdk-reference.md#api-client)
-  * [usePayStatus](getting-started/sdk-reference.md#usepaystatus)
-  * [Themes & customization](getting-started/sdk-reference.md#themes-and-customization)
-* [Webhooks](getting-started/webhooks.md)
-  * [Handling webhook events](getting-started/webhooks.md#handling-webhook-events)
+* [SDK reference](overview/sdk-reference.md)
+  * [PayKitProvider](overview/sdk-reference.md#paykitprovider)
+  * [WalletProvider](overview/sdk-reference.md#walletprovider)
+  * [PayButton](overview/sdk-reference.md#paybutton)
+  * [ApiClient](overview/sdk-reference.md#api-client)
+  * [usePayStatus](overview/sdk-reference.md#usepaystatus)
+  * [Themes & customization](overview/sdk-reference.md#themes-and-customization)
+* [Webhooks](overview/webhooks.md)
+  * [Handling webhook events](overview/webhooks.md#handling-webhook-events)
 
 ## Dashboard
 
