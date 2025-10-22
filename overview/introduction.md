@@ -48,6 +48,6 @@ We've put together some helpful guides for you to get setup with our product qui
 [sdk-reference.md](sdk-reference.md)
 {% endcontent-ref %}
 
-{% content-ref url="broken-reference" %}
-[Broken link](broken-reference)
+{% content-ref url="../dashboard/index.md" %}
+[../dashboard/index.md](../dashboard/index.md)
 {% endcontent-ref %}

@@ -39,7 +39,7 @@ CoinVoyage's analytics provides a real-time and historical view of your payment 
 
 <figure><img src="../.gitbook/assets/cv2.png" alt=""><figcaption></figcaption></figure>
 
-Through [analytics](https://dashboard.coinvoyage.io/) you can get an overview of your payment performance through key metrics and reports to help you track and analyze your payment performance. It includes total volume, payment method usage, conversation rate, customer preferences and trends, etc.
+Through [analytics](https://dashboard.coinvoyage.io/) you can get an overview of your payment performance through key metrics and reports to help you track and analyze your payment performance. It includes total volume, payment method usage, conversion rate, customer preferences and trends, etc.
 
 ### Transaction
 

@@ -51,7 +51,7 @@ bun add @coin-voyage/paykit @tanstack/react-query@^5.80.2
 {% endtab %}
 {% endtabs %}
 
-Head over to [CoinVoyage Dashboard ](https://dashboard.coinvoyage.io/) and create an Organization. Under the `Developer` section you’ll find a API key generated tied to the organization. Once you have an `COIN_VOYAGE_API_KEY` the next section shows you a basic implementation.
+Head over to [CoinVoyage Dashboard ](https://dashboard.coinvoyage.io/) and create an organization. Under the `Developer` section you’ll find a API key generated tied to the organization. Once you have an `COIN_VOYAGE_API_KEY` the next section shows you a basic implementation.
 
 {% hint style="info" %}
 Users need to create an API key if they haven’t already. You can do so by visiting the [CoinVoyage Dashboard](https://dashboard.coinvoyage.io/developers).
