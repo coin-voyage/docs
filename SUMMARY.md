@@ -28,14 +28,14 @@
 * [Quickstart](overview/quickstart.md)
 * [Supported Networks](overview/supported-networks.md)
 * [SDK reference](overview/sdk-reference.md)
-  *
-  *
-  *
-  *
-  *
-  *
+  * [PayKitProvider](overview/sdk-reference.md#paykitprovider)
+  * [WalletProvider](overview/sdk-reference.md#walletprovider)
+  * [PayButton](overview/sdk-reference.md#paybutton)
+  * [ApiClient](overview/sdk-reference.md#apiclient)
+  * [usePayStatus](overview/sdk-reference.md#usepaystatus)
+  * [Themes & customization](overview/sdk-reference.md#themes-and-customization)
 * [Webhooks](overview/webhooks.md)
-  *
+  * [Handling webhook events](overview/webhooks.md#handling-webhook-events)
 
 ## Dashboard
 
