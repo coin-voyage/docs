@@ -1,19 +1,6 @@
 # Table of contents
 
-* [API reference](README.md)
-  * ```yaml
-    props:
-      models: true
-    type: builtin:openapi
-    dependencies:
-      spec:
-        ref:
-          kind: openapi
-          spec: test
-    ```
-
 ## Overview
-
 * [Introduction](overview/introduction.md)
 * [Quickstart](overview/quickstart.md)
 * [Supported Networks](overview/supported-networks.md)
@@ -29,6 +16,20 @@
   * [Webhook Events](overview/webhooks.md#webhook-events)
   * [Event Payload Structure](overview/webhooks.md#event-payload-structure)
   * [Handling webhook events](overview/webhooks.md#handling-webhook-events)
+
+## API Reference
+
+* [API reference](README.md)
+  * ```yaml
+    props:
+      models: true
+    type: builtin:openapi
+    dependencies:
+      spec:
+        ref:
+          kind: openapi
+          spec: test
+    ```
 
 ## Dashboard
 
