@@ -11,16 +11,6 @@
           kind: openapi
           spec: test
     ```
-  * ```yaml
-    props:
-      models: true
-    type: builtin:openapi
-    dependencies:
-      spec:
-        ref:
-          kind: openapi
-          spec: test
-    ```
 * [TEST](TEST.md)
 
 ## Overview
