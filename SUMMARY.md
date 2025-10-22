@@ -42,12 +42,13 @@
 
 ## Dashboard
 
-* [Introduction](dashboard/introduction.md)
-* [Analytics](dashboard/analytics.md)
-* [Transaction](dashboard/transaction.md)
-* [Settlement Currency](dashboard/settlement-currency.md)
-* [Developers](dashboard/developers.md)
-* [Invoices](dashboard/invoices.md)
+* [Dashboard](dashboard/index.md)
+  * [Introduction](dashboard/index.md#introduction)
+  * [Analytics](dashboard/index.md#analytics)
+  * [Transaction](dashboard/index.md#transaction)
+  * [Settlement Currency](dashboard/index.md#settlement-currency)
+  * [Developers](dashboard/index.md#developers)
+  * [Invoices](dashboard/index.md#invoices)
 
 ## Resources
 
