@@ -6,7 +6,7 @@ description: Production-ready SDK for CoinVoyage integration.
 
 The [`@coin-voyage/paykit`](https://www.npmjs.com/package/@coin-voyage/paykit) SDK offers client-side and server-side functionality that abstracts the integration of the API, while also exporting UI components. This SDK reduce the amount of boilerplate code you need and lets you easily integrate payment and deposit flow into your web application.
 
-***
+---
 
 #### Install CoinVoyage PayKit
 
@@ -14,33 +14,37 @@ Use your preferred package manager to install CoinVoyage PayKit.
 
 {% tabs %}
 {% tab title="npm" %}
+
 ```sh
 npm i @coin-voyage/paykit @tanstack/react-query@^5.80.2
 ```
+
 {% endtab %}
 
 {% tab title="pnpm" %}
+
 ```sh
 pnpm add @coin-voyage/paykit @tanstack/react-query@^5.80.2
 ```
+
 {% endtab %}
 
 {% tab title="yarn" %}
+
 ```sh
 yarn add @coin-voyage/paykit @tanstack/react-query@^5.80.2
 ```
+
 {% endtab %}
 
 {% tab title="bun" %}
+
 ```sh
 bun add @coin-voyage/paykit @tanstack/react-query@^5.80.2
 ```
+
 {% endtab %}
 {% endtabs %}
-
-
-
-
 
 #### PayKitProvider
 
@@ -84,10 +88,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
 The `PayKitProvider` accepts the following configuration parameters:
 
 <table><thead><tr><th width="218.4000244140625">Option</th><th width="146.5999755859375">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td>Yes</td><td>API Key of the organization, acquired in the developers tab of the <a href="https://dashboard.coinvoyage.io/developers">dashboard</a>.</td></tr><tr><td><code>customTheme</code></td><td>No</td><td>Gives you the flexibility to modify the PayKit modal styling. See also <a href="sdk-reference.md#themes-and-customization">Themes &#x26; customisation</a></td></tr><tr><td><code>environment</code></td><td>No</td><td><p>Environment to connect to:</p><ul><li>production (default)</li><li>development</li></ul><p>The development environment exposes additional testnet chains.</p></td></tr><tr><td><code>debugMode</code></td><td>No</td><td>Will log debug logs into the console, helpful when integrating.</td></tr><tr><td><code>mode</code></td><td>No</td><td>"light", "dark" or "auto"</td></tr><tr><td><code>onConnect</code></td><td>No</td><td>Callback triggered upon connection of a new wallet.</td></tr><tr><td><code>onConnectValidation</code></td><td>No</td><td>Allows you to pass a custom function that is run upon connecting of a wallet.</td></tr><tr><td><code>onDisconnect</code></td><td>No</td><td>Callback triggered upon disconnect of a wallet.</td></tr><tr><td><code>options</code></td><td>No</td><td><p>Multiple options to modify PayKit modal, including:</p><ul><li>add a disclaimer</li><li>control display language</li><li>hide tooltips</li></ul><p>and more</p></td></tr><tr><td><code>theme</code></td><td>No</td><td><p>Select a predefined styling for the PayKit modal, options include:</p><ul><li>auto</li><li>web95</li><li>retro</li><li>soft</li><li>midnight</li><li>minimal</li><li>rounded</li><li>nouns</li></ul></td></tr></tbody></table>
-
-
-
-
 
 #### WalletProvider
 
@@ -139,10 +139,6 @@ The `WalletProvider` accepts the following configuration parameters:
 
 <table><thead><tr><th width="218.4000244140625">Option</th><th width="146.5999755859375">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>config</code></td><td>No</td><td>Object that contains chain type specific configurations.</td></tr><tr><td><code>config.evm</code></td><td>No</td><td><p>Configuration for EVM chain types. Allows configuration of wallets, connectors, and other evm specific properties.</p><p>Also includes options to configure <code>WalletConnect</code>, <code>Coinbase Wallet</code> and <code>MetaMask</code></p></td></tr><tr><td><code>config.solana</code></td><td>No</td><td>Configuration of the Solana chain. Set a custom <code>rpcUrl</code> and configure wallet adapters.</td></tr><tr><td><code>config.sui</code></td><td>No</td><td>Configuration of the Sui chain. Set a custom <code>rpcUrl</code> and configure wallet adapters.</td></tr><tr><td><code>config.utxo</code></td><td>No</td><td>Configuration of UTXO chain types. Allows configuration of wallet connectors and few additional options.</td></tr></tbody></table>
 
-
-
-
-
 #### PayButton
 
 {% columns %}
@@ -153,6 +149,7 @@ Clicking the button opens a modal that allows the user to select a payment metho
 {% endcolumn %}
 
 {% column %}
+
 <figure><img src="../.gitbook/assets/pay_button (1).png" alt=""><figcaption></figcaption></figure>
 {% endcolumn %}
 {% endcolumns %}
@@ -230,13 +227,13 @@ export const apiClient = (apiKey: string) =>
 
 <table><thead><tr><th width="200">Option</th><th width="120">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td>Yes</td><td>API Key of the organization, acquired in the developers tab of the <a href="https://dashboard.coinvoyage.io/developers">dashboard</a>.</td></tr><tr><td><code>environment</code></td><td>No</td><td>Environment to connect to: <code>production</code> (default) or <code>development</code>.</td></tr></tbody></table>
 
-***
+---
 
 **ApiClient Methods**
 
 The API client exposes the following methods to interact with the backend:
 
-***
+---
 
 **`getPayOrder`**
 
@@ -253,7 +250,7 @@ console.log(payOrder);
 
 **Returns:** `Promise<PayOrder | undefined>` - The PayOrder object if successful.
 
-***
+---
 
 **`generateAuthorizationSignature`**
 
@@ -280,7 +277,7 @@ APIKey=<apiKey>,signature=<signature>,timestamp=<timestamp>
 
 **Returns:** `string` - A formatted authorization string.
 
-***
+---
 
 **`createDepositPayOrder`**
 
@@ -319,7 +316,7 @@ const payOrder = await apiClient.createDepositPayOrder({
 
 **Returns:** `Promise<PayOrder | undefined>` - The created PayOrder object if successful.
 
-***
+---
 
 **`createSalePayOrder`**
 
@@ -361,7 +358,7 @@ const payOrder = await apiClient.createSalePayOrder(
 
 **Returns:** `Promise<PayOrder | undefined>` - The created PayOrder object if successful.
 
-***
+---
 
 **`createRefundPayOrder`**
 
@@ -408,7 +405,7 @@ const refundPayOrder = await apiClient.createRefundPayOrder(
 
 **Returns:** `Promise<PayOrder | undefined>` - The created refund PayOrder object if successful.
 
-***
+---
 
 **`payOrderQuote`**
 
@@ -431,7 +428,7 @@ console.log(quote); // Array of available currencies with balances
 
 **Returns:** `Promise<CurrencyWithBalance[] | undefined>` - An array of available payment tokens with balances.
 
-***
+---
 
 **`payOrderPaymentDetails`**
 
@@ -458,7 +455,7 @@ console.log(paymentDetails);
 
 **Returns:** `Promise<PaymentDetails | undefined>` - The payment details object if successful.
 
-***
+---
 
 **`processPayOrder`**
 
@@ -478,10 +475,6 @@ await apiClient.processPayOrder("pay-order-id", "0xabcdef...");
 * `sourceTransactionHash` (string): The transaction hash representing the payment
 
 **Returns:** `Promise<void>`
-
-
-
-
 
 #### usePayStatus
 
@@ -503,7 +496,7 @@ function PaymentTracker() {
     <div>
       <p>Payment ID: {paymentStatus.paymentId}</p>
       <p>Status: {paymentStatus.status}</p>
-      
+
       {paymentStatus.status === "payment_pending" && (
         <p>Waiting for payment...</p>
       )}
@@ -548,12 +541,157 @@ The hook maps internal `PayOrderStatus` values to user-friendly `PaymentStatus` 
 * `EXECUTING_ORDER`, `COMPLETED` → `payment_completed`
 * `REFUNDED` → `payment_bounced`
 * `EXPIRED` → `payment_expired`
-* `FAILED` → `payment_failed`&#x20;
+* `FAILED` → `payment_failed`
 
-
-
-
+---
 
 #### Themes & Customization
 
-todo
+CoinVoyage PayKit offers extensive theming and customization options to match your brand and design preferences. You can choose from predefined themes or create custom themes using CSS variables.
+
+---
+
+**Using Predefined Themes**
+
+Apply a theme to your PayKit modal by setting the `theme` prop on the `PayKitProvider` or `PayButton`:
+
+```tsx
+<PayKitProvider
+  apiKey={process.env.NEXT_PUBLIC_COIN_VOYAGE_API_KEY!}
+  theme="midnight"
+  mode="auto"
+>
+  {children}
+</PayKitProvider>
+```
+
+**Available Themes**
+
+<table><thead><tr><th width="180">Theme Name</th><th>Description</th></tr></thead><tbody><tr><td><code>auto</code></td><td>Automatically adapts to system light/dark mode preferences (default).</td></tr><tr><td><code>web95</code></td><td>Retro Windows 95-inspired design with classic UI elements.</td></tr><tr><td><code>retro</code></td><td>Vintage aesthetic with nostalgic styling.</td></tr><tr><td><code>soft</code></td><td>Gentle, rounded design with soft colors and shadows.</td></tr><tr><td><code>midnight</code></td><td>Dark theme optimized for low-light environments.</td></tr><tr><td><code>minimal</code></td><td>Clean, minimalist design with reduced visual elements.</td></tr><tr><td><code>rounded</code></td><td>Emphasis on rounded corners and smooth edges.</td></tr><tr><td><code>nouns</code></td><td>Nouns DAO-inspired design with bold, playful elements.</td></tr></tbody></table>
+
+---
+
+**Mode Settings**
+
+Control the light/dark appearance independently from themes:
+
+```tsx
+<PayKitProvider
+  apiKey={process.env.NEXT_PUBLIC_COIN_VOYAGE_API_KEY!}
+  mode="dark" // "light" | "dark" | "auto"
+>
+  {children}
+</PayKitProvider>
+```
+
+**Mode Options**
+
+* `light` - Force light mode
+* `dark` - Force dark mode
+* `auto` - Automatically adapt to system preferences (default)
+
+---
+
+**Custom Themes**
+
+For advanced customization, use the `customTheme` prop to override specific CSS variables. This allows you to fine-tune colors, shadows, borders, and other visual properties.
+
+```tsx
+<PayKitProvider
+  apiKey={process.env.NEXT_PUBLIC_COIN_VOYAGE_API_KEY!}
+  customTheme={{
+    "--ck-primary-button-background": "#CF276B",
+    "--ck-primary-button-color": "#FFFFFF",
+    "--ck-primary-button-border-radius": "12px",
+    "--ck-body-background": "#1a1a1a",
+    "--ck-body-color": "#ffffff",
+    "--ck-modal-box-shadow": "0 8px 32px rgba(0, 0, 0, 0.4)",
+  }}
+>
+  {children}
+</PayKitProvider>
+```
+
+---
+
+**Custom Theme Variables**
+
+The `customTheme` object accepts CSS variable overrides organized by component:
+
+**Connect Button**
+
+<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-connectbutton-font-size</code></td><td>Font size for the connect button text</td></tr><tr><td><code>--ck-connectbutton-color</code></td><td>Text color of the connect button</td></tr><tr><td><code>--ck-connectbutton-background</code></td><td>Background color of the connect button</td></tr><tr><td><code>--ck-connectbutton-background-secondary</code></td><td>Secondary background color</td></tr><tr><td><code>--ck-connectbutton-hover-color</code></td><td>Text color on hover</td></tr><tr><td><code>--ck-connectbutton-hover-background</code></td><td>Background color on hover</td></tr><tr><td><code>--ck-connectbutton-active-color</code></td><td>Text color when active/pressed</td></tr><tr><td><code>--ck-connectbutton-active-background</code></td><td>Background color when active/pressed</td></tr><tr><td><code>--ck-connectbutton-balance-color</code></td><td>Text color for balance display</td></tr><tr><td><code>--ck-connectbutton-balance-background</code></td><td>Background color for balance display</td></tr><tr><td><code>--ck-connectbutton-balance-box-shadow</code></td><td>Box shadow for balance display</td></tr><tr><td><code>--ck-connectbutton-balance-hover-background</code></td><td>Balance background on hover</td></tr><tr><td><code>--ck-connectbutton-balance-hover-box-shadow</code></td><td>Balance box shadow on hover</td></tr><tr><td><code>--ck-connectbutton-balance-active-background</code></td><td>Balance background when active</td></tr><tr><td><code>--ck-connectbutton-balance-active-box-shadow</code></td><td>Balance box shadow when active</td></tr></tbody></table>
+
+**Primary Button**
+
+<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-primary-button-border-radius</code></td><td>Border radius for primary buttons</td></tr><tr><td><code>--ck-primary-button-color</code></td><td>Text color for primary buttons</td></tr><tr><td><code>--ck-primary-button-background</code></td><td>Background color for primary buttons</td></tr><tr><td><code>--ck-primary-button-box-shadow</code></td><td>Box shadow for primary buttons</td></tr><tr><td><code>--ck-primary-button-font-weight</code></td><td>Font weight for primary button text</td></tr><tr><td><code>--ck-primary-button-hover-color</code></td><td>Text color on hover</td></tr><tr><td><code>--ck-primary-button-hover-background</code></td><td>Background color on hover</td></tr><tr><td><code>--ck-primary-button-hover-box-shadow</code></td><td>Box shadow on hover</td></tr><tr><td><code>--ck-primary-button-active-background</code></td><td>Background color when active/pressed</td></tr></tbody></table>
+
+**Secondary & Tertiary Buttons**
+
+<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-secondary-button-border-radius</code></td><td>Border radius for secondary buttons</td></tr><tr><td><code>--ck-secondary-button-color</code></td><td>Text color for secondary buttons</td></tr><tr><td><code>--ck-secondary-button-background</code></td><td>Background color for secondary buttons</td></tr><tr><td><code>--ck-secondary-button-box-shadow</code></td><td>Box shadow for secondary buttons</td></tr><tr><td><code>--ck-secondary-button-font-weight</code></td><td>Font weight for secondary button text</td></tr><tr><td><code>--ck-secondary-button-hover-background</code></td><td>Background color on hover</td></tr><tr><td><code>--ck-tertiary-button-background</code></td><td>Background color for tertiary buttons</td></tr></tbody></table>
+
+**Modal & Body**
+
+<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-modal-box-shadow</code></td><td>Box shadow for the modal container</td></tr><tr><td><code>--ck-overlay-background</code></td><td>Background color for the modal overlay</td></tr><tr><td><code>--ck-body-color</code></td><td>Primary text color for modal content</td></tr><tr><td><code>--ck-body-color-muted</code></td><td>Muted/secondary text color</td></tr><tr><td><code>--ck-body-color-muted-hover</code></td><td>Muted text color on hover</td></tr><tr><td><code>--ck-body-background</code></td><td>Primary background color for modal body</td></tr><tr><td><code>--ck-body-background-transparent</code></td><td>Transparent background variant</td></tr><tr><td><code>--ck-body-background-secondary</code></td><td>Secondary background color</td></tr><tr><td><code>--ck-body-background-secondary-hover-background</code></td><td>Secondary background on hover</td></tr><tr><td><code>--ck-body-background-secondary-hover-outline</code></td><td>Outline color on hover</td></tr><tr><td><code>--ck-body-background-tertiary</code></td><td>Tertiary background color</td></tr><tr><td><code>--ck-body-action-color</code></td><td>Color for actionable elements</td></tr><tr><td><code>--ck-body-divider</code></td><td>Color for divider lines</td></tr><tr><td><code>--ck-body-divider-secondary</code></td><td>Secondary divider color</td></tr><tr><td><code>--ck-body-color-danger</code></td><td>Color for error/danger states</td></tr><tr><td><code>--ck-body-color-valid</code></td><td>Color for success/valid states</td></tr><tr><td><code>--ck-siwe-border</code></td><td>Border color for Sign-In with Ethereum elements</td></tr></tbody></table>
+
+**Disclaimer**
+
+<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-body-disclaimer-background</code></td><td>Background color for disclaimer sections</td></tr><tr><td><code>--ck-body-disclaimer-box-shadow</code></td><td>Box shadow for disclaimer sections</td></tr><tr><td><code>--ck-body-disclaimer-color</code></td><td>Text color for disclaimers</td></tr><tr><td><code>--ck-body-disclaimer-link-color</code></td><td>Link color in disclaimers</td></tr><tr><td><code>--ck-body-disclaimer-link-hover-color</code></td><td>Link color on hover</td></tr></tbody></table>
+
+**Tooltips**
+
+<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-tooltip-background</code></td><td>Background color for tooltips</td></tr><tr><td><code>--ck-tooltip-background-secondary</code></td><td>Secondary background for tooltips</td></tr><tr><td><code>--ck-tooltip-color</code></td><td>Text color for tooltips</td></tr><tr><td><code>--ck-tooltip-shadow</code></td><td>Shadow for tooltip containers</td></tr></tbody></table>
+
+**Network Dropdown**
+
+<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-dropdown-button-color</code></td><td>Text color for dropdown buttons</td></tr><tr><td><code>--ck-dropdown-button-box-shadow</code></td><td>Box shadow for dropdown buttons</td></tr><tr><td><code>--ck-dropdown-button-background</code></td><td>Background color for dropdown buttons</td></tr><tr><td><code>--ck-dropdown-button-hover-color</code></td><td>Text color on hover</td></tr><tr><td><code>--ck-dropdown-button-hover-background</code></td><td>Background color on hover</td></tr></tbody></table>
+
+**QR Code**
+
+<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-qr-dot-color</code></td><td>Color of QR code dots</td></tr><tr><td><code>--ck-qr-border-color</code></td><td>Border color around QR code</td></tr></tbody></table>
+
+**Miscellaneous**
+
+<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-focus-color</code></td><td>Color for focused elements</td></tr><tr><td><code>--ck-spinner-color</code></td><td>Color for loading spinners</td></tr><tr><td><code>--ck-copytoclipboard-stroke</code></td><td>Stroke color for copy-to-clipboard icons</td></tr></tbody></table>
+
+---
+
+**Complete Custom Theme Example**
+
+```tsx
+<PayKitProvider
+  apiKey={process.env.NEXT_PUBLIC_COIN_VOYAGE_API_KEY!}
+  customTheme={{
+    // Primary Button
+    "--ck-primary-button-background": "#CF276B",
+    "--ck-primary-button-color": "#FFFFFF",
+    "--ck-primary-button-border-radius": "8px",
+    "--ck-primary-button-hover-background": "#A01F54",
+
+    // Modal
+    "--ck-modal-box-shadow": "0 10px 40px rgba(0, 0, 0, 0.2)",
+    "--ck-body-background": "#FFFFFF",
+    "--ck-body-color": "#1A1A1A",
+    "--ck-body-background-secondary": "#F5F5F5",
+
+    // Colors
+    "--ck-body-color-danger": "#DC2626",
+    "--ck-body-color-valid": "#10B981",
+    "--ck-body-action-color": "#3B82F6",
+
+    // Buttons
+    "--ck-secondary-button-background": "#E5E7EB",
+    "--ck-secondary-button-color": "#374151",
+
+    // QR Code
+    "--ck-qr-dot-color": "#1A1A1A",
+    "--ck-qr-border-color": "#E5E7EB",
+  }}
+>
+  {children}
+</PayKitProvider>
+```
+
+{% hint style="info" %}
+**Tip:** You can combine a predefined `theme` with `customTheme` to override specific variables while maintaining the base theme's styling.
+{% endhint %}
