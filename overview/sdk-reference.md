@@ -6,7 +6,7 @@ description: Production-ready SDK for CoinVoyage integration.
 
 The [`@coin-voyage/paykit`](https://www.npmjs.com/package/@coin-voyage/paykit) SDK offers client-side and server-side functionality that abstracts the integration of the API, while also exporting UI components. This SDK reduce the amount of boilerplate code you need and lets you easily integrate payment and deposit flow into your web application.
 
----
+***
 
 #### Install CoinVoyage PayKit
 
@@ -14,37 +14,33 @@ Use your preferred package manager to install CoinVoyage PayKit.
 
 {% tabs %}
 {% tab title="npm" %}
-
 ```sh
 npm i @coin-voyage/paykit @tanstack/react-query@^5.80.2
 ```
-
 {% endtab %}
 
 {% tab title="pnpm" %}
-
 ```sh
 pnpm add @coin-voyage/paykit @tanstack/react-query@^5.80.2
 ```
-
 {% endtab %}
 
 {% tab title="yarn" %}
-
 ```sh
 yarn add @coin-voyage/paykit @tanstack/react-query@^5.80.2
 ```
-
 {% endtab %}
 
 {% tab title="bun" %}
-
 ```sh
 bun add @coin-voyage/paykit @tanstack/react-query@^5.80.2
 ```
-
 {% endtab %}
 {% endtabs %}
+
+
+
+
 
 #### PayKitProvider
 
@@ -88,6 +84,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
 The `PayKitProvider` accepts the following configuration parameters:
 
 <table><thead><tr><th width="218.4000244140625">Option</th><th width="146.5999755859375">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td>Yes</td><td>API Key of the organization, acquired in the developers tab of the <a href="https://dashboard.coinvoyage.io/developers">dashboard</a>.</td></tr><tr><td><code>customTheme</code></td><td>No</td><td>Gives you the flexibility to modify the PayKit modal styling. See also <a href="sdk-reference.md#themes-and-customization">Themes &#x26; customisation</a></td></tr><tr><td><code>environment</code></td><td>No</td><td><p>Environment to connect to:</p><ul><li>production (default)</li><li>development</li></ul><p>The development environment exposes additional testnet chains.</p></td></tr><tr><td><code>debugMode</code></td><td>No</td><td>Will log debug logs into the console, helpful when integrating.</td></tr><tr><td><code>mode</code></td><td>No</td><td>"light", "dark" or "auto"</td></tr><tr><td><code>onConnect</code></td><td>No</td><td>Callback triggered upon connection of a new wallet.</td></tr><tr><td><code>onConnectValidation</code></td><td>No</td><td>Allows you to pass a custom function that is run upon connecting of a wallet.</td></tr><tr><td><code>onDisconnect</code></td><td>No</td><td>Callback triggered upon disconnect of a wallet.</td></tr><tr><td><code>options</code></td><td>No</td><td><p>Multiple options to modify PayKit modal, including:</p><ul><li>add a disclaimer</li><li>control display language</li><li>hide tooltips</li></ul><p>and more</p></td></tr><tr><td><code>theme</code></td><td>No</td><td><p>Select a predefined styling for the PayKit modal, options include:</p><ul><li>auto</li><li>web95</li><li>retro</li><li>soft</li><li>midnight</li><li>minimal</li><li>rounded</li><li>nouns</li></ul></td></tr></tbody></table>
+
+
+
+
 
 #### WalletProvider
 
@@ -139,6 +139,10 @@ The `WalletProvider` accepts the following configuration parameters:
 
 <table><thead><tr><th width="218.4000244140625">Option</th><th width="146.5999755859375">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>config</code></td><td>No</td><td>Object that contains chain type specific configurations.</td></tr><tr><td><code>config.evm</code></td><td>No</td><td><p>Configuration for EVM chain types. Allows configuration of wallets, connectors, and other evm specific properties.</p><p>Also includes options to configure <code>WalletConnect</code>, <code>Coinbase Wallet</code> and <code>MetaMask</code></p></td></tr><tr><td><code>config.solana</code></td><td>No</td><td>Configuration of the Solana chain. Set a custom <code>rpcUrl</code> and configure wallet adapters.</td></tr><tr><td><code>config.sui</code></td><td>No</td><td>Configuration of the Sui chain. Set a custom <code>rpcUrl</code> and configure wallet adapters.</td></tr><tr><td><code>config.utxo</code></td><td>No</td><td>Configuration of UTXO chain types. Allows configuration of wallet connectors and few additional options.</td></tr></tbody></table>
 
+
+
+
+
 #### PayButton
 
 {% columns %}
@@ -149,7 +153,6 @@ Clicking the button opens a modal that allows the user to select a payment metho
 {% endcolumn %}
 
 {% column %}
-
 <figure><img src="../.gitbook/assets/pay_button (1).png" alt=""><figcaption></figcaption></figure>
 {% endcolumn %}
 {% endcolumns %}
@@ -227,13 +230,13 @@ export const apiClient = (apiKey: string) =>
 
 <table><thead><tr><th width="200">Option</th><th width="120">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td>Yes</td><td>API Key of the organization, acquired in the developers tab of the <a href="https://dashboard.coinvoyage.io/developers">dashboard</a>.</td></tr><tr><td><code>environment</code></td><td>No</td><td>Environment to connect to: <code>production</code> (default) or <code>development</code>.</td></tr></tbody></table>
 
----
+***
 
 **ApiClient Methods**
 
 The API client exposes the following methods to interact with the backend:
 
----
+***
 
 **`getPayOrder`**
 
@@ -250,7 +253,7 @@ console.log(payOrder);
 
 **Returns:** `Promise<PayOrder | undefined>` - The PayOrder object if successful.
 
----
+***
 
 **`generateAuthorizationSignature`**
 
@@ -277,7 +280,7 @@ APIKey=<apiKey>,signature=<signature>,timestamp=<timestamp>
 
 **Returns:** `string` - A formatted authorization string.
 
----
+***
 
 **`createDepositPayOrder`**
 
@@ -316,7 +319,7 @@ const payOrder = await apiClient.createDepositPayOrder({
 
 **Returns:** `Promise<PayOrder | undefined>` - The created PayOrder object if successful.
 
----
+***
 
 **`createSalePayOrder`**
 
@@ -358,7 +361,7 @@ const payOrder = await apiClient.createSalePayOrder(
 
 **Returns:** `Promise<PayOrder | undefined>` - The created PayOrder object if successful.
 
----
+***
 
 **`createRefundPayOrder`**
 
@@ -405,7 +408,7 @@ const refundPayOrder = await apiClient.createRefundPayOrder(
 
 **Returns:** `Promise<PayOrder | undefined>` - The created refund PayOrder object if successful.
 
----
+***
 
 **`payOrderQuote`**
 
@@ -428,7 +431,7 @@ console.log(quote); // Array of available currencies with balances
 
 **Returns:** `Promise<CurrencyWithBalance[] | undefined>` - An array of available payment tokens with balances.
 
----
+***
 
 **`payOrderPaymentDetails`**
 
@@ -455,7 +458,7 @@ console.log(paymentDetails);
 
 **Returns:** `Promise<PaymentDetails | undefined>` - The payment details object if successful.
 
----
+***
 
 **`processPayOrder`**
 
@@ -474,7 +477,12 @@ await apiClient.processPayOrder("pay-order-id", "0xabcdef...");
 * `payOrderId` (string): The unique identifier of the PayOrder
 * `sourceTransactionHash` (string): The transaction hash representing the payment
 
-**Returns:** `Promise<void>`
+**Returns:** `Promise<void>`\
+&#x20;
+
+
+
+
 
 #### usePayStatus
 
@@ -543,13 +551,15 @@ The hook maps internal `PayOrderStatus` values to user-friendly `PaymentStatus` 
 * `EXPIRED` → `payment_expired`
 * `FAILED` → `payment_failed`
 
----
+
+
+
 
 #### Themes & Customization
 
 CoinVoyage PayKit offers extensive theming and customization options to match your brand and design preferences. You can choose from predefined themes or create custom themes using CSS variables.
 
----
+***
 
 **Using Predefined Themes**
 
@@ -569,7 +579,7 @@ Apply a theme to your PayKit modal by setting the `theme` prop on the `PayKitPro
 
 <table><thead><tr><th width="180">Theme Name</th><th>Description</th></tr></thead><tbody><tr><td><code>auto</code></td><td>Automatically adapts to system light/dark mode preferences (default).</td></tr><tr><td><code>web95</code></td><td>Retro Windows 95-inspired design with classic UI elements.</td></tr><tr><td><code>retro</code></td><td>Vintage aesthetic with nostalgic styling.</td></tr><tr><td><code>soft</code></td><td>Gentle, rounded design with soft colors and shadows.</td></tr><tr><td><code>midnight</code></td><td>Dark theme optimized for low-light environments.</td></tr><tr><td><code>minimal</code></td><td>Clean, minimalist design with reduced visual elements.</td></tr><tr><td><code>rounded</code></td><td>Emphasis on rounded corners and smooth edges.</td></tr><tr><td><code>nouns</code></td><td>Nouns DAO-inspired design with bold, playful elements.</td></tr></tbody></table>
 
----
+***
 
 **Mode Settings**
 
@@ -590,7 +600,7 @@ Control the light/dark appearance independently from themes:
 * `dark` - Force dark mode
 * `auto` - Automatically adapt to system preferences (default)
 
----
+***
 
 **Custom Themes**
 
@@ -612,7 +622,7 @@ For advanced customization, use the `customTheme` prop to override specific CSS 
 </PayKitProvider>
 ```
 
----
+***
 
 **Custom Theme Variables**
 
@@ -654,7 +664,7 @@ The `customTheme` object accepts CSS variable overrides organized by component:
 
 <table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-focus-color</code></td><td>Color for focused elements</td></tr><tr><td><code>--ck-spinner-color</code></td><td>Color for loading spinners</td></tr><tr><td><code>--ck-copytoclipboard-stroke</code></td><td>Stroke color for copy-to-clipboard icons</td></tr></tbody></table>
 
----
+***
 
 **Complete Custom Theme Example**
 
