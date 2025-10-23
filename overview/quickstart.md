@@ -59,17 +59,13 @@ Users need to create an API key if they haven’t already. You can do so by visi
 
 <figure><img src="../.gitbook/assets/coinvoyage (4).png" alt=""><figcaption></figcaption></figure>
 
-
-
 #### Usage <a href="#usage" id="usage"></a>
 
-Now that you have your app configured, you can use the `PayButton` component to allow users to pay, deposit, or make arbitrary contract calls in one click from any chain.
-
-
+Now that you have your app configured, you can use the `PayButton` component to allow users to complete a payment or make a deposit to any of their wallets.
 
 Here is an example of basic usage:
 
-#### Add `DepositButton` component
+#### Example: add `DepositButton` component
 
 ```tsx
 "use client"
@@ -117,4 +113,4 @@ export function DepositButton() {
 
 ```
 
-For more examples, check out the [CoinVoyage Demo](https://example.coinvoyage.io/) or find code examples on ([https://github.com/coin-voyage/examples](https://github.com/coin-voyage/examples))
+For more examples, check out the [CoinVoyage Demo](https://example.coinvoyage.io/) or find code examples on our [github](https://github.com/coin-voyage/examples)
