@@ -3,6 +3,7 @@
 ## Overview
 
 * [Introduction](README.md)
+* [Pricing & Fees](overview/pricing.md)
 * [Quickstart](overview/quickstart.md)
 * [Supported Networks](overview/supported-networks.md)
 * [SDK reference](overview/sdk-reference.md)
@@ -11,7 +12,7 @@
   * [PayButton](overview/sdk-reference.md#paybutton)
   * [ApiClient](overview/sdk-reference.md#apiclient)
   * [usePayStatus](overview/sdk-reference.md#usepaystatus)
-  * [Themes & customization](overview/sdk-reference.md#themes-and-customization)
+  * [Themes & Customization](overview/sdk-reference.md#themes-and-customization)
 * [Webhooks](overview/webhooks.md)
   * [Introduction](overview/webhooks.md#introduction)
   * [Webhook Events](overview/webhooks.md#webhook-events)
