@@ -1,7 +1,8 @@
 # Table of contents
 
 ## Overview
-* [Introduction](overview/introduction.md)
+
+* [Introduction](README.md)
 * [Quickstart](overview/quickstart.md)
 * [Supported Networks](overview/supported-networks.md)
 * [SDK reference](overview/sdk-reference.md)
@@ -19,7 +20,7 @@
 
 ## API Reference
 
-* [API reference](README.md)
+* [API reference](<README (1).md>)
   * ```yaml
     props:
       models: true
