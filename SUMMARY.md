@@ -35,7 +35,7 @@
 
 ## Resources
 
-* [API reference](resources/api-reference/README.md)
+* [API reference](resources/api-reference.md)
   * ```yaml
     props:
       models: true
