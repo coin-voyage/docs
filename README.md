@@ -36,8 +36,8 @@ Whether you're an e-commerce store, a global payment processor, or a digital ser
 
 We've put together some helpful guides for you to get setup with our product quickly and easily.
 
-{% content-ref url="overview/quickstart.md" %}
-[quickstart.md](overview/quickstart.md)
+{% content-ref url="introduction/quickstart.md" %}
+[quickstart.md](introduction/quickstart.md)
 {% endcontent-ref %}
 
 {% content-ref url="overview/sdk-reference.md" %}
