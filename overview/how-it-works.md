@@ -41,35 +41,35 @@ sequenceDiagram
     CV->>Merchant: Webhook: payorder_created
     Merchant->>User: Display Payment Modal
 
-    Note over User,User: 3. Select Payment Method
+    Note over User,User: 2. Select Payment Method
     User->>User: Select Chain (SUI/BTC/SOL/EVM)
     User->>CV: Send Wallet Address & Chain Type
 
-    Note over CV,Providers: 4. Quote Generation
+    Note over CV,Providers: 3. Quote Generation
     CV->>CV: Scan for Token Balances
     CV->>Providers: Request Quotes
     Providers-->>CV: Return All Possible Routes
     CV-->>User: Display Top Quotes
 
-    Note over User,CV: 5. Quote Selection
+    Note over User,CV: 4. Quote Selection
     User->>CV: Select Preferred Quote
     CV->>CV: Generate Payment Details
     CV-->>User: Deposit Address, Amount, Expiration
 
-    Note over User,CV: 6. Payment Execution
+    Note over User,CV: 5. Payment Execution
     CV->>Merchant: Webhook: payorder_started
     User->>Wallet: Send Funds to Deposit Address
     Wallet->>CV: Transaction Detected
     CV->>Merchant: Webhook: payorder_confirming
     CV->>CV: Verify Transaction
 
-    Note over CV,Dest: 7. Provider Chain Execution
+    Note over CV,Dest: 6. Provider Chain Execution
     CV->>Providers: Execute Route (Provider 1 → Provider 2 → ...)
     CV->>Merchant: Webhook: payorder_executing
     Providers->>Dest: Deliver Funds
     Dest-->>CV: Confirm Receipt
 
-    Note over CV,Merchant: 8. Settlement Complete
+    Note over CV,Merchant: 7. Settlement Complete
     CV->>CV: Update PayOrder Status: COMPLETED
     CV->>Merchant: Webhook: payorder_completed
     CV-->>User: Payment Success Notification
