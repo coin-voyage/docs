@@ -210,6 +210,61 @@ The `PayButton` accepts the following configuration parameters:
 
 
 
+#### PayButton.Custom
+
+For advanced use cases where you need complete control over the button's appearance and behavior, use `PayButton.Custom`. This component provides a render prop pattern that gives you access to `show()` and `hide()` functions to control the payment modal.
+
+**Usage**
+
+```tsx
+<PayButton.Custom
+  payId={payId}
+  onPaymentStarted={(event) => {
+    console.log("Payment started", event);
+  }}
+  onPaymentCompleted={(event) => {
+    console.log("Payment completed", event);
+  }}
+>
+  {({ show, hide }) => (
+    <button
+      onClick={show}
+      className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+    >
+      Pay With Crypto
+    </button>
+  )}
+</PayButton.Custom>
+```
+
+**PayButton.Custom Configuration Options**
+
+The `PayButton.Custom` component accepts all the same configuration parameters as `PayButton` (payment props, callbacks, etc.), except for the styling options. Instead of `style`, `mode`, `theme`, `customTheme`, and `disabled`, it provides a `children` render prop:
+
+<table><thead><tr><th width="250">Option</th><th width="120">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>children</code></td><td>Yes</td><td>A render function that receives <code>show</code> and <code>hide</code> functions to control the modal.</td></tr><tr><td><code>payId</code></td><td>Conditional*</td><td>The payment ID, generated via the Coin Voyage API.</td></tr><tr><td><code>toChain</code></td><td>Conditional*</td><td>Destination chain ID.</td></tr><tr><td><code>toToken</code></td><td>No</td><td>The destination token contract address or <code>undefined</code> for native token.</td></tr><tr><td><code>toAmount</code></td><td>Conditional*</td><td>The amount of destination token to receive.</td></tr><tr><td><code>toAddress</code></td><td>Conditional*</td><td>The recipient address on the destination chain.</td></tr><tr><td><code>metadata</code></td><td>No</td><td>Metadata to attach to the payment.</td></tr><tr><td><code>intent</code></td><td>No</td><td>The intent verb (not displayed on custom button).</td></tr><tr><td><code>onPaymentCreationError</code></td><td>No</td><td>Callback triggered when payment creation fails.</td></tr><tr><td><code>onPaymentStarted</code></td><td>No</td><td>Callback triggered when payment transaction is detected.</td></tr><tr><td><code>onPaymentCompleted</code></td><td>No</td><td>Callback triggered when payment completes successfully.</td></tr><tr><td><code>onPaymentBounced</code></td><td>No</td><td>Callback triggered when payment fails and is refunded.</td></tr><tr><td><code>onOpen</code></td><td>No</td><td>Callback triggered when modal opens.</td></tr><tr><td><code>onClose</code></td><td>No</td><td>Callback triggered when modal closes.</td></tr><tr><td><code>defaultOpen</code></td><td>No</td><td>Open the modal by default on mount.</td></tr></tbody></table>
+
+**Render Props**
+
+The `children` function receives an object with the following functions:
+
+| Function | Description |
+| --- | --- |
+| `show()` | Opens the payment modal. Call this from your custom button's `onClick` handler. |
+| `hide()` | Closes the payment modal programmatically. |
+
+
+{% hint style="info" %}
+**When to use PayButton.Custom:**
+- You need complete control over button styling beyond CSS customization
+- You want to integrate the payment modal into an existing design system
+- You need to trigger the modal from multiple UI elements
+- You want to programmatically control modal visibility
+{% endhint %}
+
+
+
+
+
 #### ApiClient
 
 The API client is the easiest way to interact with the CoinVoyage backend. It allows you to safely create PayOrders on the server and perform various payment-related operations.
