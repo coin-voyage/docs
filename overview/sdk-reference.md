@@ -247,23 +247,19 @@ The `PayButton.Custom` component accepts all the same configuration parameters a
 
 The `children` function receives an object with the following functions:
 
-| Function | Description |
-| --- | --- |
+| Function | Description                                                                     |
+| -------- | ------------------------------------------------------------------------------- |
 | `show()` | Opens the payment modal. Call this from your custom button's `onClick` handler. |
-| `hide()` | Closes the payment modal programmatically. |
-
+| `hide()` | Closes the payment modal programmatically.                                      |
 
 {% hint style="info" %}
 **When to use PayButton.Custom:**
+
 - You need complete control over button styling beyond CSS customization
 - You want to integrate the payment modal into an existing design system
 - You need to trigger the modal from multiple UI elements
 - You want to programmatically control modal visibility
-{% endhint %}
-
-
-
-
+  {% endhint %}
 
 #### ApiClient
 
@@ -287,6 +283,37 @@ export const apiClient = (apiKey: string) =>
 
 ***
 
+**API Response Structure**
+
+All ApiClient methods return responses wrapped in an `APIResponse<T>` object that provides consistent error handling:
+
+```tsx
+interface APIResponse<T> {
+  data?: T;
+  error?: string;
+  success: boolean;
+}
+```
+
+**Usage Pattern:**
+
+```tsx
+const { data, error } = await apiClient.someMethod();
+
+if (error) {
+  console.error("Operation failed:", error);
+  // Handle error case
+  return;
+}
+
+// Use data safely - TypeScript knows it's defined
+console.log("Success:", data);
+```
+
+This pattern ensures you always handle both success and error cases explicitly, and TypeScript can properly type-check your code.
+
+---
+
 **ApiClient Methods**
 
 The API client exposes the following methods to interact with the backend:
@@ -298,17 +325,35 @@ The API client exposes the following methods to interact with the backend:
 Fetches a PayOrder by its ID. Retrieves a PayOrder object from the API using the provided payOrderId.
 
 ```tsx
-const payOrder = await apiClient.getPayOrder("pay-order-id-123");
-console.log(payOrder);
+const { data: payOrder, error } = await apiClient.getPayOrder(
+  "pay-order-id-123"
+);
 ```
 
 **Parameters:**
 
 * `payOrderId` (string): The unique identifier of the PayOrder.
 
-**Returns:** `Promise<PayOrder | undefined>` - The PayOrder object if successful.
+**Returns:** `Promise<APIResponse<PayOrder>>` - The PayOrder object wrapped in an API response.
 
-***
+**Response Structure:**
+
+```typescript
+// Successful response
+{ data: PayOrder }
+
+// Error response
+{
+  error: {
+    path: string,
+    statusCode: number,
+    status: string,
+    message: string
+  }
+}
+```
+
+---
 
 **`generateAuthorizationSignature`**
 
@@ -350,9 +395,9 @@ Creating a deposit PayOrder on the server is **not required**. The same result c
 ```tsx
 import { ApiClient, ChainId } from "@coin-voyage/paykit/server";
 
-const payOrder = await apiClient.createDepositPayOrder({
+const { data, error } = await apiClient.createDepositPayOrder({
   destination_currency: {
-    address: undefined, // undefined for native token (ETH/SOL/SUI)
+    address: null, // null for native token (ETH/SOL/SUI)
     chain_id: ChainId.SUI,
   },
   receiving_address: "0xYourReceivingAddressHere",
@@ -366,13 +411,24 @@ const payOrder = await apiClient.createDepositPayOrder({
 **Parameters:**
 
 * `params` (DepositPayOrderParams): Parameters required to create a deposit PayOrder
-  * `destination_currency`: Object containing `address` (token contract address or `undefined` for native) and `chain_id`
+  * `destination_currency`: Object containing `address` (token contract address or `null` for native) and `chain_id`
   * `receiving_address`: The recipient address on the destination chain
   * `destination_amount`: The amount to receive (as string)
   * `metadata` (optional): Additional metadata for the PayOrder
-* `throwOnFailure` (boolean, optional): Whether to throw an error if the request fails
 
-**Returns:** `Promise<PayOrder | undefined>` - The created PayOrder object if successful.
+**Returns:** `Promise<APIResponse<PayOrder>>` - The created PayOrder object wrapped in an API response.
+
+**Built-in Validation:**
+The method automatically validates input parameters using Zod schemas. If validation fails, it returns an error response without making the API call:
+
+```typescript
+// Invalid input example
+const { error } = await apiClient.createDepositPayOrder({
+  receiving_address: "", // Invalid: empty address
+  destination_amount: "-10", // Invalid: negative amount
+});
+// Returns: { error: { statusCode: 400, message: "validation errors..." } }
+```
 
 ***
 
@@ -387,7 +443,7 @@ This method requires an authorization signature generated using `generateAuthori
 ```tsx
 const signature = apiClient.generateAuthorizationSignature(apiSecret);
 
-const payOrder = await apiClient.createSalePayOrder(
+const { data: payOrder, error } = await apiClient.createSalePayOrder(
   {
     destination_value_usd: 200,
     metadata: {
@@ -414,7 +470,7 @@ const payOrder = await apiClient.createSalePayOrder(
   * `metadata` (optional): Additional metadata including items, customer info, etc.
 * `signature` (string): Authorization signature from `generateAuthorizationSignature`
 
-**Returns:** `Promise<PayOrder | undefined>` - The created PayOrder object if successful.
+**Returns:** `Promise<APIResponse<PayOrder>>` - Response object containing either the PayOrder data or error information.
 
 ***
 
@@ -429,7 +485,7 @@ This method requires an authorization signature generated using `generateAuthori
 ```tsx
 const signature = apiClient.generateAuthorizationSignature(apiSecret);
 
-const refundPayOrder = await apiClient.createRefundPayOrder(
+const { data: refundPayOrder, error } = await apiClient.createRefundPayOrder(
   "original-payorder-id",
   {
     amount: {
@@ -461,7 +517,7 @@ const refundPayOrder = await apiClient.createRefundPayOrder(
   * `metadata` (optional): Additional metadata for the refund
 * `signature` (string): Authorization signature from `generateAuthorizationSignature`
 
-**Returns:** `Promise<PayOrder | undefined>` - The created refund PayOrder object if successful.
+**Returns:** `Promise<APIResponse<PayOrder>>` - Response object containing either the PayOrder data or error information.
 
 ***
 
@@ -470,21 +526,22 @@ const refundPayOrder = await apiClient.createRefundPayOrder(
 Generates a PayOrder quote by providing wallet information and chain details. This returns available payment tokens with balances for the user's wallet.
 
 ```tsx
-const quote = await apiClient.payOrderQuote("pay-order-id", {
+const { data: quote, error } = await apiClient.payOrderQuote("pay-order-id", {
   wallet_address: "0x1234...abcd",
   chain_type: ChainType.EVM,
   chain_id: 1, // Ethereum Mainnet
 });
-
-console.log(quote); // Array of available currencies with balances
 ```
 
 **Parameters:**
 
-* `orderId` (string): The unique identifier of the PayOrder
-* `quoteParams` (PayOrderQuoteParams): Contains `wallet_address`, `chain_type`, and `chain_id`
+* `payOrderId` (string): The unique identifier of the PayOrder
+* `params` (PayOrderQuoteParams): Quote request parameters
+  * `wallet_address`: The user's wallet address
+  * `chain_type`: The blockchain type (EVM, Solana, etc.)
+  * `chain_id`: The specific chain ID
 
-**Returns:** `Promise<CurrencyWithBalance[] | undefined>` - An array of available payment tokens with balances.
+**Returns:** `Promise<APIResponse<PayOrderQuote[]>>` - Response object containing available payment options or error information.
 
 ***
 
@@ -493,14 +550,12 @@ console.log(quote); // Array of available currencies with balances
 Retrieves payment details for a specific PayOrder. This provides the information needed to complete the payment, including the destination address and amount.
 
 ```tsx
-const paymentDetails = await apiClient.payOrderPaymentDetails({
+const { data: paymentDetails, error } = await apiClient.payOrderPaymentDetails({
   payorder_id: "12345",
   token_address: "0x1234567890abcdef1234567890abcdef12345678", // Optional
   chain_id: ChainId.ETH,
   refund_address: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
 });
-
-console.log(paymentDetails);
 ```
 
 **Parameters:**
@@ -511,7 +566,7 @@ console.log(paymentDetails);
   * `chain_id`: The blockchain network ID
   * `refund_address`: The address where funds will be refunded in case of failure
 
-**Returns:** `Promise<PaymentDetails | undefined>` - The payment details object if successful.
+**Returns:** `Promise<APIResponse<PaymentDetails>>` - Response object containing payment details or error information.
 
 ***
 
@@ -534,10 +589,6 @@ await apiClient.processPayOrder("pay-order-id", "0xabcdef...");
 
 **Returns:** `Promise<void>`\
 &#x20;
-
-
-
-
 
 #### usePayStatus
 
@@ -572,12 +623,8 @@ function PaymentTracker() {
       {paymentStatus.status === "payment_bounced" && (
         <p>⚠️ Payment bounced - funds refunded</p>
       )}
-      {paymentStatus.status === "payment_expired" && (
-        <p>Payment expired</p>
-      )}
-      {paymentStatus.status === "payment_failed" && (
-        <p>❌ Payment failed</p>
-      )}
+      {paymentStatus.status === "payment_expired" && <p>Payment expired</p>}
+      {paymentStatus.status === "payment_failed" && <p>❌ Payment failed</p>}
     </div>
   );
 }
