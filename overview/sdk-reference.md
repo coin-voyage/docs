@@ -15,25 +15,25 @@ Use your preferred package manager to install CoinVoyage PayKit.
 {% tabs %}
 {% tab title="npm" %}
 ```sh
-npm i @coin-voyage/paykit @tanstack/react-query@^5.80.2
+npm i @coin-voyage/paykit @tanstack/react-query@^5.90.6
 ```
 {% endtab %}
 
 {% tab title="pnpm" %}
 ```sh
-pnpm add @coin-voyage/paykit @tanstack/react-query@^5.80.2
+pnpm add @coin-voyage/paykit @tanstack/react-query@^5.90.6
 ```
 {% endtab %}
 
 {% tab title="yarn" %}
 ```sh
-yarn add @coin-voyage/paykit @tanstack/react-query@^5.80.2
+yarn add @coin-voyage/paykit @tanstack/react-query@^5.90.6
 ```
 {% endtab %}
 
 {% tab title="bun" %}
 ```sh
-bun add @coin-voyage/paykit @tanstack/react-query@^5.80.2
+bun add @coin-voyage/paykit @tanstack/react-query@^5.90.6
 ```
 {% endtab %}
 {% endtabs %}
