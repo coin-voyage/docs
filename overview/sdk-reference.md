@@ -261,6 +261,8 @@ The `children` function receives an object with the following functions:
 - You want to programmatically control modal visibility
   {% endhint %}
 
+
+
 #### ApiClient
 
 The API client is the easiest way to interact with the CoinVoyage backend. It allows you to safely create PayOrders on the server and perform various payment-related operations.
@@ -382,70 +384,53 @@ APIKey=<apiKey>,signature=<signature>,timestamp=<timestamp>
 
 ***
 
-**`createDepositPayOrder`**
+**`createPayOrder`**
 
-Creates a PayOrder with mode `DEPOSIT`. This allows users to deposit funds to a specific address on a target chain.
+Creates a PayOrder using a unified intent-based API. This method supports all PayOrder modes (DEPOSIT, SALE, REFUND) through a flexible intent structure.
 
 You may perform this operation on either the **client** or **server**. Executing on the **server** ensures users cannot perform malicious actions.
 
 {% hint style="info" %}
-Creating a deposit PayOrder on the server is **not required**. The same result can be achieved by passing the required properties directly to the `PayButton` component on the **client side**.
+For SALE and REFUND modes, this method requires an authorization signature generated using `generateAuthorizationSignature`.
 {% endhint %}
+
+**Example: Deposit with token amount**
 
 ```tsx
 import { ApiClient, ChainId } from "@coin-voyage/paykit/server";
 
-const { data, error } = await apiClient.createDepositPayOrder({
-  destination_currency: {
-    address: null, // null for native token (ETH/SOL/SUI)
-    chain_id: ChainId.SUI,
+const { data, error } = await apiClient.createPayOrder({
+  intent: {
+    asset: {
+      chain_id: ChainId.SUI,
+      address: null, // null for native token (SUI)
+    },
+    amount: {
+      token_amount: 10, // 10 SUI
+    },
+    receiving_address: "0xYourReceivingAddressHere",
   },
-  receiving_address: "0xYourReceivingAddressHere",
-  destination_amount: "10",
   metadata: {
-    description: "Deposit to SUI wallet",
+    items: [{ name: "Deposit to SUI wallet" }],
   },
 });
 ```
 
-**Parameters:**
-
-* `params` (DepositPayOrderParams): Parameters required to create a deposit PayOrder
-  * `destination_currency`: Object containing `address` (token contract address or `null` for native) and `chain_id`
-  * `receiving_address`: The recipient address on the destination chain
-  * `destination_amount`: The amount to receive (as string)
-  * `metadata` (optional): Additional metadata for the PayOrder
-
-**Returns:** `Promise<APIResponse<PayOrder>>` - The created PayOrder object wrapped in an API response.
-
-**Built-in Validation:**
-The method automatically validates input parameters using Zod schemas. If validation fails, it returns an error response without making the API call:
-
-```typescript
-// Invalid input example
-const { error } = await apiClient.createDepositPayOrder({
-  receiving_address: "", // Invalid: empty address
-  destination_amount: "-10", // Invalid: negative amount
-});
-// Returns: { error: { statusCode: 400, message: "validation errors..." } }
-```
-
-***
-
-**`createSalePayOrder`**
-
-Creates a PayOrder with mode `SALE`. This is used for merchant sales where the payment is settled to the merchant's configured settlement currency.
-
-{% hint style="info" %}
-This method requires an authorization signature generated using `generateAuthorizationSignature`.
-{% endhint %}
+**Example: Sale with fiat amount**
 
 ```tsx
 const signature = apiClient.generateAuthorizationSignature(apiSecret);
 
-const { data: payOrder, error } = await apiClient.createSalePayOrder(
+const { data, error } = await apiClient.createPayOrder(
   {
-    destination_value_usd: 200,
+    intent: {
+      amount: {
+        fiat: {
+          amount: 200,
+          unit: "USD",
+        },
+      },
+    },
     metadata: {
       items: [
         {
@@ -465,12 +450,37 @@ const { data: payOrder, error } = await apiClient.createSalePayOrder(
 
 **Parameters:**
 
-* `params` (SalePayOrderParams): Parameters required to create a sale PayOrder
-  * `destination_value_usd`: The USD value of the sale
-  * `metadata` (optional): Additional metadata including items, customer info, etc.
-* `signature` (string): Authorization signature from `generateAuthorizationSignature`
+* `params` (PayOrderParams): Parameters required to create a PayOrder
+  * `intent` (PayOrderIntent): The intent of the order
+    * `asset` (optional): Desired fulfillment asset with `chain_id` and `address` (null for native token)
+    * `amount` (IntentAmount): Amount expected to fulfill the order
+      * `token_amount` (optional): Token amount in human-readable format (e.g., 10 for 10 tokens)
+      * `fiat` (optional): Fiat amount with `amount` and `unit` (e.g., "USD")
+    * `receiving_address` (optional): Address to fulfill the order to. If not provided, a settlement address will be selected.
+  * `metadata` (optional): Additional metadata for the PayOrder
+* `signature` (string, optional): Authorization signature from `generateAuthorizationSignature` (required for SALE/REFUND modes)
 
-**Returns:** `Promise<APIResponse<PayOrder>>` - Response object containing either the PayOrder data or error information.
+**Returns:** `Promise<APIResponse<PayOrder>>` - The created PayOrder object wrapped in an API response.
+
+{% hint style="warning" %}
+**Amount validation:** You must provide either `token_amount` OR `fiat`, but not both. The amount must be greater than zero.
+{% endhint %}
+
+**Built-in Validation:**
+The method automatically validates input parameters using Zod schemas. If validation fails, it returns an error response without making the API call:
+
+```typescript
+// Invalid input example - both amounts provided
+const { error } = await apiClient.createPayOrder({
+  intent: {
+    amount: {
+      token_amount: 10,
+      fiat: { amount: 100, unit: "USD" }, // Error: only one allowed
+    },
+  },
+});
+// Returns: { error: { statusCode: 400, message: "Only one of fiat amount or token amount should be present." } }
+```
 
 ***
 
@@ -488,21 +498,20 @@ const signature = apiClient.generateAuthorizationSignature(apiSecret);
 const { data: refundPayOrder, error } = await apiClient.createRefundPayOrder(
   "original-payorder-id",
   {
-    amount: {
-      fiat: {
-        value: 100,
-        unit: "USD",
+    intent: {
+      amount: {
+        fiat: {
+          amount: 100,
+          unit: "USD",
+        },
       },
     },
     metadata: {
-      items: [
-        {
-          name: "refund",
-          description: "Refund for t-shirt purchase",
-          unit_price: 100,
-          currency: "USD",
-        },
-      ],
+      refund: {
+        reason: "Customer requested refund",
+        refund_amount: 100,
+        currency: "USD",
+      },
     },
   },
   signature
@@ -512,9 +521,9 @@ const { data: refundPayOrder, error } = await apiClient.createRefundPayOrder(
 **Parameters:**
 
 * `payOrderId` (string): The unique identifier of the PayOrder to be refunded
-* `params` (RefundOrderParams): Parameters required to create a refund
-  * `amount`: Object containing fiat value and unit
-  * `metadata` (optional): Additional metadata for the refund
+* `params` (PayOrderParams): Parameters for the refund
+  * `intent` (PayOrderIntent): The refund intent with amount
+  * `metadata` (optional): Additional metadata including refund details
 * `signature` (string): Authorization signature from `generateAuthorizationSignature`
 
 **Returns:** `Promise<APIResponse<PayOrder>>` - Response object containing either the PayOrder data or error information.
@@ -587,7 +596,332 @@ await apiClient.processPayOrder("pay-order-id", "0xabcdef...");
 * `payOrderId` (string): The unique identifier of the PayOrder
 * `sourceTransactionHash` (string): The transaction hash representing the payment
 
-**Returns:** `Promise<void>`\
+**Returns:** `Promise<void>`
+
+***
+
+**`listPayOrders`**
+
+Retrieves a paginated list of PayOrders for your organization.
+
+```tsx
+const { data, error } = await apiClient.listPayOrders({
+  limit: 20,
+  offset: 0,
+  status: PayOrderStatus.COMPLETED,
+});
+```
+
+**Parameters:**
+
+* `params` (ListPayOrdersParams): Query parameters for filtering
+  * `limit` (optional): Number of results to return (default: 20)
+  * `offset` (optional): Pagination offset
+  * `status` (optional): Filter by PayOrder status
+
+**Returns:** `Promise<APIResponse<{ data: PayOrder[], total: number, limit: number, offset: number }>>` - Paginated list of PayOrders.
+
+&#x20;
+
+#### Types
+
+The SDK exports several TypeScript types to help you work with PayOrders and related data.
+
+***
+
+**PayOrder**
+
+The main PayOrder object returned from API methods.
+
+```typescript
+type PayOrder = {
+  id: string
+  mode: PayOrderMode
+  status: PayOrderStatus
+  metadata?: PayOrderMetadata
+  deposit_tx_hash?: string
+  receiving_tx_hash?: string
+  refund_tx_hash?: string
+  fulfillment: FulfillmentData
+  payment?: PaymentData
+}
+```
+
+<table><thead><tr><th width="200">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>id</code></td><td><code>string</code></td><td>Unique identifier for the PayOrder.</td></tr><tr><td><code>mode</code></td><td><code>PayOrderMode</code></td><td>The mode of the PayOrder (SALE, DEPOSIT, or REFUND).</td></tr><tr><td><code>status</code></td><td><code>PayOrderStatus</code></td><td>Current status of the PayOrder.</td></tr><tr><td><code>metadata</code></td><td><code>PayOrderMetadata</code></td><td>Optional metadata attached to the order.</td></tr><tr><td><code>deposit_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of the user's deposit.</td></tr><tr><td><code>receiving_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of the final transfer to the recipient.</td></tr><tr><td><code>refund_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of the refund, if applicable.</td></tr><tr><td><code>fulfillment</code></td><td><code>FulfillmentData</code></td><td>Details about what the PayOrder will fulfill.</td></tr><tr><td><code>payment</code></td><td><code>PaymentData</code></td><td>Payment details including source, destination, and execution info.</td></tr></tbody></table>
+
+***
+
+**PayOrderMode**
+
+Enum representing the mode of a PayOrder.
+
+```typescript
+enum PayOrderMode {
+  SALE = "SALE",
+  DEPOSIT = "DEPOSIT",
+  REFUND = "REFUND",
+}
+```
+
+<table><thead><tr><th width="150">Value</th><th>Description</th></tr></thead><tbody><tr><td><code>SALE</code></td><td>Merchant sale where payment is settled to the configured settlement currency.</td></tr><tr><td><code>DEPOSIT</code></td><td>Direct deposit to a specified address on a target chain.</td></tr><tr><td><code>REFUND</code></td><td>Refund of a previous PayOrder (full or partial).</td></tr></tbody></table>
+
+***
+
+**PayOrderStatus**
+
+Enum representing all possible PayOrder statuses.
+
+```typescript
+enum PayOrderStatus {
+  PENDING = "PENDING",
+  FAILED = "FAILED",
+  AWAITING_PAYMENT = "AWAITING_PAYMENT",
+  AWAITING_CONFIRMATION = "AWAITING_CONFIRMATION",
+  OPTIMISTIC_CONFIRMED = "OPTIMISTIC_CONFIRMED",
+  EXECUTING_ORDER = "EXECUTING_ORDER",
+  COMPLETED = "COMPLETED",
+  EXPIRED = "EXPIRED",
+  REFUNDED = "REFUNDED",
+}
+```
+
+<table><thead><tr><th width="250">Status</th><th>Description</th></tr></thead><tbody><tr><td><code>PENDING</code></td><td>PayOrder has been created but not yet ready for payment.</td></tr><tr><td><code>AWAITING_PAYMENT</code></td><td>PayOrder is ready and waiting for the user to send payment.</td></tr><tr><td><code>AWAITING_CONFIRMATION</code></td><td>Payment transaction detected, waiting for blockchain confirmation.</td></tr><tr><td><code>OPTIMISTIC_CONFIRMED</code></td><td>Transaction optimistically confirmed, execution can begin.</td></tr><tr><td><code>EXECUTING_ORDER</code></td><td>Payment is being processed and routed to the destination.</td></tr><tr><td><code>COMPLETED</code></td><td>PayOrder completed successfully. Funds delivered to recipient.</td></tr><tr><td><code>FAILED</code></td><td>PayOrder failed during processing.</td></tr><tr><td><code>EXPIRED</code></td><td>PayOrder expired before payment was received.</td></tr><tr><td><code>REFUNDED</code></td><td>Payment was refunded to the user's refund address.</td></tr></tbody></table>
+
+***
+
+**PayOrderMetadata**
+
+Metadata that can be attached to a PayOrder. Supports structured item details, refund information, and custom fields.
+
+```typescript
+type PayOrderMetadata = {
+  items?: Array<{
+    name: string
+    description?: string
+    image?: string
+    quantity?: number
+    unit_price?: number
+    currency?: string
+  }>
+  refund?: {
+    name?: string
+    reason?: string
+    additional_info?: string
+    refund_amount?: number
+    currency?: string
+  }
+  // Plus up to 20 custom fields
+  [key: string]: any
+}
+```
+
+**Items Array**
+
+<table><thead><tr><th width="150">Field</th><th width="120">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>name</code></td><td><code>string</code></td><td>Name of the item being purchased/donated/deposited.</td></tr><tr><td><code>description</code></td><td><code>string</code></td><td>Optional description of the item.</td></tr><tr><td><code>image</code></td><td><code>string</code></td><td>Optional URL to an image of the item.</td></tr><tr><td><code>quantity</code></td><td><code>number</code></td><td>Optional quantity (integer).</td></tr><tr><td><code>unit_price</code></td><td><code>number</code></td><td>Optional price per unit.</td></tr><tr><td><code>currency</code></td><td><code>string</code></td><td>Optional currency code for the price (e.g., "USD").</td></tr></tbody></table>
+
+**Refund Object**
+
+<table><thead><tr><th width="180">Field</th><th width="120">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>name</code></td><td><code>string</code></td><td>Optional name/label for the refund.</td></tr><tr><td><code>reason</code></td><td><code>string</code></td><td>Optional reason for the refund.</td></tr><tr><td><code>additional_info</code></td><td><code>string</code></td><td>Optional additional information.</td></tr><tr><td><code>refund_amount</code></td><td><code>number</code></td><td>Optional refund amount.</td></tr><tr><td><code>currency</code></td><td><code>string</code></td><td>Optional currency code for the refund amount.</td></tr></tbody></table>
+
+**Custom Fields**
+
+You can add up to 20 additional custom fields to the metadata object. Each custom field value must be a string with a maximum of 500 characters.
+
+```typescript
+const metadata: PayOrderMetadata = {
+  items: [{ name: "Premium Plan" }],
+  // Custom fields
+  customer_id: "cust_12345",
+  order_reference: "ORD-2024-001",
+  campaign: "summer_sale",
+}
+```
+
+***
+
+**PayOrderParams**
+
+Parameters for creating a PayOrder via the `createPayOrder` method.
+
+```typescript
+type PayOrderParams = {
+  intent: PayOrderIntent
+  metadata?: PayOrderMetadata
+}
+```
+
+<table><thead><tr><th width="150">Field</th><th width="200">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>intent</code></td><td><code>PayOrderIntent</code></td><td>The intent of the order, specifying asset, amount, and destination.</td></tr><tr><td><code>metadata</code></td><td><code>PayOrderMetadata</code></td><td>Optional metadata to attach to the PayOrder.</td></tr></tbody></table>
+
+***
+
+**PayOrderIntent**
+
+Defines the intent of a PayOrder, specifying what should be fulfilled.
+
+```typescript
+type PayOrderIntent = {
+  asset?: CurrencyBase
+  amount: IntentAmount
+  receiving_address?: string
+}
+```
+
+<table><thead><tr><th width="200">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>asset</code></td><td><code>CurrencyBase</code></td><td>Optional desired fulfillment asset with <code>chain_id</code> and <code>address</code>.</td></tr><tr><td><code>amount</code></td><td><code>IntentAmount</code></td><td>Amount expected to fulfill the order.</td></tr><tr><td><code>receiving_address</code></td><td><code>string</code></td><td>Optional address to fulfill to. If not provided, a settlement address will be selected.</td></tr></tbody></table>
+
+***
+
+**IntentAmount**
+
+Specifies the amount for a PayOrder intent. Provide either `token_amount` OR `fiat`, but not both.
+
+```typescript
+type IntentAmount = {
+  token_amount?: number
+  fiat?: {
+    amount: number
+    unit: FiatCurrency
+  }
+}
+```
+
+<table><thead><tr><th width="180">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>token_amount</code></td><td><code>number</code></td><td>Token amount in human-readable format (e.g., 10 for 10 tokens). Must be greater than zero.</td></tr><tr><td><code>fiat</code></td><td><code>object</code></td><td>Fiat amount with <code>amount</code> (number, must be > 0) and <code>unit</code> (FiatCurrency, e.g., "USD").</td></tr></tbody></table>
+
+***
+
+**PaymentDetails**
+
+Returned by `payOrderPaymentDetails`, contains payment information for completing a PayOrder.
+
+```typescript
+type PaymentDetails = {
+  payorder_id: string
+  status: PayOrderStatus
+  data: PaymentData
+
+  // Deprecated fields (use data.* instead)
+  expires_at: Date           // Use data.expires_at
+  refund_address: string     // Use data.refund_address
+  deposit_address: string    // Use data.deposit_address
+  receiving_address: string  // Use data.receiving_address
+  source_currency: Currency  // Use data.src
+  source_amount: CurrencyAmount    // Use data.src.currency_amount
+  destination_currency: Currency   // Use data.dst
+  destination_amount: CurrencyAmount // Use data.dst.currency_amount
+}
+```
+
+<table><thead><tr><th width="220">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>payorder_id</code></td><td><code>string</code></td><td>The PayOrder identifier.</td></tr><tr><td><code>status</code></td><td><code>PayOrderStatus</code></td><td>Current status of the PayOrder.</td></tr><tr><td><code>data</code></td><td><code>PaymentData</code></td><td>Full payment data with source, destination, and execution details.</td></tr></tbody></table>
+
+{% hint style="warning" %}
+**Deprecated fields:** The top-level fields `expires_at`, `refund_address`, `deposit_address`, `receiving_address`, `source_currency`, `source_amount`, `destination_currency`, and `destination_amount` are deprecated. Use the corresponding fields in the `data` object instead.
+{% endhint %}
+
+***
+
+**FulfillmentData**
+
+Details about what the PayOrder will fulfill.
+
+```typescript
+type FulfillmentData = {
+  asset?: Currency
+  fiat?: FiatCurrency
+  amount: CurrencyAmount
+  rate_usd?: number
+  receiving_address: string
+}
+```
+
+<table><thead><tr><th width="200">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>asset</code></td><td><code>Currency</code></td><td>The target asset/token to receive.</td></tr><tr><td><code>fiat</code></td><td><code>FiatCurrency</code></td><td>The fiat currency for SALE orders.</td></tr><tr><td><code>amount</code></td><td><code>CurrencyAmount</code></td><td>The amount to fulfill.</td></tr><tr><td><code>rate_usd</code></td><td><code>number</code></td><td>USD exchange rate at time of creation.</td></tr><tr><td><code>receiving_address</code></td><td><code>string</code></td><td>Address that will receive the funds.</td></tr></tbody></table>
+
+***
+
+**PaymentData**
+
+Payment details including source, destination, and execution tracking.
+
+```typescript
+type PaymentData = {
+  src: QuoteWithCurrency
+  dst: CurrencyWithAmount
+  deposit_address: string
+  receiving_address: string
+  refund_address: string
+  source_tx_hash?: string
+  destination_tx_hash?: string
+  refund_tx_hash?: string
+  execution?: ExecutionStep[]
+  expires_at: Date
+}
+```
+
+<table><thead><tr><th width="220">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>src</code></td><td><code>QuoteWithCurrency</code></td><td>Source currency with quote breakdown (total, base, fee, gas).</td></tr><tr><td><code>dst</code></td><td><code>CurrencyWithAmount</code></td><td>Destination currency and amount.</td></tr><tr><td><code>deposit_address</code></td><td><code>string</code></td><td>Address where user should send payment.</td></tr><tr><td><code>receiving_address</code></td><td><code>string</code></td><td>Address that will receive the final funds.</td></tr><tr><td><code>refund_address</code></td><td><code>string</code></td><td>Address for refunds if payment fails.</td></tr><tr><td><code>source_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of the deposit.</td></tr><tr><td><code>destination_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of the final transfer.</td></tr><tr><td><code>refund_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of any refund.</td></tr><tr><td><code>execution</code></td><td><code>ExecutionStep[]</code></td><td>Array of execution steps for multi-provider routing.</td></tr><tr><td><code>expires_at</code></td><td><code>Date</code></td><td>When the payment expires.</td></tr></tbody></table>
+
+***
+
+**CurrencyAmount**
+
+Represents an amount in various formats.
+
+```typescript
+interface CurrencyAmount {
+  ui_amount: number
+  ui_amount_display: string
+  raw_amount: string
+  value_usd: number
+}
+```
+
+<table><thead><tr><th width="200">Field</th><th width="120">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>ui_amount</code></td><td><code>number</code></td><td>Human-readable amount (e.g., 1.5 for 1.5 ETH).</td></tr><tr><td><code>ui_amount_display</code></td><td><code>string</code></td><td>Formatted display string.</td></tr><tr><td><code>raw_amount</code></td><td><code>string</code></td><td>Raw amount as string (to prevent BigInt precision loss).</td></tr><tr><td><code>value_usd</code></td><td><code>number</code></td><td>USD value of the amount.</td></tr></tbody></table>
+
+***
+
+**ExecutionStep**
+
+Represents a single step in multi-provider payment execution.
+
+```typescript
+type ExecutionStep = {
+  id: string
+  status: ProviderStatus
+  provider: string
+  receiver: string
+  deposit_address: string
+  source_tx_hash?: string | null
+  destination_tx_hash?: string | null
+  error?: unknown
+  source_currency: CurrencyWithAmount
+  destination_currency: CurrencyWithAmount
+  gas_amount?: CurrencyAmount
+  fee_plan?: FeePlan
+  price_impact?: string
+}
+
+type ProviderStatus = "pending" | "executing" | "completed" | "error" | "cleaned_up"
+```
+
+***
+
+**WebhookEventType**
+
+Enum of webhook event types you can subscribe to.
+
+```typescript
+enum WebhookEventType {
+  ORDER_CREATED = "ORDER_CREATED",
+  ORDER_AWAITING_PAYMENT = "ORDER_AWAITING_PAYMENT",
+  ORDER_CONFIRMING = "ORDER_CONFIRMING",
+  ORDER_EXECUTING = "ORDER_EXECUTING",
+  ORDER_COMPLETED = "ORDER_COMPLETED",
+  ORDER_ERROR = "ORDER_ERROR",
+  ORDER_REFUNDED = "ORDER_REFUNDED"
+}
+```
+
+<table><thead><tr><th width="260">Event Type</th><th>Description</th></tr></thead><tbody><tr><td><code>ORDER_CREATED</code></td><td>Fired when a new PayOrder is created.</td></tr><tr><td><code>ORDER_AWAITING_PAYMENT</code></td><td>Fired when a PayOrder is ready for payment.</td></tr><tr><td><code>ORDER_CONFIRMING</code></td><td>Fired when payment is detected and confirming.</td></tr><tr><td><code>ORDER_EXECUTING</code></td><td>Fired when payment execution begins.</td></tr><tr><td><code>ORDER_COMPLETED</code></td><td>Fired when PayOrder completes successfully.</td></tr><tr><td><code>ORDER_ERROR</code></td><td>Fired when an error occurs during processing.</td></tr><tr><td><code>ORDER_REFUNDED</code></td><td>Fired when a refund is processed.</td></tr></tbody></table>
+
+For webhook configuration details, see the [Webhooks documentation](webhooks.md).
+
 &#x20;
 
 #### usePayStatus
