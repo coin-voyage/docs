@@ -20,7 +20,7 @@ layout:
 
 ### Introduction
 
-The [CoinVoyage dashboard](https://dashboard.coinvoyage.io/)  is the hub for managing payments, monitoring performance, and configuring your organization account. It provides an intuitive interface for navigating analytics, tracking transactions, managing settlements, issuing refunds, and integrating developer tools.
+The [CoinVoyage dashboard](https://dashboard.coinvoyage.io/) is the hub for managing payments, monitoring performance, and configuring your organization account. It provides an intuitive interface for navigating analytics, tracking transactions, managing settlements, issuing refunds, and integrating developer tools.
 
 In the dashboard, you can:
 
@@ -30,8 +30,6 @@ In the dashboard, you can:
 * **Configure settlement currencies** to automatically convert received payments into your preferred assets and chains.
 * **Manage developer integrations**, including API key generation and webhook setup for payment confirmations or disputes.
 * **Generate and send invoices** directly to customers, simplifying crypto payment collection.
-
-
 
 ### Analytics
 
@@ -98,7 +96,7 @@ All settlements are non-custodial and executed on-chain.
 
 In the [**Developer** **tab**](https://dashboard.coinvoyage.io/developers) you can create, view, and rotate your **public API Key** and **Secret** securely to authenticate your integration.
 
-<figure><img src="../.gitbook/assets/developers-api-keys.png" alt="Developers API Keys"><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (6) (1).png" alt="Developers API Keys"><figcaption></figcaption></figure>
 
 You can also set up and manage **webhook endpoints** and subscribe to events like payment confirmations or disputes.
 

@@ -37,14 +37,14 @@
 
 * [API reference](resources/api-reference.md)
   * ```yaml
+    type: builtin:openapi
     props:
       models: true
-    type: builtin:openapi
     dependencies:
       spec:
         ref:
           kind: openapi
-          spec: test
+          spec: v2
     ```
 * [FAQs](resources/faqs.md)
 * [Support](resources/support.md)
