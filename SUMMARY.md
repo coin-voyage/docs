@@ -46,6 +46,7 @@
           kind: openapi
           spec: v2
     ```
+* [Migration Guide: V1 to V2](resources/migration-v1-to-v2.md)
 * [FAQs](resources/faqs.md)
 * [Support](resources/support.md)
 * [Changelog](resources/changelog.md)
