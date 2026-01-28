@@ -272,16 +272,17 @@ The API client is the easiest way to interact with the CoinVoyage backend. It al
 ```tsx
 import { ApiClient } from "@coin-voyage/paykit/server";
 
-export const apiClient = (apiKey: string) =>
-  ApiClient({
-    apiKey,
-    environment: "development",
-  });
+const apiClient = new ApiClient({
+  apiKey: process.env.COIN_VOYAGE_API_KEY!,
+  environment: "development",
+  sessionId: "optional-session-id",
+  version: "1.0.0",
+});
 ```
 
 **Configuration Options**
 
-<table><thead><tr><th width="200">Option</th><th width="120">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td>Yes</td><td>API Key of the organization, acquired in the developers tab of the <a href="https://dashboard.coinvoyage.io/developers">dashboard</a>.</td></tr><tr><td><code>environment</code></td><td>No</td><td>Environment to connect to: <code>production</code> (default) or <code>development</code>.</td></tr></tbody></table>
+<table><thead><tr><th width="200">Option</th><th width="120">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td>Yes</td><td>API Key of the organization, acquired in the developers tab of the <a href="https://dashboard.coinvoyage.io/developers">dashboard</a>.</td></tr><tr><td><code>environment</code></td><td>No</td><td>Environment to connect to: <code>production</code> (default) or <code>development</code>.</td></tr><tr><td><code>sessionId</code></td><td>No</td><td>Optional session identifier for request tracking.</td></tr><tr><td><code>version</code></td><td>No</td><td>Optional client version string sent via <code>X-Client-Version</code> header.</td></tr></tbody></table>
 
 ***
 
@@ -367,10 +368,10 @@ Generates an authorization signature for API requests that require enhanced secu
 
 ```tsx
 const apiSecret = process.env.COIN_VOYAGE_API_SECRET!;
-const signature = apiClient.generateAuthorizationSignature(apiSecret);
+const signature = apiClient.generateAuthorizationSignature(apiSecret, 'POST', '/pay-orders');
 ```
 
-The signature is a SHA-512 hash of the concatenated API key, secret, and timestamp, formatted as:
+The signature is an HMAC-SHA256 hash computed over: `method + path + timestamp`, using the API secret as the HMAC key. The result is formatted as:
 
 ```
 APIKey=<apiKey>,signature=<signature>,timestamp=<timestamp>
@@ -379,27 +380,21 @@ APIKey=<apiKey>,signature=<signature>,timestamp=<timestamp>
 **Parameters:**
 
 * `apiSecret` (string): The API secret obtained from the [dashboard](https://dashboard.coinvoyage.io/developers).
+* `method` (string): The HTTP method (e.g., "POST", "GET").
+* `path` (string): The request path (e.g., "/pay-orders").
 
 **Returns:** `string` - A formatted authorization string.
 
 ***
 
-**`createPayOrder`**
+**`createDepositPayOrder`**
 
-Creates a PayOrder using a unified intent-based API. This method supports all PayOrder modes (DEPOSIT, SALE, REFUND) through a flexible intent structure.
-
-You may perform this operation on either the **client** or **server**. Executing on the **server** ensures users cannot perform malicious actions.
-
-{% hint style="info" %}
-For SALE and REFUND modes, this method requires an authorization signature generated using `generateAuthorizationSignature`.
-{% endhint %}
-
-**Example: Deposit with token amount**
+Creates a PayOrder with mode `DEPOSIT`. This is used for direct deposits to a specified address on a target chain.
 
 ```tsx
 import { ApiClient, ChainId } from "@coin-voyage/paykit/server";
 
-const { data, error } = await apiClient.createPayOrder({
+const { data, error } = await apiClient.createDepositPayOrder({
   intent: {
     asset: {
       chain_id: ChainId.SUI,
@@ -416,12 +411,53 @@ const { data, error } = await apiClient.createPayOrder({
 });
 ```
 
-**Example: Sale with fiat amount**
+**Parameters:**
+
+* `params` (PayOrderParams): Parameters required to create a deposit PayOrder
+  * `intent` (PayOrderIntent): The intent of the order
+    * `asset` (optional): Desired fulfillment asset with `chain_id` and `address` (null for native token)
+    * `amount` (IntentAmount): Amount expected to fulfill the order
+      * `token_amount` (optional): Token amount in human-readable format (e.g., 10 for 10 tokens)
+      * `fiat` (optional): Fiat amount with `amount` and `unit` (e.g., "USD")
+    * `receiving_address` (optional): Address to fulfill the order to. If not provided, a settlement address will be selected.
+  * `metadata` (optional): Additional metadata for the PayOrder
+
+**Returns:** `Promise<APIResponse<PayOrder>>` - The created PayOrder object wrapped in an API response.
+
+{% hint style="warning" %}
+**Amount validation:** You must provide either `token_amount` OR `fiat`, but not both. The amount must be greater than zero.
+{% endhint %}
+
+**Built-in Validation:**
+The method automatically validates input parameters using Zod schemas. If validation fails, it returns an error response without making the API call:
+
+```typescript
+// Invalid input example - both amounts provided
+const { error } = await apiClient.createDepositPayOrder({
+  intent: {
+    amount: {
+      token_amount: 10,
+      fiat: { amount: 100, unit: "USD" }, // Error: only one allowed
+    },
+  },
+});
+// Returns: { error: { statusCode: 400, message: "Only one of fiat amount or token amount should be present." } }
+```
+
+***
+
+**`createSalePayOrder`**
+
+Creates a PayOrder with mode `SALE`. This is used for merchant sales where payment is settled to the configured settlement currency.
+
+{% hint style="info" %}
+This method requires an API secret for authorization. The signature is generated internally using `generateAuthorizationSignature`.
+{% endhint %}
 
 ```tsx
-const signature = apiClient.generateAuthorizationSignature(apiSecret);
+const apiSecret = process.env.COIN_VOYAGE_API_SECRET!;
 
-const { data, error } = await apiClient.createPayOrder(
+const { data, error } = await apiClient.createSalePayOrder(
   {
     intent: {
       amount: {
@@ -444,43 +480,21 @@ const { data, error } = await apiClient.createPayOrder(
       ],
     },
   },
-  signature
+  apiSecret
 );
 ```
 
 **Parameters:**
 
-* `params` (PayOrderParams): Parameters required to create a PayOrder
+* `params` (PayOrderParams): Parameters required to create a sale PayOrder
   * `intent` (PayOrderIntent): The intent of the order
     * `asset` (optional): Desired fulfillment asset with `chain_id` and `address` (null for native token)
     * `amount` (IntentAmount): Amount expected to fulfill the order
-      * `token_amount` (optional): Token amount in human-readable format (e.g., 10 for 10 tokens)
-      * `fiat` (optional): Fiat amount with `amount` and `unit` (e.g., "USD")
     * `receiving_address` (optional): Address to fulfill the order to. If not provided, a settlement address will be selected.
   * `metadata` (optional): Additional metadata for the PayOrder
-* `signature` (string, optional): Authorization signature from `generateAuthorizationSignature` (required for SALE/REFUND modes)
+* `apiSecret` (string): API secret used to generate the authorization signature
 
 **Returns:** `Promise<APIResponse<PayOrder>>` - The created PayOrder object wrapped in an API response.
-
-{% hint style="warning" %}
-**Amount validation:** You must provide either `token_amount` OR `fiat`, but not both. The amount must be greater than zero.
-{% endhint %}
-
-**Built-in Validation:**
-The method automatically validates input parameters using Zod schemas. If validation fails, it returns an error response without making the API call:
-
-```typescript
-// Invalid input example - both amounts provided
-const { error } = await apiClient.createPayOrder({
-  intent: {
-    amount: {
-      token_amount: 10,
-      fiat: { amount: 100, unit: "USD" }, // Error: only one allowed
-    },
-  },
-});
-// Returns: { error: { statusCode: 400, message: "Only one of fiat amount or token amount should be present." } }
-```
 
 ***
 
@@ -489,32 +503,40 @@ const { error } = await apiClient.createPayOrder({
 Creates a PayOrder with mode `REFUND` for an existing PayOrder. This allows merchants to refund full or partial payments.
 
 {% hint style="info" %}
-This method requires an authorization signature generated using `generateAuthorizationSignature`.
+This method requires an API secret for authorization. The signature is generated internally using `generateAuthorizationSignature`.
 {% endhint %}
 
 ```tsx
-const signature = apiClient.generateAuthorizationSignature(apiSecret);
+const apiSecret = process.env.COIN_VOYAGE_API_SECRET!;
 
 const { data: refundPayOrder, error } = await apiClient.createRefundPayOrder(
   "original-payorder-id",
   {
     intent: {
+      asset: {
+        chain_id: 1,
+        address: null,
+      },
+      receiving_address: "0x5678...efgh",
       amount: {
         fiat: {
-          amount: 100,
+          value: 100,
           unit: "USD",
         },
       },
     },
     metadata: {
-      refund: {
-        reason: "Customer requested refund",
-        refund_amount: 100,
-        currency: "USD",
-      },
+      items: [
+        {
+          name: "refund",
+          description: "Refund for t-shirt purchase",
+          unit_price: 100,
+          currency: "USD",
+        },
+      ],
     },
   },
-  signature
+  apiSecret
 );
 ```
 
@@ -524,7 +546,7 @@ const { data: refundPayOrder, error } = await apiClient.createRefundPayOrder(
 * `params` (PayOrderParams): Parameters for the refund
   * `intent` (PayOrderIntent): The refund intent with amount
   * `metadata` (optional): Additional metadata including refund details
-* `signature` (string): Authorization signature from `generateAuthorizationSignature`
+* `apiSecret` (string): API secret used to generate the authorization signature
 
 **Returns:** `Promise<APIResponse<PayOrder>>` - Response object containing either the PayOrder data or error information.
 
