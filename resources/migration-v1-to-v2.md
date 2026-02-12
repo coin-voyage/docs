@@ -18,33 +18,41 @@ layout:
 
 # Migrate from v1 to v2
 
-This guide covers the breaking changes and new features when upgrading from CoinVoyage API v1 to v2. 
+This guide covers the breaking changes and new features when upgrading from CoinVoyage API v1 to v2.
 
 If you're using the CoinVoyage Paykit SDK, update to the latest version which handles V2 automatically.
 
 {% tabs %}
 {% tab title="npm" %}
+
 ```sh
 npm i @coin-voyage/paykit@2 @tanstack/react-query@^5.90.6
 ```
+
 {% endtab %}
 
 {% tab title="pnpm" %}
+
 ```sh
 pnpm add @coin-voyage/paykit@2 @tanstack/react-query@^5.90.6
 ```
+
 {% endtab %}
 
 {% tab title="yarn" %}
+
 ```sh
 yarn add @coin-voyage/paykit@2 @tanstack/react-query@^5.90.6
 ```
+
 {% endtab %}
 
 {% tab title="bun" %}
+
 ```sh
 bun add @coin-voyage/paykit@2 @tanstack/react-query@^5.90.6
 ```
+
 {% endtab %}
 {% endtabs %}
 
@@ -52,12 +60,13 @@ bun add @coin-voyage/paykit@2 @tanstack/react-query@^5.90.6
 
 ## Overview of Changes
 
-| Description           | V1                     | V2                                       |
-| ------------------ | ---------------------- | ---------------------------------------- |
-| Base URL           | `https://api.coinvoyage.io/`          | `https://api.coinvoyage.io/v2/`                         |
-| List Orders Endpoint        | -          | `GET /pay-orders`                        |
-| Process Endpoint   | Available (deprecated) | Removed                                  |
-| Response Structure changes | Flat fields            | Nested `payment` & `fulfillment` objects |
+| Description                | V1                           | V2                                       |
+| -------------------------- | ---------------------------- | ---------------------------------------- |
+| Base URL                   | `https://api.coinvoyage.io/` | `https://api.coinvoyage.io/v2/`          |
+| List Orders Endpoint       | -                            | `GET /pay-orders`                        |
+| Process Endpoint           | Available (deprecated)       | Removed                                  |
+| Response Structure changes | Flat fields                  | Nested `payment` & `fulfillment` objects |
+| Event Types                | `order_*` events             | `payorder_*` events with `PaymentData`   |
 
 ---
 
@@ -106,7 +115,7 @@ Many top-level fields have been moved into nested objects. The old fields are st
     "src": {
       "total": { "ui_amount": 0.1, "raw_amount": "100000000000000000", "value_usd": 250 },
       "base": { ... },
-      "fee": { ... },
+      "fees": { ... },
       "gas": { ... }
     },
     "dst": { ... },
@@ -194,10 +203,25 @@ The quote endpoint now returns more detailed fee breakdowns.
     "raw_amount": "100000000000000000",
     "value_usd": 250
   },
-  "fee": {
-    "ui_amount": 0.003,
-    "raw_amount": "3000000000000000",
-    "value_usd": 7.5
+  "fees": {
+    "custom_fee": {
+      "raw_amount": "1000000",
+      "ui_amount": 1.0,
+      "ui_amount_display": "1.0",
+      "value_usd": 13.45
+    },
+    "protocol_fee": {
+      "raw_amount": "2000000",
+      "ui_amount": 2.0,
+      "ui_amount_display": "2.0",
+      "value_usd": 26.90
+    },
+    "total_fee": {
+      "raw_amount": "3000000",
+      "ui_amount": 3.0,
+      "ui_amount_display": "3.0",
+      "value_usd": 39.35
+    }
   },
   "gas": {
     "ui_amount": 0.002,
@@ -206,6 +230,43 @@ The quote endpoint now returns more detailed fee breakdowns.
   }
 }
 ```
+
+---
+
+### 5. Event Types Updated
+
+Event types have been restructured in V2. All events now include `metadata`, and most events include a `payment_data` field with the full nested payment structure.
+
+**V2 Event Types:**
+
+| Event Type                  | Key Fields                                    |
+| --------------------------- | --------------------------------------------- |
+| `payorder_created`          | `payorder_id`, `metadata?`                    |
+| `payorder_started`          | `payorder_id`, `metadata?`, `payment_data`    |
+| `payorder_confirming`       | `payorder_id`, `metadata?`, `payment_data`    |
+| `payorder_executing`        | `payorder_id`, `metadata?`, `payment_data`    |
+| `payorder_completed`        | `payorder_id`, `metadata?`, `payment_data`    |
+| `payorder_error`            | `payorder_id`, `metadata?`, `message`, `status` |
+| `payorder_refunded`         | `payorder_id`, `metadata?`, `refund_tx_hash`, `refund_address` |
+
+**`PaymentData` structure** (included in `started`, `confirming`, `executing`, and `completed` events):
+
+```json
+{
+  "src": { "total": { ... }, "base": { ... }, "fees": { ... }, "gas": { ... } },
+  "dst": { "currency": { ... }, "currency_amount": { ... } },
+  "deposit_address": "0x...",
+  "receiving_address": "0x...",
+  "refund_address": "0x...",
+  "source_tx_hash": "0x...",
+  "destination_tx_hash": "0x...",
+  "refund_tx_hash": "0x...",
+  "execution": [ { "provider": "...", "status": "...", ... } ],
+  "expires_at": "2025-01-15T11:00:00Z"
+}
+```
+
+**Update your event listeners** to use the new event type names and handle the updated payload structure.
 
 ---
 
