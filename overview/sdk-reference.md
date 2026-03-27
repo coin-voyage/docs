@@ -153,7 +153,7 @@ Clicking the button opens a modal that allows the user to select a payment metho
 {% endcolumn %}
 
 {% column %}
-<figure><img src="../.gitbook/assets/pay_button (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/pay_button.png" alt="Pay Button"><figcaption></figcaption></figure>
 {% endcolumn %}
 {% endcolumns %}
 
@@ -292,9 +292,13 @@ All ApiClient methods return responses wrapped in an `APIResponse<T>` object tha
 
 ```tsx
 interface APIResponse<T> {
-  data?: T;
-  error?: string;
-  success: boolean;
+  data?: T
+  error?: {
+    path: string
+    statusCode: number
+    status: string
+    message: string
+  }
 }
 ```
 
@@ -304,7 +308,7 @@ interface APIResponse<T> {
 const { data, error } = await apiClient.someMethod();
 
 if (error) {
-  console.error("Operation failed:", error);
+  console.error("Operation failed:", error.message);
   // Handle error case
   return;
 }
@@ -572,7 +576,26 @@ const { data: quote, error } = await apiClient.payOrderQuote("pay-order-id", {
   * `chain_type`: The blockchain type (EVM, Solana, etc.)
   * `chain_id`: The specific chain ID
 
-**Returns:** `Promise<APIResponse<PayOrderQuote[]>>` - Response object containing available payment options or error information.
+**Returns:** `Promise<APIResponse<RouteQuote[]>>` - Response object containing available payment options or error information.
+
+***
+
+**`getPayOrderPaymentMethods`**
+
+Fetches the currently available payment methods for a PayOrder.
+
+```tsx
+const { data: paymentMethods, error } = await apiClient.getPayOrderPaymentMethods(
+  "pay-order-id-123"
+);
+```
+
+**Parameters:**
+
+* `payOrderId` (string): The unique identifier of the PayOrder.
+* `opts` (optional): Additional request options such as custom headers.
+
+**Returns:** `Promise<APIResponse<PaymentMethodsResponse>>` - Response object containing available payment rails, tokens, and availability information.
 
 ***
 
@@ -583,8 +606,10 @@ Retrieves payment details for a specific PayOrder. This provides the information
 ```tsx
 const { data: paymentDetails, error } = await apiClient.payOrderPaymentDetails({
   payorder_id: "12345",
-  token_address: "0x1234567890abcdef1234567890abcdef12345678", // Optional
-  chain_id: ChainId.ETH,
+  source_currency: {
+    chain_id: ChainId.ETH,
+    address: "0x1234567890abcdef1234567890abcdef12345678",
+  },
   refund_address: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
 });
 ```
@@ -593,57 +618,21 @@ const { data: paymentDetails, error } = await apiClient.payOrderPaymentDetails({
 
 * `params` (PaymentDetailsParams):
   * `payorder_id`: The unique identifier of the PayOrder
-  * `token_address` (optional): The token address of the source currency
-  * `chain_id`: The blockchain network ID
-  * `refund_address`: The address where funds will be refunded in case of failure
+  * `payment_rail` (optional): Payment rail to use. Defaults to `CRYPTO`
+  * `source_currency` (optional): Source currency to use for the payment details request
+  * `quote_id` (optional): Quote identifier for a previously selected route
+  * `refund_address` (optional): The address where funds will be refunded in case of failure
+* `opts` (optional): Additional request options such as custom headers.
 
 **Returns:** `Promise<APIResponse<PaymentDetails>>` - Response object containing payment details or error information.
 
 ***
 
-**`processPayOrder`**
+{% hint style="info" %}
+The current ApiClient does not expose `processPayOrder()`. PayOrder processing is automatic once funds are detected.
 
-{% hint style="warning" %}
-**Deprecated:** This function is deprecated and will be removed in future versions. The backend now automatically scans for incoming transactions.
+The `GET /pay-orders` endpoint is available in the HTTP API, but there is no `listPayOrders()` helper in the current ApiClient.
 {% endhint %}
-
-Triggers the processing of a PayOrder by providing the transaction hash that represents the payment on the blockchain.
-
-```tsx
-await apiClient.processPayOrder("pay-order-id", "0xabcdef...");
-```
-
-**Parameters:**
-
-* `payOrderId` (string): The unique identifier of the PayOrder
-* `sourceTransactionHash` (string): The transaction hash representing the payment
-
-**Returns:** `Promise<void>`
-
-***
-
-**`listPayOrders`**
-
-Retrieves a paginated list of PayOrders for your organization.
-
-```tsx
-const { data, error } = await apiClient.listPayOrders({
-  limit: 20,
-  offset: 0,
-  status: PayOrderStatus.COMPLETED,
-});
-```
-
-**Parameters:**
-
-* `params` (ListPayOrdersParams): Query parameters for filtering
-  * `limit` (optional): Number of results to return (default: 20)
-  * `offset` (optional): Pagination offset
-  * `status` (optional): Filter by PayOrder status
-
-**Returns:** `Promise<APIResponse<{ data: PayOrder[], total: number, limit: number, offset: number }>>` - Paginated list of PayOrders.
-
-&#x20;
 
 #### Types
 
@@ -826,7 +815,7 @@ type PaymentDetails = {
   deposit_address: string    // Use data.deposit_address
   receiving_address: string  // Use data.receiving_address
   source_currency: Currency  // Use data.src
-  source_amount: CurrencyAmount    // Use data.src.currency_amount
+  source_amount: CurrencyAmount    // Use data.src.total
   destination_currency: Currency   // Use data.dst
   destination_amount: CurrencyAmount // Use data.dst.currency_amount
 }
@@ -877,7 +866,7 @@ type PaymentData = {
 }
 ```
 
-<table><thead><tr><th width="220">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>src</code></td><td><code>QuoteWithCurrency</code></td><td>Source currency with quote breakdown (total, base, fee, gas).</td></tr><tr><td><code>dst</code></td><td><code>CurrencyWithAmount</code></td><td>Destination currency and amount.</td></tr><tr><td><code>deposit_address</code></td><td><code>string</code></td><td>Address where user should send payment.</td></tr><tr><td><code>receiving_address</code></td><td><code>string</code></td><td>Address that will receive the final funds.</td></tr><tr><td><code>refund_address</code></td><td><code>string</code></td><td>Address for refunds if payment fails.</td></tr><tr><td><code>source_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of the deposit.</td></tr><tr><td><code>destination_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of the final transfer.</td></tr><tr><td><code>refund_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of any refund.</td></tr><tr><td><code>execution</code></td><td><code>ExecutionStep[]</code></td><td>Array of execution steps for multi-provider routing.</td></tr><tr><td><code>expires_at</code></td><td><code>Date</code></td><td>When the payment expires.</td></tr></tbody></table>
+<table><thead><tr><th width="220">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>src</code></td><td><code>QuoteWithCurrency</code></td><td>Source currency with quote breakdown (total, base, fees, gas).</td></tr><tr><td><code>dst</code></td><td><code>CurrencyWithAmount</code></td><td>Destination currency and amount.</td></tr><tr><td><code>deposit_address</code></td><td><code>string</code></td><td>Address where user should send payment.</td></tr><tr><td><code>receiving_address</code></td><td><code>string</code></td><td>Address that will receive the final funds.</td></tr><tr><td><code>refund_address</code></td><td><code>string</code></td><td>Address for refunds if payment fails.</td></tr><tr><td><code>source_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of the deposit.</td></tr><tr><td><code>destination_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of the final transfer.</td></tr><tr><td><code>refund_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of any refund.</td></tr><tr><td><code>execution</code></td><td><code>ExecutionStep[]</code></td><td>Array of execution steps for multi-provider routing.</td></tr><tr><td><code>expires_at</code></td><td><code>Date</code></td><td>When the payment expires.</td></tr></tbody></table>
 
 ***
 
@@ -926,7 +915,7 @@ type ProviderStatus = "pending" | "executing" | "completed" | "error" | "cleaned
 
 **WebhookEventType**
 
-Enum of webhook event types you can subscribe to.
+Enum of webhook subscription event types.
 
 ```typescript
 enum WebhookEventType {
@@ -936,15 +925,14 @@ enum WebhookEventType {
   ORDER_EXECUTING = "ORDER_EXECUTING",
   ORDER_COMPLETED = "ORDER_COMPLETED",
   ORDER_ERROR = "ORDER_ERROR",
-  ORDER_REFUNDED = "ORDER_REFUNDED"
+  ORDER_REFUNDED = "ORDER_REFUNDED",
+  ORDER_EXPIRED = "ORDER_EXPIRED"
 }
 ```
 
-<table><thead><tr><th width="260">Event Type</th><th>Description</th></tr></thead><tbody><tr><td><code>ORDER_CREATED</code></td><td>Fired when a new PayOrder is created.</td></tr><tr><td><code>ORDER_AWAITING_PAYMENT</code></td><td>Fired when a PayOrder is ready for payment.</td></tr><tr><td><code>ORDER_CONFIRMING</code></td><td>Fired when payment is detected and confirming.</td></tr><tr><td><code>ORDER_EXECUTING</code></td><td>Fired when payment execution begins.</td></tr><tr><td><code>ORDER_COMPLETED</code></td><td>Fired when PayOrder completes successfully.</td></tr><tr><td><code>ORDER_ERROR</code></td><td>Fired when an error occurs during processing.</td></tr><tr><td><code>ORDER_REFUNDED</code></td><td>Fired when a refund is processed.</td></tr></tbody></table>
+<table><thead><tr><th width="250">Subscription Event</th><th width="220">Payload <code>type</code></th><th>Description</th></tr></thead><tbody><tr><td><code>ORDER_CREATED</code></td><td><code>payorder_created</code></td><td>Fired when a new PayOrder is created.</td></tr><tr><td><code>ORDER_AWAITING_PAYMENT</code></td><td><code>payorder_started</code></td><td>Fired when a PayOrder is ready for payment.</td></tr><tr><td><code>ORDER_CONFIRMING</code></td><td><code>payorder_confirming</code></td><td>Fired when payment is detected and confirming.</td></tr><tr><td><code>ORDER_EXECUTING</code></td><td><code>payorder_executing</code></td><td>Fired when payment execution begins.</td></tr><tr><td><code>ORDER_COMPLETED</code></td><td><code>payorder_completed</code></td><td>Fired when a PayOrder completes successfully.</td></tr><tr><td><code>ORDER_ERROR</code></td><td><code>payorder_error</code></td><td>Fired when an error occurs during processing.</td></tr><tr><td><code>ORDER_REFUNDED</code></td><td><code>payorder_refunded</code></td><td>Fired when a refund is processed.</td></tr><tr><td><code>ORDER_EXPIRED</code></td><td><code>payorder_expired</code></td><td>Fired when a PayOrder expires before payment is received.</td></tr></tbody></table>
 
 For webhook configuration details, see the [Webhooks documentation](webhooks.md).
-
-&#x20;
 
 #### usePayStatus
 

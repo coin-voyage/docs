@@ -20,7 +20,9 @@ layout:
 
 This guide covers the breaking changes and new features when upgrading from CoinVoyage API v1 to v2.
 
-If you're using the CoinVoyage Paykit SDK, update to the latest version which handles V2 automatically.
+If you're using the CoinVoyage PayKit SDK, update to the latest version, which handles v2 automatically.
+
+When you configure webhooks in v2, you subscribe using uppercase `ORDER_*` identifiers. The delivered webhook payload uses lowercase `payorder_*` values in its `type` field.
 
 {% tabs %}
 {% tab title="npm" %}
@@ -65,8 +67,8 @@ bun add @coin-voyage/paykit@2 @tanstack/react-query@^5.90.6
 | Base URL                   | `https://api.coinvoyage.io/` | `https://api.coinvoyage.io/v2/`          |
 | List Orders Endpoint       | -                            | `GET /pay-orders`                        |
 | Process Endpoint           | Available (deprecated)       | Removed                                  |
-| Response Structure changes | Flat fields                  | Nested `payment` & `fulfillment` objects |
-| Event Types                | `order_*` events             | `payorder_*` events with `PaymentData`   |
+| Response Structure Changes | Flat fields                  | Nested `payment` and `fulfillment` objects |
+| Webhook Payload Types      | `order_*` events             | `payorder_*` events with `payment_data`  |
 
 ---
 
@@ -235,21 +237,27 @@ The quote endpoint now returns more detailed fee breakdowns.
 
 ### 5. Event Types Updated
 
-Event types have been restructured in V2. All events now include `metadata`, and most events include a `payment_data` field with the full nested payment structure.
+Webhook handling changed in v2:
 
-**V2 Event Types:**
+- Use uppercase `ORDER_*` identifiers when creating or updating webhook subscriptions.
+- Read lowercase `payorder_*` values from the delivered payload's `type` field.
+- Every payload includes `status`.
+- Lifecycle events include `payment_data` when payment details are available.
 
-| Event Type                  | Key Fields                                    |
-| --------------------------- | --------------------------------------------- |
-| `payorder_created`          | `payorder_id`, `metadata?`                    |
-| `payorder_started`          | `payorder_id`, `metadata?`, `payment_data`    |
-| `payorder_confirming`       | `payorder_id`, `metadata?`, `payment_data`    |
-| `payorder_executing`        | `payorder_id`, `metadata?`, `payment_data`    |
-| `payorder_completed`        | `payorder_id`, `metadata?`, `payment_data`    |
-| `payorder_error`            | `payorder_id`, `metadata?`, `message`, `status` |
-| `payorder_refunded`         | `payorder_id`, `metadata?`, `refund_tx_hash`, `refund_address` |
+**V2 Event Mapping:**
 
-**`PaymentData` structure** (included in `started`, `confirming`, `executing`, and `completed` events):
+| Subscription Event       | Payload `type`        | Key Fields                                                     |
+| ------------------------ | --------------------- | -------------------------------------------------------------- |
+| `ORDER_CREATED`          | `payorder_created`    | `payorder_id`, `status`, `metadata?`                           |
+| `ORDER_AWAITING_PAYMENT` | `payorder_started`    | `payorder_id`, `status`, `metadata?`, `payment_data`           |
+| `ORDER_CONFIRMING`       | `payorder_confirming` | `payorder_id`, `status`, `metadata?`, `payment_data`           |
+| `ORDER_EXECUTING`        | `payorder_executing`  | `payorder_id`, `status`, `metadata?`, `payment_data`           |
+| `ORDER_COMPLETED`        | `payorder_completed`  | `payorder_id`, `status`, `metadata?`, `payment_data`           |
+| `ORDER_ERROR`            | `payorder_error`      | `payorder_id`, `status`, `metadata?`, `message`                |
+| `ORDER_REFUNDED`         | `payorder_refunded`   | `payorder_id`, `status`, `metadata?`, `refund_tx_hash`, `refund_address` |
+| `ORDER_EXPIRED`          | `payorder_expired`    | `payorder_id`, `status`                                        |
+
+**`PaymentData` structure** (included in `payorder_started`, `payorder_confirming`, `payorder_executing`, and `payorder_completed` events):
 
 ```json
 {
@@ -266,7 +274,7 @@ Event types have been restructured in V2. All events now include `metadata`, and
 }
 ```
 
-**Update your event listeners** to use the new event type names and handle the updated payload structure.
+**Update your event listeners** to subscribe with `ORDER_*` event names and handle the lowercase `payorder_*` payload `type` values.
 
 ---
 
@@ -307,11 +315,9 @@ GET /v2/pay-orders
 V2 exposes quote breakdown information directly in responses:
 
 - `payment.src.base` - Base quote in source currency
-- `payment.src.fee` - Breakdown of fees in source currency
+- `payment.src.fees` - Breakdown of fees in source currency
 - `payment.src.gas` - Gas costs for the transaction
 - `payment.src.total` - Sum of above
-
----
 
 ---
 

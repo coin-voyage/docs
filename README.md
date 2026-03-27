@@ -17,24 +17,22 @@ layout:
 
 # Introduction
 
-### Introduction
+CoinVoyage lets you accept crypto payments from any supported chain and settle them in the asset and network that fit your product.
 
-CoinVoyage enables seamless crypto payments into your app. Onboard users from any chain, any coin into your app with one click and maximize your conversion
+* **Flexible**: Let customers pay with the tokens and chains they already use.
+* **Fast**: Routes are optimized for speed and pricing across providers.
+* **Simple**: Embed CoinVoyage into your app with SDK components or direct API calls.
+* **Non-custodial**: CoinVoyage does not hold user funds during the payment flow.
 
-* **Intuitive**: Let your customers use any token on any chain
-* **Fast**: Payments complete in seconds
-* **Simple**: Pay in a single step from any wallet
-* **Secure**: No extra counterparties. CoinVoyage never holds user funds.
+## Accept Payments, Settle Anywhere
 
-#### Accept Payments, Settle Anywhere
+Use CoinVoyage to onboard users regardless of the asset they hold while keeping settlement aligned with your product requirements.
 
-Developers can onboard users regardless of their coin or chain. Merchants can receive payments in their preferred token.
+Whether you are building ecommerce checkout, global payments, deposits, or crypto-native services, CoinVoyage helps you accept payments across BTC, Sui, Solana, and EVM networks.
 
-Whether you're an e-commerce store, a global payment processor, or a digital service provider, our technology empowers you to accept payments in multiple cryptocurrencies across BTC, SUI, Solana, and EVM networks.
+## Get Started
 
-#### Get Started
-
-We've put together some helpful guides for you to get setup with our product quickly and easily.
+Start with the quickest path to a working integration, then go deeper into the SDK and dashboard guides.
 
 {% content-ref url="introduction/quickstart.md" %}
 [quickstart.md](introduction/quickstart.md)

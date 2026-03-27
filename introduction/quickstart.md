@@ -17,13 +17,11 @@ layout:
 
 # Quickstart
 
-### Quickstart
+This guide gets you from installation to a working CoinVoyage payment button in a few minutes.
 
-This guide will get you set up and ready to use CoinVoyage within minutes.
+## 1. Install the SDK
 
-#### Install Package
-
-To get started using **CoinVoyage**, import `@coin-voyage/paykit` into your project.
+Install `@coin-voyage/paykit` and its React Query peer dependency.
 
 {% tabs %}
 {% tab title="npm" %}
@@ -51,66 +49,82 @@ bun add @coin-voyage/paykit @tanstack/react-query@^5.90.6
 {% endtab %}
 {% endtabs %}
 
-Head over to [CoinVoyage Dashboard ](https://dashboard.coinvoyage.io/) and create an organization. Under the `Developer` section you’ll find a API key generated tied to the organization. Once you have an `COIN_VOYAGE_API_KEY` the next section shows you a basic implementation.
+## 2. Create an API Key
+
+Open the [CoinVoyage Dashboard](https://dashboard.coinvoyage.io/) and create an organization if you do not already have one.
+
+Then go to **Developers** and create an API key for that organization. For client-side SDK usage, expose the public key as `NEXT_PUBLIC_COIN_VOYAGE_API_KEY`.
 
 {% hint style="info" %}
-Users need to create an API key if they haven’t already. You can do so by visiting the [CoinVoyage Dashboard](https://dashboard.coinvoyage.io/developers).
+Keep your API secret on the server. Only the public API key belongs in client-side code.
 {% endhint %}
 
-<figure><img src="../.gitbook/assets/coinvoyage (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/developers-api-keys.png" alt="CoinVoyage dashboard - Developers"></figure>
 
-#### Usage <a href="#usage" id="usage"></a>
+## 3. Add the Providers
 
-Now that you have your app configured, you can use the `PayButton` component to allow users to complete a payment or make a deposit to any of their wallets.
-
-Here is an example of basic usage:
-
-#### Example: add `DepositButton` component
+Wrap your app with `QueryClientProvider`, `WalletProvider`, and `PayKitProvider`.
 
 ```tsx
-"use client"
- 
-import { PayButton, PayKitProvider, WalletProvider } from "@coin-voyage/paykit"
-import { ChainId } from "@coin-voyage/paykit/server"
-import type { WalletConfiguration } from "@coin-voyage/paykit/types"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
- 
-const queryClient = new QueryClient()
- 
-export function DepositButton() {
+"use client";
+
+import { PayKitProvider, WalletProvider } from "@coin-voyage/paykit";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
+
+export function Providers({ children }: { children: React.ReactNode }) {
   if (!process.env.NEXT_PUBLIC_COIN_VOYAGE_API_KEY) {
-    throw new Error("NEXT_PUBLIC_COIN_VOYAGE_API_KEY is required")
+    throw new Error("NEXT_PUBLIC_COIN_VOYAGE_API_KEY is required");
   }
- 
+
   return (
     <QueryClientProvider client={queryClient}>
       <WalletProvider>
         <PayKitProvider apiKey={process.env.NEXT_PUBLIC_COIN_VOYAGE_API_KEY}>
-          <PayButton
-            intent="Deposit to SUI"
-            toChain={ChainId.SUI} // Deposit to SUI
-            toAddress="0xYourSUIWalletAddress" // SUI deposit address
-            toAmount={10} // Deposit 10 SUI
-            toToken={undefined} // undefined for NATIVE currency
- 
-            style={{
-              width: "100%",
-              borderRadius: "0.375rem",
-            }}
- 
-            onPaymentStarted={(event) => {
-              console.log("Payment is being processed")
-            }}
-            onPaymentCompleted={(event) => {
-              console.log("Payment Completed")
-            }}
-        />
+          {children}
         </PayKitProvider>
       </WalletProvider>
     </QueryClientProvider>
-  )
+  );
 }
-
 ```
 
-For more examples, check out the [CoinVoyage Demo](https://example.coinvoyage.io/) or find code examples on our [github](https://github.com/coin-voyage/examples)
+## 4. Render a Payment Button
+
+Use `PayButton` to launch the CoinVoyage payment flow.
+
+```tsx
+"use client";
+
+import { PayButton } from "@coin-voyage/paykit";
+import { ChainId } from "@coin-voyage/paykit/server";
+
+export function DepositButton() {
+  return (
+    <PayButton
+      intent="Deposit to SUI"
+      toChain={ChainId.SUI}
+      toAddress="0xYourSUIWalletAddress"
+      toAmount={10}
+      toToken={undefined}
+      style={{
+        width: "100%",
+        borderRadius: "0.375rem",
+      }}
+      onPaymentStarted={() => {
+        console.log("Payment started");
+      }}
+      onPaymentCompleted={() => {
+        console.log("Payment completed");
+      }}
+    />
+  );
+}
+```
+
+## Next Steps
+
+* See the [SDK Reference](../overview/sdk-reference.md) for all provider, button, and API client options.
+* Use the [example site](https://example.coinvoyage.io/) to test live flows against your organization.
+* Browse the [example repository](https://github.com/coin-voyage/examples) for integration patterns.

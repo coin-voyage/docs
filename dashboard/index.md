@@ -67,7 +67,7 @@ Refunds are initiated from the **Transaction Detail** view and executed as on-ch
 
     After clicking **Proceed**, the CoinVoyage widget will open, allowing you to select the currency for the refund and confirm the transaction.
 
-<figure><img src="../.gitbook/assets/Screenshot 2025-08-03 144320 (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/refund-modal.png" alt="Refund modal"><figcaption></figcaption></figure>
 
 Once sent, refund status updates in real-time. All refund transactions are shown under the **“Refund Transactions”** section of the original payment.
 
@@ -96,11 +96,11 @@ All settlements are non-custodial and executed on-chain.
 
 In the [**Developer** **tab**](https://dashboard.coinvoyage.io/developers) you can create, view, and rotate your **public API Key** and **Secret** securely to authenticate your integration.
 
-<figure><img src="../.gitbook/assets/image (6) (1).png" alt="Developers API Keys"><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/developers.png" alt="Developers API Keys"><figcaption></figcaption></figure>
 
 You can also set up and manage **webhook endpoints** and subscribe to events like payment confirmations or disputes.
 
-<figure><img src="../.gitbook/assets/Screenshot 2025-10-22 at 5.43.24 PM.png" alt="Dashboard - Add Webhook"><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/add-webhook.png" alt="Dashboard - Add Webhook"><figcaption></figcaption></figure>
 
 Check out [Webhook](../overview/webhooks.md) for an example
 
@@ -108,7 +108,7 @@ Check out [Webhook](../overview/webhooks.md) for an example
 
 CoinVoyage now supports **invoices**, allowing merchants to generate crypto payment requests directly from the dashboard. From the dashboard, you can create an invoice by entering the amount, currency, customer details, description and optionally setting a due date.
 
-<figure><img src="../.gitbook/assets/Screenshot 2025-09-28 at 11.26.57 AM.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/create-invoice.png" alt="invoice creation"><figcaption></figcaption></figure>
 
 To get started, merchants first set up their **organization profile** in the dashboard, which defines their business details. Once the organization profile is configured, they can immediately begin creating invoices for their customers.
 

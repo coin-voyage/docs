@@ -18,16 +18,20 @@ layout:
 
 # Support
 
-### Support
+Use the channel that matches the kind of help you need.
 
-#### Github
+## Technical Questions and Integration Help
 
-{% embed url="https://github.com/coin-voyage" %}
+Contact the CoinVoyage team at [help@coinvoyage.io](mailto:help@coinvoyage.io) for implementation questions, migration support, or production issues.
 
-#### Report issues
+## Report an Issue
+
+If you found a bug in the public examples or documentation flow, open an issue in the examples repository:
 
 {% embed url="https://github.com/coin-voyage/examples/issues" %}
 
-#### Technical questions and integration help
+## Browse CoinVoyage on GitHub
 
-Contact our team at [help@coinvoyage.io](mailto:help@coinvoyage.io)
+Explore public repositories, examples, and updates on GitHub:
+
+{% embed url="https://github.com/coin-voyage" %}

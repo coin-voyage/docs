@@ -17,64 +17,61 @@ layout:
 
 # FAQs
 
-### FAQs
+Common questions about testing, authentication, and the CoinVoyage payment flow.
 
-#### **How do I test CoinVoyage payments before going live?**
+## How do I test CoinVoyage payments before going live?
 
-You can test both **Deposit** and **Sale** flows using our [examples site](https://example.coinvoyage.io/)
+You can test both **Deposit** and **Sale** flows using our [example site](https://example.coinvoyage.io/).
 
-Create an account on the [CoinVoyage Dashboard](../dashboard/index.md), copy your **API Key** and **Secret**, and add them into the examples site. Now your dashboard is hooked up to the example demo.
+Create an account in the [CoinVoyage Dashboard](../dashboard/index.md), copy your **API Key** and **API Secret**, and add them to the example site. That connects the demo flow to your organization.
 
-
-
-#### **Where do I find my API Key and Secret?**
+## Where do I find my API Key and Secret?
 
 In the [CoinVoyage Dashboard](https://dashboard.coinvoyage.io/):
 
-* Navigate to **Developer** → **API Keys**
+* Navigate to **Developer** -> **API Keys**
 * Create a new key, then store both the **API Key** and **Secret** securely.
 
+## What's the difference between a Deposit and a Sale?
 
+* **Deposit**: Send funds to a wallet address you control. For example, fund your Sui wallet with native SUI while paying with USDC on mainnet.
+* **Sale**: A merchant or organization creates an order for the user to fulfill. The user's funds are routed to the configured [**settlement wallet**](../dashboard/index.md#settlement-currencies). This mode requires a server-side **Authorization** signature generated from your API secret.
 
-#### **What’s the difference between a Deposit and a Sale?**
+## How do I generate the Authorization signature?
 
-* **Deposit**: send funds to a wallet address in your possession. For example, fund your sui wallet with native SUI while paying with USDC on mainnet.
-* **Sale**: merchant or organization creates an order for the user to fulfill. The users funds are routed directly to the [**settlement wallet**](../dashboard/index.md#settlement-currencies). This mode can be securely executed on the client by via the usage of a **signature-based Authorization header**.
-
-
-
-#### **How do I generate the Authorization signature?**
-
-If you're using the [**CoinVoyage PayKit SDK**](../overview/sdk-reference.md#apiclient), there's a built-in method to generate the required signature:
+If you're using the [**CoinVoyage PayKit SDK**](../overview/sdk-reference.md#apiclient), use the built-in method:
 
 ```typescript
-const signature = apiClient.generateAuthorizationSignature(process.env.COIN_VOYAGE_API_SECRET);
+const signature = apiClient.generateAuthorizationSignature(
+  process.env.COIN_VOYAGE_API_SECRET!,
+  "POST",
+  "/pay-orders"
+);
 ```
 
-When directly implementing the API you can create it like so:
+The signature is an HMAC-SHA256 hash computed over `method + path + timestamp`. The `method` and `path` must match the request exactly.
+
+When directly implementing the API, you can create it like this:
 
 ```typescript
-generateAuthorizationSignature(apiKey: string, apiSecret: string): string {
-  // Get the current timestamp as a string
+import { createHmac } from "crypto";
+
+function generateAuthorizationSignature(
+  apiKey: string,
+  apiSecret: string,
+  method: string,
+  path: string
+): string {
   const timestamp = Math.floor(Date.now() / 1000).toString();
+  const data = `${method}${path}${timestamp}`;
+  const signature = createHmac("sha256", apiSecret).update(data).digest("hex");
 
-  // Create the data string
-  const data = apiKey + apiSecret + timestamp;
-
-  // Create a SHA-512 hash of the data
-  const hash = createHash('sha512');
-  hash.update(data);
-
-  // Encode the hash as a hexadecimal string
-  const signature = hash.digest('hex');
-
-  // Format the final string
   return `APIKey=${apiKey},signature=${signature},timestamp=${timestamp}`;
 }
 ```
 
+Run this only on the server. Never expose your API secret in client-side code.
 
+## Where can I view transaction history?
 
-#### **Where can I view transaction history?**
-
-A transaction overview and specific transaction details can be found in the [CoinVoyage Dashboard](https://dashboard.coinvoyage.io/) and go to **Transactions**
+A transaction overview and detailed transaction pages are available in the [CoinVoyage Dashboard](https://dashboard.coinvoyage.io/) under **Transactions**.

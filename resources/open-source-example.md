@@ -15,9 +15,18 @@ layout:
     visible: true
 ---
 
-# Example code
+# Example Code
 
-### Example code&#x20;
+CoinVoyage maintains public examples you can use as a starting point for your own integration.
 
-We added a few examples in a [repository on github](https://github.com/coin-voyage/examples). If you have any questions don't hesitate to [reach out](support.md).
+## Example Repository
 
+Browse the [coin-voyage/examples](https://github.com/coin-voyage/examples) repository for end-to-end examples and integration patterns.
+
+## Live Demo
+
+Use the [example site](https://example.coinvoyage.io/) to test Deposit and Sale flows with your own organization credentials.
+
+## Need Help?
+
+If you get stuck while adapting an example, see [Support](support.md).

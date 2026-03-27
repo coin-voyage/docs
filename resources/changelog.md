@@ -17,83 +17,80 @@ layout:
 
 # Changelog
 
-All notable changes to CoinVoyage SDK, API, and Platform will be documented here.
+All notable changes to CoinVoyage SDK, API, and platform behavior are documented here.
 
-
+{% hint style="info" %}
+Entries below are ordered by release date, newest first. `2.0.0` marks the v2 migration release.
+{% endhint %}
 
 ***
 
-## @coin-voyage/paykit \[2.0.0] - 2025-01-28
+## @coin-voyage/paykit [2.0.0] - 2026-01-28
 
 ### Added
 
-* **List Pay Orders endpoint**: New `GET /pay-orders` endpoint to retrieve all pay orders for your organization with pagination and status filtering.
-* **Quote breakdown transparency**: Quotes now expose detailed fee breakdowns including `base`, `fee`, `gas`, and `total` amounts.
-* **Multi-provider execution tracking**: Track execution status across multiple providers via `payment.execution` array.
-* **ApiClient class instantiation**: ApiClient is now instantiated with `new ApiClient({...})` and supports new options `sessionId` and `version`.
-* **Dedicated PayOrder methods**: New `createDepositPayOrder()` and `createSalePayOrder()` methods for clearer intent.
+* **List Pay Orders endpoint**: Added `GET /pay-orders` to retrieve all pay orders for your organization with pagination and status filtering.
+* **Quote breakdown transparency**: Quotes now expose detailed fee breakdowns including `base`, `fees`, `gas`, and `total`.
+* **Multi-provider execution tracking**: Added `payment.execution` to track execution status across multiple providers.
+* **ApiClient constructor options**: Added `sessionId` and `version`.
+* **Dedicated PayOrder helpers**: Added `createDepositPayOrder()` and `createSalePayOrder()` for clearer intent.
 
 ### Changed
 
 * **API base URL**: Updated to `https://api.coinvoyage.io/v2/`.
-* **Response structure**: Flat fields moved to nested `payment` and `fulfillment` objects for better organization.
+* **Response structure**: Flat fields moved into nested `payment` and `fulfillment` objects.
 * **BigInt handling**: `raw_amount` fields now return strings instead of numbers to prevent precision loss.
-* **Authorization signature**: `generateAuthorizationSignature()` now uses HMAC-SHA256 and requires `method` and `path` parameters.
-* **createSalePayOrder / createRefundPayOrder signature**: Now accepts `apiSecret` directly instead of a pre-generated signature.
+* **Authorization signature**: `generateAuthorizationSignature()` now uses HMAC-SHA256 and requires `method` and `path`.
+* **Sale and refund authorization**: `createSalePayOrder()` and `createRefundPayOrder()` now accept `apiSecret` directly instead of a pre-generated signature.
+* **Webhook event naming**: Webhook subscriptions use uppercase `ORDER_*` identifiers, while delivered payloads use lowercase `payorder_*` values in the `type` field.
 
 ### Removed
 
-* **Process endpoint**: `/pay-orders/{payorder_id}/process` has been removed. Payment processing now happens automatically when funds are detected.
+* **Process endpoint**: `/pay-orders/{payorder_id}/process` was removed. Payment processing now happens automatically when funds are detected.
 
 ### Deprecated
 
-* **Top-level response fields**: `source_currency`, `source_amount`, `destination_currency`, `destination_amount`, `deposit_address`, `receiving_address`, `refund_address`, and `expires_at` are deprecated. Use the corresponding fields in `payment` and `fulfillment` objects instead.
+* **Top-level response fields**: `source_currency`, `source_amount`, `destination_currency`, `destination_amount`, `deposit_address`, `receiving_address`, `refund_address`, and `expires_at` are deprecated. Use the corresponding nested fields in `payment` and `fulfillment` instead.
 
 {% hint style="info" %}
 See the [Migration Guide](migration-v1-to-v2.md) for detailed upgrade instructions.
 {% endhint %}
 
-
-
 ***
 
-## @coin-voyage/paykit \[0.1.25] - 2025-11-04
+## @coin-voyage/paykit [0.1.25] - 2025-11-04
 
 ### Added
 
-* **Phantom wallet (EVM)**: users can now also connect their EVM wallet via Phantom.
-
-
+* **Phantom wallet (EVM)**: Users can now connect an EVM wallet through Phantom.
 
 ***
 
-## @coin-voyage/paykit \[0.1.24] - 2025-10-29
+## @coin-voyage/paykit [0.1.24] - 2025-10-29
 
 ### Added
 
-* **German Localization**: display PayKit modal in German by specifying de-DE language.
+* **German localization**: Display the PayKit modal in German by specifying the `de-DE` language.
 
 ### Changed
 
-* **ApiClient API response**: all APIClient functions now return `APIResponse<T>` for a more uniform response.
-
-
+* **ApiClient responses**: All ApiClient methods now return `APIResponse<T>` for a more consistent response shape.
 
 ***
 
-## @coin-voyage/paykit \[0.1.23] - 2025-10-21
+## @coin-voyage/paykit [0.1.23] - 2025-10-21
 
 ### Changed
 
-* **WalletProvider props**: changed property names and nesting structure of the component.<br>
+* **WalletProvider props**: Updated property names and nesting structure.
 
 ***
 
-## @coin-voyage/paykit \[0.1.22] - 2025-10-17
+## @coin-voyage/paykit [0.1.22] - 2025-10-17
 
 ### Added
 
-* **Stable Testnet Network Support**: Added support for Stable Testnet. The upcoming chain of Tether.
+* **Stable Testnet network support**: Added support for Stable Testnet.
 
 ***
 
@@ -101,9 +98,9 @@ See the [Migration Guide](migration-v1-to-v2.md) for detailed upgrade instructio
 
 CoinVoyage follows [Semantic Versioning](https://semver.org/):
 
-* **MAJOR** version for incompatible API changes
-* **MINOR** version for new functionality in a backward compatible manner
-* **PATCH** version for backward compatible bug fixes
+* **MAJOR** - Incompatible API changes
+* **MINOR** - Backward-compatible functionality
+* **PATCH** - Backward-compatible bug fixes
 
 ***
 
@@ -111,7 +108,7 @@ CoinVoyage follows [Semantic Versioning](https://semver.org/):
 
 * **Added** - New features, endpoints, or capabilities
 * **Changed** - Modifications to existing functionality
-* **Deprecated** - Features that will be removed in future versions (but still work)
-* **Removed** - Features that have been completely removed
+* **Deprecated** - Features that still work but will be removed in a future version
+* **Removed** - Features that have been fully removed
 * **Fixed** - Bug fixes and corrections
 * **Security** - Vulnerability patches and security improvements
