@@ -37,9 +37,9 @@
 
 * [API reference](resources/api-reference.md)
   * ```yaml
-    type: builtin:openapi
     props:
       models: true
+    type: builtin:openapi
     dependencies:
       spec:
         ref:

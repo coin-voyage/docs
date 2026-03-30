@@ -14,13 +14,15 @@ layout:
     visible: true
   metadata:
     visible: true
+  tags:
+    visible: true
 ---
 
 # Pricing & Fees
 
 CoinVoyage is free to get started. Pricing is usage-based, with transparent transaction fees and no hidden platform costs.
 
-<table><thead><tr><th width="250">Fee Type</th><th width="150">Standard Rate</th><th>Description</th></tr></thead><tbody><tr><td>Transaction Fee</td><td>1.5%</td><td>Applied to each successful payment transaction.</td></tr><tr><td>Offramp Fee</td><td>0.5%</td><td>Applied when withdrawing to fiat.</td></tr></tbody></table>
+<table><thead><tr><th width="250">Fee Type</th><th width="150">Standard Rate</th><th>Description</th></tr></thead><tbody><tr><td>Transaction Fee</td><td>1%</td><td>Applied to each successful payment transaction.</td></tr><tr><td>Offramp Fee</td><td>0.5%</td><td>Applied when withdrawing to fiat.</td></tr></tbody></table>
 
 {% hint style="success" %}
 We offer discounted rates based on volume. Contact [help@coinvoyage.io](mailto:help@coinvoyage.io) for details.

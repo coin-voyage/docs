@@ -13,6 +13,8 @@ layout:
     visible: true
   metadata:
     visible: true
+  tags:
+    visible: true
 ---
 
 # Quickstart
@@ -59,7 +61,7 @@ Then go to **Developers** and create an API key for that organization. For clien
 Keep your API secret on the server. Only the public API key belongs in client-side code.
 {% endhint %}
 
-<figure><img src="../.gitbook/assets/developers-api-keys.png" alt="CoinVoyage dashboard - Developers"></figure>
+<figure><img src="../.gitbook/assets/developers-api-keys (1).png" alt="CoinVoyage dashboard - Developers"><figcaption></figcaption></figure>
 
 ## 3. Add the Providers
 

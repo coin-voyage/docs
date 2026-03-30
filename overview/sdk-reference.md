@@ -38,10 +38,6 @@ bun add @coin-voyage/paykit @tanstack/react-query@^5.90.6
 {% endtab %}
 {% endtabs %}
 
-
-
-
-
 #### PayKitProvider
 
 The `PayKitProvider` is required if you want to utilize the [PayButton](sdk-reference.md#paybutton) and [usePayStatus](sdk-reference.md#usepaystatus). It wraps the client application and tracks the state of the PayOrder flow.
@@ -84,10 +80,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
 The `PayKitProvider` accepts the following configuration parameters:
 
 <table><thead><tr><th width="218.4000244140625">Option</th><th width="146.5999755859375">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td>Yes</td><td>API Key of the organization, acquired in the developers tab of the <a href="https://dashboard.coinvoyage.io/developers">dashboard</a>.</td></tr><tr><td><code>customTheme</code></td><td>No</td><td>Gives you the flexibility to modify the PayKit modal styling. See also <a href="sdk-reference.md#themes-and-customization">Themes &#x26; customisation</a></td></tr><tr><td><code>environment</code></td><td>No</td><td><p>Environment to connect to:</p><ul><li>production (default)</li><li>development</li></ul><p>The development environment exposes additional testnet chains.</p></td></tr><tr><td><code>debugMode</code></td><td>No</td><td>Will log debug logs into the console, helpful when integrating.</td></tr><tr><td><code>mode</code></td><td>No</td><td>"light", "dark" or "auto"</td></tr><tr><td><code>onConnect</code></td><td>No</td><td>Callback triggered upon connection of a new wallet.</td></tr><tr><td><code>onConnectValidation</code></td><td>No</td><td>Allows you to pass a custom function that is run upon connecting of a wallet.</td></tr><tr><td><code>onDisconnect</code></td><td>No</td><td>Callback triggered upon disconnect of a wallet.</td></tr><tr><td><code>options</code></td><td>No</td><td><p>Multiple options to modify PayKit modal, including:</p><ul><li>add a disclaimer</li><li>control display language</li><li>hide tooltips</li></ul><p>and more</p></td></tr><tr><td><code>theme</code></td><td>No</td><td><p>Select a predefined styling for the PayKit modal, options include:</p><ul><li>auto</li><li>web95</li><li>retro</li><li>soft</li><li>midnight</li><li>minimal</li><li>rounded</li><li>nouns</li></ul></td></tr></tbody></table>
-
-
-
-
 
 #### WalletProvider
 
@@ -139,10 +131,6 @@ The `WalletProvider` accepts the following configuration parameters:
 
 <table><thead><tr><th width="218.4000244140625">Option</th><th width="146.5999755859375">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>config</code></td><td>No</td><td>Object that contains chain type specific configurations.</td></tr><tr><td><code>config.evm</code></td><td>No</td><td><p>Configuration for EVM chain types. Allows configuration of wallets, connectors, and other evm specific properties.</p><p>Also includes options to configure <code>WalletConnect</code>, <code>Coinbase Wallet</code> and <code>MetaMask</code></p></td></tr><tr><td><code>config.solana</code></td><td>No</td><td>Configuration of the Solana chain. Set a custom <code>rpcUrl</code> and configure wallet adapters.</td></tr><tr><td><code>config.sui</code></td><td>No</td><td>Configuration of the Sui chain. Set a custom <code>rpcUrl</code> and configure wallet adapters.</td></tr><tr><td><code>config.utxo</code></td><td>No</td><td>Configuration of UTXO chain types. Allows configuration of wallet connectors and few additional options.</td></tr></tbody></table>
 
-
-
-
-
 #### PayButton
 
 {% columns %}
@@ -153,7 +141,7 @@ Clicking the button opens a modal that allows the user to select a payment metho
 {% endcolumn %}
 
 {% column %}
-<figure><img src="../.gitbook/assets/pay_button.png" alt="Pay Button"><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/pay_button (1).png" alt="Pay Button"><figcaption></figcaption></figure>
 {% endcolumn %}
 {% endcolumns %}
 
@@ -206,10 +194,6 @@ The `PayButton` accepts the following configuration parameters:
 **\*Required Parameters:** Either provide `payId` **OR** all three of `toAddress`, `toChain`, and `toAmount`. The `payId` approach is used for server-generated pay orders, while the direct parameters are used for client-side deposit flows.
 {% endhint %}
 
-
-
-
-
 #### PayButton.Custom
 
 For advanced use cases where you need complete control over the button's appearance and behavior, use `PayButton.Custom`. This component provides a render prop pattern that gives you access to `show()` and `hide()` functions to control the payment modal.
@@ -255,13 +239,11 @@ The `children` function receives an object with the following functions:
 {% hint style="info" %}
 **When to use PayButton.Custom:**
 
-- You need complete control over button styling beyond CSS customization
-- You want to integrate the payment modal into an existing design system
-- You need to trigger the modal from multiple UI elements
-- You want to programmatically control modal visibility
-  {% endhint %}
-
-
+* You need complete control over button styling beyond CSS customization
+* You want to integrate the payment modal into an existing design system
+* You need to trigger the modal from multiple UI elements
+* You want to programmatically control modal visibility
+{% endhint %}
 
 #### ApiClient
 
@@ -319,7 +301,7 @@ console.log("Success:", data);
 
 This pattern ensures you always handle both success and error cases explicitly, and TypeScript can properly type-check your code.
 
----
+***
 
 **ApiClient Methods**
 
@@ -360,7 +342,7 @@ const { data: payOrder, error } = await apiClient.getPayOrder(
 }
 ```
 
----
+***
 
 **`generateAuthorizationSignature`**
 
@@ -432,8 +414,7 @@ const { data, error } = await apiClient.createDepositPayOrder({
 **Amount validation:** You must provide either `token_amount` OR `fiat`, but not both. The amount must be greater than zero.
 {% endhint %}
 
-**Built-in Validation:**
-The method automatically validates input parameters using Zod schemas. If validation fails, it returns an error response without making the API call:
+**Built-in Validation:** The method automatically validates input parameters using Zod schemas. If validation fails, it returns an error response without making the API call:
 
 ```typescript
 // Invalid input example - both amounts provided
@@ -930,7 +911,16 @@ enum WebhookEventType {
 }
 ```
 
-<table><thead><tr><th width="250">Subscription Event</th><th width="220">Payload <code>type</code></th><th>Description</th></tr></thead><tbody><tr><td><code>ORDER_CREATED</code></td><td><code>payorder_created</code></td><td>Fired when a new PayOrder is created.</td></tr><tr><td><code>ORDER_AWAITING_PAYMENT</code></td><td><code>payorder_started</code></td><td>Fired when a PayOrder is ready for payment.</td></tr><tr><td><code>ORDER_CONFIRMING</code></td><td><code>payorder_confirming</code></td><td>Fired when payment is detected and confirming.</td></tr><tr><td><code>ORDER_EXECUTING</code></td><td><code>payorder_executing</code></td><td>Fired when payment execution begins.</td></tr><tr><td><code>ORDER_COMPLETED</code></td><td><code>payorder_completed</code></td><td>Fired when a PayOrder completes successfully.</td></tr><tr><td><code>ORDER_ERROR</code></td><td><code>payorder_error</code></td><td>Fired when an error occurs during processing.</td></tr><tr><td><code>ORDER_REFUNDED</code></td><td><code>payorder_refunded</code></td><td>Fired when a refund is processed.</td></tr><tr><td><code>ORDER_EXPIRED</code></td><td><code>payorder_expired</code></td><td>Fired when a PayOrder expires before payment is received.</td></tr></tbody></table>
+| Subscription Event       | Payload `type`        | Description                                               |
+| ------------------------ | --------------------- | --------------------------------------------------------- |
+| `ORDER_CREATED`          | `payorder_created`    | Fired when a new PayOrder is created.                     |
+| `ORDER_AWAITING_PAYMENT` | `payorder_started`    | Fired when a PayOrder is ready for payment.               |
+| `ORDER_CONFIRMING`       | `payorder_confirming` | Fired when payment is detected and confirming.            |
+| `ORDER_EXECUTING`        | `payorder_executing`  | Fired when payment execution begins.                      |
+| `ORDER_COMPLETED`        | `payorder_completed`  | Fired when a PayOrder completes successfully.             |
+| `ORDER_ERROR`            | `payorder_error`      | Fired when an error occurs during processing.             |
+| `ORDER_REFUNDED`         | `payorder_refunded`   | Fired when a refund is processed.                         |
+| `ORDER_EXPIRED`          | `payorder_expired`    | Fired when a PayOrder expires before payment is received. |
 
 For webhook configuration details, see the [Webhooks documentation](webhooks.md).
 
@@ -996,10 +986,6 @@ The hook maps internal `PayOrderStatus` values to user-friendly `PaymentStatus` 
 * `REFUNDED` → `payment_bounced`
 * `EXPIRED` → `payment_expired`
 * `FAILED` → `payment_failed`
-
-
-
-
 
 #### Themes & Customization
 
