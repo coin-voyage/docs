@@ -79,7 +79,43 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 The `PayKitProvider` accepts the following configuration parameters:
 
-<table><thead><tr><th width="218.4000244140625">Option</th><th width="146.5999755859375">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td>Yes</td><td>API Key of the organization, acquired in the developers tab of the <a href="https://dashboard.coinvoyage.io/developers">dashboard</a>.</td></tr><tr><td><code>customTheme</code></td><td>No</td><td>Gives you the flexibility to modify the PayKit modal styling. See also <a href="sdk-reference.md#themes-and-customization">Themes &#x26; customisation</a></td></tr><tr><td><code>environment</code></td><td>No</td><td><p>Environment to connect to:</p><ul><li>production (default)</li><li>development</li></ul><p>The development environment exposes additional testnet chains.</p></td></tr><tr><td><code>debugMode</code></td><td>No</td><td>Will log debug logs into the console, helpful when integrating.</td></tr><tr><td><code>mode</code></td><td>No</td><td>"light", "dark" or "auto"</td></tr><tr><td><code>onConnect</code></td><td>No</td><td>Callback triggered upon connection of a new wallet.</td></tr><tr><td><code>onConnectValidation</code></td><td>No</td><td>Allows you to pass a custom function that is run upon connecting of a wallet.</td></tr><tr><td><code>onDisconnect</code></td><td>No</td><td>Callback triggered upon disconnect of a wallet.</td></tr><tr><td><code>options</code></td><td>No</td><td><p>Multiple options to modify PayKit modal, including:</p><ul><li>add a disclaimer</li><li>control display language</li><li>hide tooltips</li></ul><p>and more</p></td></tr><tr><td><code>theme</code></td><td>No</td><td><p>Select a predefined styling for the PayKit modal, options include:</p><ul><li>auto</li><li>web95</li><li>retro</li><li>soft</li><li>midnight</li><li>minimal</li><li>rounded</li><li>nouns</li></ul></td></tr></tbody></table>
+<table><thead><tr><th width="218.4000244140625">Option</th><th width="146.5999755859375">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td>Yes</td><td>API Key of the organization, acquired in the developers tab of the <a href="https://dashboard.coinvoyage.io/developers">dashboard</a>.</td></tr><tr><td><code>customTheme</code></td><td>No</td><td>Gives you the flexibility to modify the PayKit modal styling. See also <a href="sdk-reference.md#themes-and-customization">Themes &#x26; customisation</a></td></tr><tr><td><code>environment</code></td><td>No</td><td><p>Environment to connect to:</p><ul><li>production (default)</li><li>development</li></ul><p>The development environment exposes additional testnet chains.</p></td></tr><tr><td><code>debugMode</code></td><td>No</td><td>Will log debug logs into the console, helpful when integrating.</td></tr><tr><td><code>mode</code></td><td>No</td><td>"light", "dark" or "auto"</td></tr><tr><td><code>onConnect</code></td><td>No</td><td>Callback triggered upon connection of a new wallet.</td></tr><tr><td><code>onConnectValidation</code></td><td>No</td><td>Allows you to pass a custom function that is run upon connecting of a wallet.</td></tr><tr><td><code>onDisconnect</code></td><td>No</td><td>Callback triggered upon disconnect of a wallet.</td></tr><tr><td><code>options</code></td><td>No</td><td><p>Global <code>PayKitOptions</code> applied across all pay buttons and payment flows.</p><p>Includes language, CTA visibility, overlay behavior, optimistic confirmation, and experimental feature flags such as <code>experimentalFeatures.cardPayments</code>.</p></td></tr><tr><td><code>theme</code></td><td>No</td><td><p>Select a predefined styling for the PayKit modal, options include:</p><ul><li>auto</li><li>web95</li><li>retro</li><li>soft</li><li>midnight</li><li>minimal</li><li>rounded</li><li>nouns</li></ul></td></tr></tbody></table>
+
+**PayKitProvider `options` (`PayKitOptions`)**
+
+Use `options` to configure global behavior across all PayButtons and payment flows managed by the provider.
+
+```typescript
+type PayKitOptions = {
+  language?: Languages
+  hideTooltips?: boolean
+  hideQuestionMarkCTA?: boolean
+  hideNoWalletCTA?: boolean
+  hideRecentBadge?: boolean
+  walletConnectCTA?: "link" | "modal" | "both"
+  embedGoogleFonts?: boolean
+  disclaimer?: ReactNode | string
+  bufferPolyfill?: boolean
+  overlayBlur?: number
+  optimisticConfirmation?: boolean
+  experimentalFeatures?: {
+    cardPayments?: boolean
+  }
+}
+```
+
+Key options:
+
+* `language`: Sets the PayKit display language.
+* `hideTooltips`, `hideQuestionMarkCTA`, `hideNoWalletCTA`, `hideRecentBadge`: Hide specific helper UI and CTA elements.
+* `walletConnectCTA`: Controls whether WalletConnect is shown as a deep link, modal, or both.
+* `embedGoogleFonts`: Automatically embeds the Google Font for the selected built-in theme. This does not work with custom themes.
+* `disclaimer`: Adds a global disclaimer to the modal. Accepts a string or `ReactNode`.
+* `bufferPolyfill`: Enables the Buffer polyfill for bundlers that do not provide Node polyfills by default. Defaults to `true`.
+* `overlayBlur`: Applies background blur while the modal is open.
+* `optimisticConfirmation`: Enables optimistic order confirmation after the user signs and the transaction validates on-chain. This is not allowed for deposits and defaults to `true`.
+* `experimentalFeatures`: Container for opt-in feature flags that are not enabled by default.
+* `experimentalFeatures.cardPayments`: Enables card payments. Disabled by default while CoinVoyage gathers more feedback and data. Your organization must also be approved before you can use it.
 
 #### WalletProvider
 
