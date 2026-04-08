@@ -25,6 +25,46 @@ Entries below are ordered by release date, newest first. `2.0.0` marks the v2 mi
 
 ***
 
+## @coin-voyage/paykit [2.4.1] - 2026-04-08
+
+### Added
+
+* **Partial payment terminal state**: Added `PARTIAL_PAYMENT` to represent PayOrders that receive an insufficient amount and end in a terminal partial-payment state.
+* **Partial payment event type**: Added `PayOrderPartialPaymentEvent` so you can handle partial-payment outcomes explicitly in your event flows.
+
+***
+
+## @coin-voyage/paykit [2.4.0] - 2026-04-04
+
+### Added
+
+* **Stripe onramp integration**: Added full Stripe fiat-to-crypto onramp support, including geo-blocking.
+* **Payment steps model**: Added `PaymentSteps` to track granular payment progress such as onramp, swap, and delivery.
+* **Payment methods endpoint**: Added `GET /pay-orders/{payorder_id}/payment-methods` to fetch available payment methods for a PayOrder.
+* **Organization settings in PayOrder responses**: Added an `Organization.settings` JSON field and now return `settings` in `GET /pay-orders` and `GET /pay-orders/{payorder_id}` responses.
+* **Hosted pay page URL**: Added `hosted_url` to `GET /pay-orders` and `GET /pay-orders/{payorder_id}` responses.
+
+### Changed
+
+* **Webhook payload coverage**: `payorder_error` and `payorder_refunded` events now include the full `payment_data` object.
+* **PayKit payment handling**: Updated the widget to consume `payment_data.steps`, support organization settings, and expose location-aware payment method options.
+* **SDK request and response models**: Added `metadata` support to `ClaimFeesRequest` and `SwapQuoteRequest`, updated order event types and `ClaimFeeResponse`, and expanded `ApiClient` to accept `Opts`.
+* **EVM prefunding flow**: Improved prefunding across CCTP, Direct, Relay, and Uniswap providers with better gas estimation, prefund calculation, and error handling.
+
+### Fixed
+
+* **Webhook subscription filtering**: Fixed webhook deliveries so they respect each subscriber's registered event types.
+* **Payment state persistence**: Improved orchestrator handling of `payment_data` so the correct exchange state is always persisted.
+* **Refund PayOrder client flow**: Fixed `createRefundPayOrder` handling in `ApiClient`.
+* **WalletConnect desktop routing**: Fixed desktop WalletConnect flows to route through the QR flow correctly.
+
+### Removed
+
+* **Deprecated PayOrder response fields**: Removed the deprecated `RequestData` / `request` field from `PayOrderResponse`.
+* **Legacy transaction hash aliases**: Removed `SourceTransactionHash` and `DestinationTransactionHash` alias fields.
+
+***
+
 ## @coin-voyage/paykit [2.0.0] - 2026-01-28
 
 ### Added
