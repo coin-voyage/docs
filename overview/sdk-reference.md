@@ -266,6 +266,16 @@ const apiClient = new ApiClient({
 
 <table><thead><tr><th width="200">Option</th><th width="120">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td>Yes</td><td>API Key of the organization, acquired in the developers tab of the <a href="https://dashboard.coinvoyage.io/developers">dashboard</a>.</td></tr><tr><td><code>environment</code></td><td>No</td><td>Environment to connect to: <code>production</code> (default) or <code>development</code>.</td></tr><tr><td><code>sessionId</code></td><td>No</td><td>Optional session identifier for request tracking.</td></tr><tr><td><code>version</code></td><td>No</td><td>Optional client version string sent via <code>X-Client-Version</code> header.</td></tr></tbody></table>
 
+**Common Request Options**
+
+Most authenticated helper methods also accept an optional `opts` argument for custom headers:
+
+```typescript
+type Opts = {
+  headers?: Record<string, string>
+}
+```
+
 ***
 
 **API Response Structure**
@@ -407,6 +417,7 @@ const { data, error } = await apiClient.createDepositPayOrder({
       * `fiat` (optional): Fiat amount with `amount` and `unit` (e.g., "USD")
     * `receiving_address` (optional): Address to fulfill the order to. If not provided, a settlement address will be selected.
   * `metadata` (optional): Additional metadata for the PayOrder
+* `opts` (optional): Additional request options such as custom headers
 
 **Returns:** `Promise<APIResponse<PayOrder>>` - The created PayOrder object wrapped in an API response.
 
@@ -478,6 +489,7 @@ const { data, error } = await apiClient.createSalePayOrder(
     * `receiving_address` (optional): Address to fulfill the order to. If not provided, a settlement address will be selected.
   * `metadata` (optional): Additional metadata for the PayOrder
 * `apiSecret` (string): API secret used to generate the authorization signature
+* `opts` (optional): Additional request options such as custom headers
 
 **Returns:** `Promise<APIResponse<PayOrder>>` - The created PayOrder object wrapped in an API response.
 
@@ -505,7 +517,7 @@ const { data: refundPayOrder, error } = await apiClient.createRefundPayOrder(
       receiving_address: "0x5678...efgh",
       amount: {
         fiat: {
-          value: 100,
+          amount: 100,
           unit: "USD",
         },
       },
@@ -532,8 +544,38 @@ const { data: refundPayOrder, error } = await apiClient.createRefundPayOrder(
   * `intent` (PayOrderIntent): The refund intent with amount
   * `metadata` (optional): Additional metadata including refund details
 * `apiSecret` (string): API secret used to generate the authorization signature
+* `opts` (optional): Additional request options such as custom headers
 
 **Returns:** `Promise<APIResponse<PayOrder>>` - Response object containing either the PayOrder data or error information.
+
+***
+
+**`createPayOrder`**
+
+Low-level helper for creating a PayOrder with an explicit `mode`. In most cases you should prefer the mode-specific helpers above, but this method is available when you want direct control over the mode and authorization signature.
+
+```tsx
+const signature = apiClient.generateAuthorizationSignature(
+  apiSecret,
+  "POST",
+  "/pay-orders"
+);
+
+const { data, error } = await apiClient.createPayOrder(
+  params,
+  PayOrderMode.SALE,
+  signature
+);
+```
+
+**Parameters:**
+
+* `params` (PayOrderParams): Parameters for the PayOrder.
+* `mode` (PayOrderMode): The PayOrder mode to create.
+* `signature` (optional): Authorization signature. Required for `SALE` and `REFUND` PayOrders.
+* `opts` (optional): Additional request options such as custom headers.
+
+**Returns:** `Promise<APIResponse<PayOrder>>` - The created PayOrder wrapped in an API response.
 
 ***
 
@@ -556,6 +598,7 @@ const { data: quote, error } = await apiClient.payOrderQuote("pay-order-id", {
   * `wallet_address`: The user's wallet address
   * `chain_type`: The blockchain type (EVM, Solana, etc.)
   * `chain_id`: The specific chain ID
+* `opts` (optional): Additional request options such as custom headers.
 
 **Returns:** `Promise<APIResponse<RouteQuote[]>>` - Response object containing available payment options or error information.
 
@@ -609,6 +652,187 @@ const { data: paymentDetails, error } = await apiClient.payOrderPaymentDetails({
 
 ***
 
+**`getFeeBalances`**
+
+Retrieves the claimable fee balances for the authenticated organization.
+
+```tsx
+const { data: balances, error } = await apiClient.getFeeBalances(apiSecret);
+```
+
+**Parameters:**
+
+* `apiSecret` (string): API secret used to generate the authorization signature.
+* `opts` (optional): Additional request options such as custom headers.
+
+**Returns:** `Promise<APIResponse<GetFeeBalancesResponse>>` - Claimable fee balances wrapped in an API response.
+
+***
+
+**`claimFees`**
+
+Claims accrued fees for the authenticated organization.
+
+```tsx
+const { data: claimResult, error } = await apiClient.claimFees(
+  claimFeesParams,
+  apiSecret
+);
+```
+
+**Parameters:**
+
+* `params` (ClaimFeesRequest): Parameters describing which fees to claim and where to send them.
+* `apiSecret` (string): API secret used to generate the authorization signature.
+* `opts` (optional): Additional request options such as custom headers.
+
+**Returns:** `Promise<APIResponse<ClaimFeesResponse>>` - Fee claim result wrapped in an API response.
+
+***
+
+**`listWebhooks`**
+
+Lists all webhooks configured for the authenticated organization.
+
+```tsx
+const { data: webhooks, error } = await apiClient.listWebhooks(apiSecret);
+```
+
+**Parameters:**
+
+* `apiSecret` (string): API secret used to generate the authorization signature.
+* `opts` (optional): Additional request options such as custom headers.
+
+**Returns:** `Promise<APIResponse<WebhookResponse[]>>` - The organization's configured webhooks.
+
+***
+
+**`createWebhook`**
+
+Creates a new webhook subscription for the authenticated organization.
+
+```tsx
+const { data: webhook, error } = await apiClient.createWebhook(
+  params,
+  apiSecret
+);
+```
+
+**Parameters:**
+
+* `params` (CreateWebhookRequest): Webhook URL and subscribed event types.
+* `apiSecret` (string): API secret used to generate the authorization signature.
+* `opts` (optional): Additional request options such as custom headers.
+
+**Returns:** `Promise<APIResponse<WebhookResponse>>` - The created webhook wrapped in an API response.
+
+***
+
+**`updateWebhook`**
+
+Updates an existing webhook subscription.
+
+```tsx
+const { data: webhook, error } = await apiClient.updateWebhook(
+  "webhook-id",
+  params,
+  apiSecret
+);
+```
+
+**Parameters:**
+
+* `webhookId` (string): The webhook to update.
+* `params` (UpdateWebhookRequest): Fields to update on the webhook.
+* `apiSecret` (string): API secret used to generate the authorization signature.
+* `opts` (optional): Additional request options such as custom headers.
+
+**Returns:** `Promise<APIResponse<WebhookResponse>>` - The updated webhook wrapped in an API response.
+
+***
+
+**`deleteWebhook`**
+
+Deletes a webhook subscription.
+
+```tsx
+const { error } = await apiClient.deleteWebhook("webhook-id", apiSecret);
+```
+
+**Parameters:**
+
+* `webhookId` (string): The webhook to delete.
+* `apiSecret` (string): API secret used to generate the authorization signature.
+* `opts` (optional): Additional request options such as custom headers.
+
+**Returns:** `Promise<APIResponse<void>>` - Empty success response or an error.
+
+***
+
+**`swapQuote`**
+
+Gets a quote for swapping between two currencies.
+
+```tsx
+const { data: quote, error } = await apiClient.swapQuote(params);
+```
+
+**Parameters:**
+
+* `params` (SwapQuoteRequest): Swap quote parameters.
+* `opts` (optional): Additional request options such as custom headers.
+
+**Returns:** `Promise<APIResponse<SwapQuoteResponse>>` - Swap quote data wrapped in an API response.
+
+***
+
+**`swapData`**
+
+Gets transaction data for executing a swap.
+
+```tsx
+const { data: swapTx, error } = await apiClient.swapData(params);
+```
+
+**Parameters:**
+
+* `params` (SwapDataRequest): Parameters required to build the swap transaction data.
+* `opts` (optional): Additional request options such as custom headers.
+
+**Returns:** `Promise<APIResponse<SwapDataResponse>>` - Executable swap transaction data wrapped in an API response.
+
+***
+
+**`subscribeOrderStatus`**
+
+Opens a WebSocket connection for real-time order status events. The client authenticates automatically with your API key when the socket opens.
+
+```tsx
+const socket = apiClient.subscribeOrderStatus();
+
+socket.onOpen(() => {
+  socket.subscribe(orderId);
+});
+
+socket.onMessage((msg) => {
+  if (msg.type === "event") {
+    console.log(msg.data);
+  }
+});
+```
+
+**Returns:** `OrderStatusSocket` - A socket helper with:
+
+* `subscribe(orderId)`: Subscribe to a single PayOrder.
+* `subscribeOrg()`: Subscribe to organization-wide events.
+* `unsubscribe(orderId?)`: Unsubscribe from one PayOrder or all subscriptions.
+* `unsubscribeOrg()`: Unsubscribe from organization-wide events.
+* `onMessage(callback)`: Listen for parsed server messages.
+* `onOpen(callback)`, `onClose(callback)`, `onError(callback)`: Attach lifecycle listeners.
+* `close()`: Close the WebSocket connection.
+
+***
+
 {% hint style="info" %}
 The current ApiClient does not expose `processPayOrder()`. PayOrder processing is automatic once funds are detected.
 
@@ -631,15 +855,31 @@ type PayOrder = {
   mode: PayOrderMode
   status: PayOrderStatus
   metadata?: PayOrderMetadata
-  deposit_tx_hash?: string
-  receiving_tx_hash?: string
-  refund_tx_hash?: string
+  settings?: PayOrderSettings
   fulfillment: FulfillmentData
   payment?: PaymentData
 }
 ```
 
-<table><thead><tr><th width="200">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>id</code></td><td><code>string</code></td><td>Unique identifier for the PayOrder.</td></tr><tr><td><code>mode</code></td><td><code>PayOrderMode</code></td><td>The mode of the PayOrder (SALE, DEPOSIT, or REFUND).</td></tr><tr><td><code>status</code></td><td><code>PayOrderStatus</code></td><td>Current status of the PayOrder.</td></tr><tr><td><code>metadata</code></td><td><code>PayOrderMetadata</code></td><td>Optional metadata attached to the order.</td></tr><tr><td><code>deposit_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of the user's deposit.</td></tr><tr><td><code>receiving_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of the final transfer to the recipient.</td></tr><tr><td><code>refund_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of the refund, if applicable.</td></tr><tr><td><code>fulfillment</code></td><td><code>FulfillmentData</code></td><td>Details about what the PayOrder will fulfill.</td></tr><tr><td><code>payment</code></td><td><code>PaymentData</code></td><td>Payment details including source, destination, and execution info.</td></tr></tbody></table>
+Key fields:
+
+* `id`: Unique identifier for the PayOrder.
+* `mode`: The PayOrder mode (`SALE`, `DEPOSIT`, or `REFUND`).
+* `status`: The current backend status for the PayOrder.
+* `metadata`: Parsed metadata attached to the order.
+* `settings`: Optional organization-level settings returned with the PayOrder response.
+* `fulfillment`: What the PayOrder is intended to fulfill.
+* `payment`: Payment-side data including quotes, transaction hashes, and step-by-step payment instructions.
+
+***
+
+**PayOrderSettings**
+
+Organization-level settings returned with PayOrder responses when configured. The exact shape depends on your organization's enabled settings. Typical examples include presentation and payment-method flags such as `hide_footer` and `card_payments`.
+
+```typescript
+type PayOrderSettings = Record<string, unknown>
+```
 
 ***
 
@@ -674,10 +914,22 @@ enum PayOrderStatus {
   COMPLETED = "COMPLETED",
   EXPIRED = "EXPIRED",
   REFUNDED = "REFUNDED",
+  PARTIAL_PAYMENT = "PARTIAL_PAYMENT",
 }
 ```
 
-<table><thead><tr><th width="250">Status</th><th>Description</th></tr></thead><tbody><tr><td><code>PENDING</code></td><td>PayOrder has been created but not yet ready for payment.</td></tr><tr><td><code>AWAITING_PAYMENT</code></td><td>PayOrder is ready and waiting for the user to send payment.</td></tr><tr><td><code>AWAITING_CONFIRMATION</code></td><td>Payment transaction detected, waiting for blockchain confirmation.</td></tr><tr><td><code>OPTIMISTIC_CONFIRMED</code></td><td>Transaction optimistically confirmed, execution can begin.</td></tr><tr><td><code>EXECUTING_ORDER</code></td><td>Payment is being processed and routed to the destination.</td></tr><tr><td><code>COMPLETED</code></td><td>PayOrder completed successfully. Funds delivered to recipient.</td></tr><tr><td><code>FAILED</code></td><td>PayOrder failed during processing.</td></tr><tr><td><code>EXPIRED</code></td><td>PayOrder expired before payment was received.</td></tr><tr><td><code>REFUNDED</code></td><td>Payment was refunded to the user's refund address.</td></tr></tbody></table>
+Status meanings:
+
+* `PENDING`: PayOrder has been created but is not yet ready for payment.
+* `AWAITING_PAYMENT`: PayOrder is ready and waiting for the user to send payment.
+* `AWAITING_CONFIRMATION`: Payment transaction detected and waiting for blockchain confirmation.
+* `OPTIMISTIC_CONFIRMED`: Transaction is optimistically confirmed and execution can begin.
+* `EXECUTING_ORDER`: Payment is being processed and routed to the destination.
+* `COMPLETED`: PayOrder completed successfully.
+* `FAILED`: PayOrder failed during processing.
+* `EXPIRED`: PayOrder expired before payment was received.
+* `REFUNDED`: Payment was refunded to the configured refund address.
+* `PARTIAL_PAYMENT`: The PayOrder received an insufficient amount and ended in a terminal partial-payment state.
 
 ***
 
@@ -802,7 +1054,7 @@ type PaymentDetails = {
 }
 ```
 
-<table><thead><tr><th width="220">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>payorder_id</code></td><td><code>string</code></td><td>The PayOrder identifier.</td></tr><tr><td><code>status</code></td><td><code>PayOrderStatus</code></td><td>Current status of the PayOrder.</td></tr><tr><td><code>data</code></td><td><code>PaymentData</code></td><td>Full payment data with source, destination, and execution details.</td></tr></tbody></table>
+<table><thead><tr><th width="220">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>payorder_id</code></td><td><code>string</code></td><td>The PayOrder identifier.</td></tr><tr><td><code>status</code></td><td><code>PayOrderStatus</code></td><td>Current status of the PayOrder.</td></tr><tr><td><code>data</code></td><td><code>PaymentData</code></td><td>Full payment data with source, destination, and payment step details.</td></tr></tbody></table>
 
 {% hint style="warning" %}
 **Deprecated fields:** The top-level fields `expires_at`, `refund_address`, `deposit_address`, `receiving_address`, `source_currency`, `source_amount`, `destination_currency`, and `destination_amount` are deprecated. Use the corresponding fields in the `data` object instead.
@@ -820,34 +1072,99 @@ type FulfillmentData = {
   fiat?: FiatCurrency
   amount: CurrencyAmount
   rate_usd?: number
-  receiving_address: string
+  receiving_address?: string
+  custom_fee_bps?: number
 }
 ```
 
-<table><thead><tr><th width="200">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>asset</code></td><td><code>Currency</code></td><td>The target asset/token to receive.</td></tr><tr><td><code>fiat</code></td><td><code>FiatCurrency</code></td><td>The fiat currency for SALE orders.</td></tr><tr><td><code>amount</code></td><td><code>CurrencyAmount</code></td><td>The amount to fulfill.</td></tr><tr><td><code>rate_usd</code></td><td><code>number</code></td><td>USD exchange rate at time of creation.</td></tr><tr><td><code>receiving_address</code></td><td><code>string</code></td><td>Address that will receive the funds.</td></tr></tbody></table>
+Key fields:
+
+* `asset`: The target asset or token to receive.
+* `fiat`: The fiat currency for `SALE` orders.
+* `amount`: The amount to fulfill.
+* `rate_usd`: USD exchange rate at time of creation.
+* `receiving_address`: Optional address that will receive the funds.
+* `custom_fee_bps`: Optional custom fee in basis points applied to the order.
 
 ***
 
 **PaymentData**
 
-Payment details including source, destination, and execution tracking.
+Payment details including source, destination, transaction hashes, and step-based payment instructions.
 
 ```typescript
 type PaymentData = {
   src: QuoteWithCurrency
   dst: CurrencyWithAmount
+
+  // Deprecated legacy fields
   deposit_address: string
   receiving_address: string
   refund_address: string
+
   source_tx_hash?: string
   destination_tx_hash?: string
   refund_tx_hash?: string
-  execution?: ExecutionStep[]
+  fee_tx_hash?: string
+
+  steps: PaymentStep[]
+
   expires_at: Date
 }
 ```
 
-<table><thead><tr><th width="220">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>src</code></td><td><code>QuoteWithCurrency</code></td><td>Source currency with quote breakdown (total, base, fees, gas).</td></tr><tr><td><code>dst</code></td><td><code>CurrencyWithAmount</code></td><td>Destination currency and amount.</td></tr><tr><td><code>deposit_address</code></td><td><code>string</code></td><td>Address where user should send payment.</td></tr><tr><td><code>receiving_address</code></td><td><code>string</code></td><td>Address that will receive the final funds.</td></tr><tr><td><code>refund_address</code></td><td><code>string</code></td><td>Address for refunds if payment fails.</td></tr><tr><td><code>source_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of the deposit.</td></tr><tr><td><code>destination_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of the final transfer.</td></tr><tr><td><code>refund_tx_hash</code></td><td><code>string</code></td><td>Transaction hash of any refund.</td></tr><tr><td><code>execution</code></td><td><code>ExecutionStep[]</code></td><td>Array of execution steps for multi-provider routing.</td></tr><tr><td><code>expires_at</code></td><td><code>Date</code></td><td>When the payment expires.</td></tr></tbody></table>
+Key fields:
+
+* `src`: Source currency with quote breakdown (`total`, `base`, `fees`, and `gas`).
+* `dst`: Destination currency and amount.
+* `deposit_address`, `receiving_address`, `refund_address`: Legacy compatibility fields retained for older integrations.
+* `source_tx_hash`, `destination_tx_hash`, `refund_tx_hash`, `fee_tx_hash`: Relevant transaction hashes when available.
+* `steps`: Canonical step-by-step payment instructions, including fiat onramp and crypto execution data.
+* `expires_at`: When the payment expires.
+
+{% hint style="warning" %}
+`deposit_address`, `receiving_address`, and `refund_address` are legacy fields. Prefer `steps` for rail-specific payment instructions and provider data.
+{% endhint %}
+
+***
+
+**PaymentStep**
+
+Represents a single payment step, such as fiat onramp, swap, or delivery.
+
+```typescript
+type PaymentStep = {
+  rail: PaymentRail
+  kind: StepKind
+  deposit_address?: string
+  data?: PaymentStepData
+}
+```
+
+Key fields:
+
+* `rail`: The payment rail used for the step, such as crypto or fiat.
+* `kind`: The type of step in the payment flow.
+* `deposit_address`: Optional address to which the user sends funds for that step.
+* `data`: Optional rail-specific payload, such as Stripe session data or chain-specific transaction data.
+
+***
+
+**PaymentStepData**
+
+Provider-specific data associated with a payment step.
+
+```typescript
+type PaymentStepData = {
+  crypto?: CryptoPaymentData
+  fiat?: FiatPaymentData
+}
+```
+
+Key fields:
+
+* `crypto`: Chain-specific transaction payloads for EVM, Bitcoin, Solana, or Sui payment steps.
+* `fiat`: Fiat-provider data such as Stripe session credentials, quote information, and destination details.
 
 ***
 
@@ -882,15 +1199,29 @@ type ExecutionStep = {
   source_tx_hash?: string | null
   destination_tx_hash?: string | null
   error?: unknown
+  cleanup_tx_hash?: Record<string, string>
+  cleanup_error?: unknown
   source_currency: CurrencyWithAmount
   destination_currency: CurrencyWithAmount
   gas_amount?: CurrencyAmount
   fee_plan?: FeePlan
+  fee_tx_hash?: string
+  fee_error?: unknown
   price_impact?: string
 }
 
 type ProviderStatus = "pending" | "executing" | "completed" | "error" | "cleaned_up"
 ```
+
+Key fields:
+
+* `provider`: The execution provider handling the step.
+* `status`: Provider-level execution status.
+* `source_currency` and `destination_currency`: Routed asset details for that execution step.
+* `gas_amount`, `fee_plan`, `fee_tx_hash`, and `fee_error`: Gas and fee-level execution metadata.
+* `cleanup_tx_hash` and `cleanup_error`: Cleanup details recorded when recovery or rollback steps run.
+
+`ExecutionStep` is provider-level execution telemetry and is distinct from `PaymentData.steps`, which describes how the user pays.
 
 ***
 
@@ -921,6 +1252,8 @@ enum WebhookEventType {
 | `ORDER_ERROR`            | `payorder_error`      | Fired when an error occurs during processing.             |
 | `ORDER_REFUNDED`         | `payorder_refunded`   | Fired when a refund is processed.                         |
 | `ORDER_EXPIRED`          | `payorder_expired`    | Fired when a PayOrder expires before payment is received. |
+
+Recent SDK versions also export dedicated typed event payloads for newer terminal outcomes, including `PayOrderPartialPaymentEvent`.
 
 For webhook configuration details, see the [Webhooks documentation](webhooks.md).
 
@@ -986,6 +1319,8 @@ The hook maps internal `PayOrderStatus` values to user-friendly `PaymentStatus` 
 * `REFUNDED` → `payment_bounced`
 * `EXPIRED` → `payment_expired`
 * `FAILED` → `payment_failed`
+
+If you need exact backend statuses such as `PARTIAL_PAYMENT`, inspect `PayOrder.status` or typed event payloads directly. `usePayStatus` intentionally collapses multiple backend states into a smaller UI-oriented status set.
 
 #### Themes & Customization
 
