@@ -29,7 +29,7 @@
   * [Introduction](dashboard/index.md#introduction)
   * [Analytics](dashboard/index.md#analytics)
   * [Transaction](dashboard/index.md#transaction)
-  * [Settlement Currency](dashboard/index.md#settlement-currency)
+  * [Settlement Currencies](dashboard/index.md#settlement-currencies)
   * [Developers](dashboard/index.md#developers)
   * [Invoices](dashboard/index.md#invoices)
 
