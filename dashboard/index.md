@@ -82,6 +82,8 @@ The [Settlement](https://dashboard.coinvoyage.io/settlement) tab lets you define
 
 {% hint style="info" %}
 * Settlement currency logic is only applied to `PayOrder`s with `mode = "SALE"`.
+* A `SALE` PayOrder without `intent.asset` requires at least one settlement currency configured here.
+* If a `SALE` PayOrder includes `intent.asset`, that PayOrder settles to the specified asset and chain instead of using the dashboard default.
 * For `mode = "DEPOSIT"`, the crypto asset is settled directly to the wallet specified in the `PayOrder` request.
 {% endhint %}
 

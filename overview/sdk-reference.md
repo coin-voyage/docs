@@ -480,11 +480,18 @@ const { error } = await apiClient.createDepositPayOrder({
 
 **`createSalePayOrder`**
 
-Creates a PayOrder with mode `SALE`. This is used for merchant sales where payment is settled to the configured settlement currency.
+Creates a PayOrder with mode `SALE`. This is used for merchant sales. If you omit `intent.asset`, CoinVoyage settles the payment to a settlement currency configured in the dashboard. If you provide `intent.asset`, the PayOrder settles to that specific asset and chain instead.
 
 {% hint style="info" %}
 This method requires an API secret for authorization. The signature is generated internally using `generateAuthorizationSignature`.
 {% endhint %}
+
+| `SALE` request shape | Settlement behavior | Requirement |
+| --- | --- | --- |
+| `intent.asset` omitted | Settles to your dashboard settlement currency | You must configure at least one settlement currency in the dashboard |
+| `intent.asset` provided | Settles to the specified asset and chain for this PayOrder | Dashboard settlement currency is optional for that PayOrder |
+
+Example using the dashboard settlement currency:
 
 ```tsx
 const apiSecret = process.env.COIN_VOYAGE_API_SECRET!;
@@ -516,13 +523,37 @@ const { data, error } = await apiClient.createSalePayOrder(
 );
 ```
 
+Example settling to a specific asset:
+
+```tsx
+const apiSecret = process.env.COIN_VOYAGE_API_SECRET!;
+
+const { data, error } = await apiClient.createSalePayOrder(
+  {
+    intent: {
+      amount: {
+        fiat: {
+          amount: 570.52,
+          unit: "USD",
+        },
+      },
+      asset: {
+        chain_id: 30000000000001,
+        address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      },
+    },
+  },
+  apiSecret
+);
+```
+
 **Parameters:**
 
 * `params` (PayOrderParams): Parameters required to create a sale PayOrder
   * `intent` (PayOrderIntent): The intent of the order
-    * `asset` (optional): Desired fulfillment asset with `chain_id` and `address` (null for native token)
+    * `asset` (optional): Desired fulfillment asset with `chain_id` and `address` (null for native token). If omitted, CoinVoyage uses your configured settlement currency for `SALE` PayOrders.
     * `amount` (IntentAmount): Amount expected to fulfill the order
-    * `receiving_address` (optional): Address to fulfill the order to. If not provided, a settlement address will be selected.
+    * `receiving_address` (optional): Address to fulfill the order to. If not provided, a settlement address will be selected for the chosen asset or settlement currency.
   * `metadata` (optional): Additional metadata for the PayOrder
 * `apiSecret` (string): API secret used to generate the authorization signature
 * `opts` (optional): Additional request options such as custom headers
@@ -931,7 +962,7 @@ enum PayOrderMode {
 }
 ```
 
-<table><thead><tr><th width="150">Value</th><th>Description</th></tr></thead><tbody><tr><td><code>SALE</code></td><td>Merchant sale where payment is settled to the configured settlement currency.</td></tr><tr><td><code>DEPOSIT</code></td><td>Direct deposit to a specified address on a target chain.</td></tr><tr><td><code>REFUND</code></td><td>Refund of a previous PayOrder (full or partial).</td></tr></tbody></table>
+<table><thead><tr><th width="150">Value</th><th>Description</th></tr></thead><tbody><tr><td><code>SALE</code></td><td>Merchant sale. If <code>intent.asset</code> is omitted, payment settles to the configured settlement currency; if provided, payment settles to the specified asset and chain.</td></tr><tr><td><code>DEPOSIT</code></td><td>Direct deposit to a specified address on a target chain.</td></tr><tr><td><code>REFUND</code></td><td>Refund of a previous PayOrder (full or partial).</td></tr></tbody></table>
 
 ***
 
@@ -1046,7 +1077,7 @@ type PayOrderIntent = {
 }
 ```
 
-<table><thead><tr><th width="200">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>asset</code></td><td><code>CurrencyBase</code></td><td>Optional desired fulfillment asset with <code>chain_id</code> and <code>address</code>.</td></tr><tr><td><code>amount</code></td><td><code>IntentAmount</code></td><td>Amount expected to fulfill the order.</td></tr><tr><td><code>receiving_address</code></td><td><code>string</code></td><td>Optional address to fulfill to. If not provided, a settlement address will be selected.</td></tr></tbody></table>
+<table><thead><tr><th width="200">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>asset</code></td><td><code>CurrencyBase</code></td><td>Optional desired fulfillment asset with <code>chain_id</code> and <code>address</code>. For <code>SALE</code> PayOrders, omit this field to use the dashboard settlement currency, or provide it to settle this PayOrder to a specific asset and chain.</td></tr><tr><td><code>amount</code></td><td><code>IntentAmount</code></td><td>Amount expected to fulfill the order.</td></tr><tr><td><code>receiving_address</code></td><td><code>string</code></td><td>Optional address to fulfill to. If not provided, a settlement address will be selected for the chosen asset or settlement currency.</td></tr></tbody></table>
 
 ***
 
