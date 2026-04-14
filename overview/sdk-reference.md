@@ -292,7 +292,7 @@ import { ApiClient } from "@coin-voyage/paykit/server";
 
 const apiClient = new ApiClient({
   apiKey: process.env.COIN_VOYAGE_API_KEY!,
-  environment: "development",
+  environment: "production",
   sessionId: "optional-session-id",
   version: "1.0.0",
 });
@@ -486,10 +486,10 @@ Creates a PayOrder with mode `SALE`. This is used for merchant sales. If you omi
 This method requires an API secret for authorization. The signature is generated internally using `generateAuthorizationSignature`.
 {% endhint %}
 
-| `SALE` request shape | Settlement behavior | Requirement |
-| --- | --- | --- |
-| `intent.asset` omitted | Settles to your dashboard settlement currency | You must configure at least one settlement currency in the dashboard |
-| `intent.asset` provided | Settles to the specified asset and chain for this PayOrder | Dashboard settlement currency is optional for that PayOrder |
+| `SALE` request shape    | Settlement behavior                                        | Requirement                                                          |
+| ----------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------- |
+| `intent.asset` omitted  | Settles to your dashboard settlement currency              | You must configure at least one settlement currency in the dashboard |
+| `intent.asset` provided | Settles to the specified asset and chain for this PayOrder | Dashboard settlement currency is optional for that PayOrder          |
 
 Example using the dashboard settlement currency:
 
