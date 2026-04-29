@@ -107,10 +107,4 @@ We're actively expanding rail coverage. Currencies in active integration:
 
 * **GBP** — Faster Payments (United Kingdom)
 * **COP** — Bre-B / domestic bank transfer (Colombia)
-* Additional APAC currencies under evaluation
-
-### Programmatic checks
-
-The currency, rail, and limit data above can also be queried at runtime so your integration stays in sync as we expand:
-
-&#x20;
+* Additional APAC currencies under evaluation&#x20;
