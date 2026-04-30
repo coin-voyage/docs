@@ -10,7 +10,7 @@
 * [How It Works](overview/how-it-works.md)
 * [Pricing & Fees](overview/pricing.md)
 * [Supported Networks](overview/supported-networks.md)
-* [Supported regions & currencies](overview/supported-regions-and-currencies.md)
+* [Supported Regions & Currencies](overview/supported-regions-and-currencies.md)
 * [SDK reference](overview/sdk-reference.md)
   * [PayKitProvider](overview/sdk-reference.md#paykitprovider)
   * [WalletProvider](overview/sdk-reference.md#walletprovider)
