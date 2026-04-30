@@ -19,7 +19,7 @@ layout:
 
 # Supported regions & currencies
 
-### Supported regions & currencies
+### Supported Regions & Currencies
 
 &#x20;
 
