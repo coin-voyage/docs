@@ -1,5 +1,6 @@
 ---
-description: Migrate from v1 to v2
+title: "Migration guide: upgrading CoinVoyage v1 to v2"
+description: Step-by-step instructions for migrating an existing CoinVoyage integration from v1 to v2, covering SDK changes, API updates, and breaking changes.
 layout:
   width: default
   title:

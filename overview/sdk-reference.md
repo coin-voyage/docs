@@ -1,5 +1,6 @@
 ---
-description: Production-ready SDK for CoinVoyage integration.
+title: PayKit SDK reference for CoinVoyage React integrations
+description: "Reference for the @coin-voyage/paykit SDK: installation, providers, hooks, and UI components for embedding crypto checkout in your React app."
 ---
 
 # SDK Reference

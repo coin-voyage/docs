@@ -1,5 +1,6 @@
 ---
-description: A list of all networks supported by CoinVoyage
+title: Supported blockchain networks and chain IDs
+description: Browse the chains CoinVoyage supports for crypto payments, including Bitcoin, Solana, Ethereum, Base, Arbitrum, Polygon, BSC, Sui, and more.
 layout:
   width: default
   title:

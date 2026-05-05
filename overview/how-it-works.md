@@ -1,5 +1,6 @@
 ---
-description: Understanding the CoinVoyage payment flow
+title: How CoinVoyage routes and settles cross-chain payments
+description: Understand the PayOrder lifecycle, how CoinVoyage routes deposits, sales, and refunds across chains, and how funds settle to your wallet.
 layout:
   width: default
   title:

@@ -1,5 +1,6 @@
 ---
-description: Explore CoinVoyage pricing options and transaction fees
+title: CoinVoyage pricing, transaction fees, and offramp costs
+description: "Review CoinVoyage pricing: a 1.5% transaction fee, 0% fiat offramp fee, volume-based discounts, and flexible plans for crypto payment integrations."
 layout:
   width: default
   title:

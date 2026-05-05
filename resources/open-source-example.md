@@ -1,4 +1,6 @@
 ---
+title: Open source CoinVoyage integration examples on GitHub
+description: Browse the public coin-voyage/examples repository and live demo site to bootstrap your own deposit and sale integrations with reusable code.
 layout:
   width: default
   title:
