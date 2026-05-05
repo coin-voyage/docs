@@ -1,5 +1,6 @@
 ---
-description: Connect with the CoinVoyage community and get help
+title: Get help with your CoinVoyage integration
+description: Reach the CoinVoyage team for technical questions, file issues against the public examples repository, and find official GitHub resources.
 layout:
   width: default
   title:

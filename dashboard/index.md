@@ -1,5 +1,6 @@
 ---
-description: The hub for managing your organization, viewing payments and more.
+title: CoinVoyage dashboard overview for managing payments
+description: Use the CoinVoyage dashboard to monitor payments, configure settlement, manage API keys, set up webhooks, issue refunds, and withdraw to fiat.
 layout:
   width: default
   title:

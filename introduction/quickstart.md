@@ -1,4 +1,6 @@
 ---
+title: "Quickstart: install the CoinVoyage PayKit SDK"
+description: Install @coin-voyage/paykit, configure your API key, and add a working CoinVoyage payment button to your React app in just a few minutes.
 layout:
   width: default
   title:

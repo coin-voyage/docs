@@ -1,4 +1,6 @@
 ---
+title: "CoinVoyage changelog: SDK, API, and platform updates"
+description: Release notes for @coin-voyage/paykit, the CoinVoyage API, and platform changes, listed by version with new features, fixes, and breaking changes.
 layout:
   width: default
   title:

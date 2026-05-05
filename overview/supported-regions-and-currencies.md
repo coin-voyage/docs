@@ -1,4 +1,6 @@
 ---
+title: Supported fiat currencies, regions, and offramp rails
+description: See which fiat currencies and regions CoinVoyage supports for offramp settlement, including USD ACH and wire, EUR SEPA, BRL Pix, and MXN SPEI.
 layout:
   width: default
   title:

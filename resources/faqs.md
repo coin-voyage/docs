@@ -1,4 +1,6 @@
 ---
+title: Frequently asked questions about CoinVoyage payments
+description: Answers to common CoinVoyage questions on testing, API keys, signing requests, deposit vs. sale flows, and integrating crypto payments end to end.
 layout:
   width: default
   title:

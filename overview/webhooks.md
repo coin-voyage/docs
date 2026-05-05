@@ -1,5 +1,6 @@
 ---
-description: Webhooks for real-time PayOrder updates and event delivery.
+title: Webhooks for real-time PayOrder event notifications
+description: Configure webhook endpoints to receive real-time PayOrder lifecycle events from CoinVoyage, including signed payloads, retries, and event types.
 ---
 
 # Webhooks

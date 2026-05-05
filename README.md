@@ -1,7 +1,7 @@
 ---
-title: Introduction
+title: Accept crypto payments and settle on your terms
 sidebarTitle: Introduction
-description: Accept crypto payments from supported chains and settle in the asset and network that fit your product.
+description: CoinVoyage lets you accept crypto from any supported chain and settle in the asset and network that fit your ecommerce or payments product.
 layout:
   width: wide
   title:
