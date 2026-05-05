@@ -161,7 +161,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           },
         }}
       >
-        <PayKitProvider {...}>
+        <PayKitProvider apiKey={process.env.NEXT_PUBLIC_COIN_VOYAGE_API_KEY!}>
           {children}
         </PayKitProvider>
       </WalletProvider>
@@ -374,7 +374,7 @@ type Opts = {
 All ApiClient methods return responses wrapped in an `APIResponse&lt;T&gt;` object that provides consistent error handling:
 
 ```tsx
-interface APIResponse&lt;T&gt; {
+interface APIResponse<T> {
   data?: T
   error?: {
     path: string

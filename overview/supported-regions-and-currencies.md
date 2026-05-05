@@ -75,13 +75,7 @@ CoinVoyage onboards individuals and businesses globally, with the exceptions lis
 
 We are unable to onboard customers resident or registered in:
 
-<details>
-
-<summary>Sanctioned jurisdictions</summary>
-
 Afghanistan, Belarus, Cuba, Democratic Republic of the Congo, Gaza Strip, Iran, Iraq, Lebanon, Libya, Myanmar, North Korea, Russian Federation, Somalia, South Sudan, Sudan, Syria, Ukrainian Territories (Crimea, Donetsk, Luhansk), Venezuela, West Bank, Yemen.
-
-</details>
 
 #### KYC & compliance
 

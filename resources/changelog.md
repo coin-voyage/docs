@@ -39,9 +39,9 @@ Entries below are ordered by release date, newest first. `2.0.0` marks the v2 mi
 
 * **Stripe onramp integration**: Added full Stripe fiat-to-crypto onramp support, including geo-blocking.
 * **Payment steps model**: Added `PaymentSteps` to track granular payment progress such as onramp, swap, and delivery.
-* **Payment methods endpoint**: Added `GET /pay-orders/{payorder_id}/payment-methods` to fetch available payment methods for a PayOrder.
-* **Organization settings in PayOrder responses**: Added an `Organization.settings` JSON field and now return `settings` in `GET /pay-orders` and `GET /pay-orders/{payorder_id}` responses.
-* **Hosted pay page URL**: Added `hosted_url` to `GET /pay-orders` and `GET /pay-orders/{payorder_id}` responses.
+* **Payment methods endpoint**: Added `GET /pay-orders/:payorder_id/payment-methods` to fetch available payment methods for a PayOrder.
+* **Organization settings in PayOrder responses**: Added an `Organization.settings` JSON field and now return `settings` in `GET /pay-orders` and `GET /pay-orders/:payorder_id` responses.
+* **Hosted pay page URL**: Added `hosted_url` to `GET /pay-orders` and `GET /pay-orders/:payorder_id` responses.
 
 ### Changed
 
@@ -85,7 +85,7 @@ Entries below are ordered by release date, newest first. `2.0.0` marks the v2 mi
 
 ### Removed
 
-* **Process endpoint**: `/pay-orders/{payorder_id}/process` was removed. Payment processing now happens automatically when funds are detected.
+* **Process endpoint**: `/pay-orders/:payorder_id/process` was removed. Payment processing now happens automatically when funds are detected.
 
 ### Deprecated
 
@@ -112,7 +112,7 @@ See the [Migration Guide](migration-v1-to-v2.md) for detailed upgrade instructio
 
 ### Changed
 
-* **ApiClient responses**: All ApiClient methods now return `APIResponse<T>` for a more consistent response shape.
+* **ApiClient responses**: All ApiClient methods now return `APIResponse&lt;T&gt;` for a more consistent response shape.
 
 ***
 
