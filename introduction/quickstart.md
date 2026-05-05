@@ -56,7 +56,7 @@ Then go to **Developers** and create an API key for that organization. For clien
 > [!NOTE]
 Keep your API secret on the server. Only the public API key belongs in client-side code.
 
-![CoinVoyage dashboard - Developers](../.gitbook/assets/developers-api-keys (1).png)
+![CoinVoyage dashboard - Developers](../.gitbook/assets/developers-api-keys%20%281%29.png)
 
 ## 3. Add the Providers
 

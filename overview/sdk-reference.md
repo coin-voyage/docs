@@ -5,7 +5,7 @@ description: "Reference for the @coin-voyage/paykit SDK: installation, providers
 
 # SDK Reference
 
-The [`@coin-voyage/paykit`](https://www.npmjs.com/package/@coin-voyage/paykit) SDK offers client-side and server-side functionality that abstracts the integration of the API, while also exporting UI components. This SDK reduce the amount of boilerplate code you need and lets you easily integrate payment and deposit flow into your web application.
+The [`@coin-voyage/paykit`](https://www.npmjs.com/package/@coin-voyage/paykit) SDK offers client-side and server-side functionality that abstracts the integration of the API, while also exporting UI components. This SDK reduces the amount of boilerplate code you need and lets you easily integrate payment and deposit flow into your web application.
 
 ***
 
@@ -191,7 +191,7 @@ UI component you can add to your application. The button comes in multiple theme
 
 Clicking the button opens a modal that allows the user to select a payment methods in order to complete the pay order.
 
-![Pay Button](../.gitbook/assets/pay_button (1).png)
+![Pay Button](../.gitbook/assets/pay_button%20%281%29.png)
 
 ```tsx
 <PayButton
