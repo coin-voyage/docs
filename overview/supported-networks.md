@@ -19,9 +19,7 @@ layout:
 
 # Supported Networks
 
-### Supported Networks
-
-#### Chain Support
+### Chain Support
 
 CoinVoyage is constantly expanding network support. If you need support for a network not listed here, please [contact our team](mailto:help@coinvoyage.io).
 

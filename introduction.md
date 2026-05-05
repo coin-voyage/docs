@@ -1,5 +1,5 @@
 ---
-title: "introduction"
+title: "Introduction"
 ---
 
 CoinVoyage lets you accept crypto payments from supported chains and settle them in the asset and network that fit your product.
