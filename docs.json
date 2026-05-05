@@ -1,0 +1,155 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "CoinVoyage",
+  "description": "CoinVoyage enables seamless crypto payments into your app from any supported chain and coin.",
+  "theme": "luma",
+  "logo": {
+    "light": "https://media.brand.dev/f2f0fc75-17b5-4a79-8e7d-f114475b8678.svg",
+    "dark": "https://media.brand.dev/f2f0fc75-17b5-4a79-8e7d-f114475b8678.svg"
+  },
+  "favicon": "https://media.brand.dev/0347e3d6-865e-439f-8864-bd815f892f46.jpg",
+  "colors": {
+    "primary": "#d6296f",
+    "light": "#e688bd",
+    "dark": "#fc1777"
+  },
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/coin-voyage"
+    },
+    "links": [
+      {
+        "label": "X",
+        "href": "https://x.com/Coin_Voyage",
+        "icon": "twitter"
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/Coin_Voyage"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/how-it-works",
+              "concepts/pay-orders",
+              "concepts/supported-networks",
+              "concepts/supported-regions"
+            ]
+          },
+          {
+            "group": "SDK",
+            "pages": [
+              "sdk/overview",
+              "sdk/paykitprovider",
+              "sdk/walletprovider",
+              "sdk/paybutton",
+              "sdk/apiclient"
+            ]
+          },
+          {
+            "group": "Webhooks",
+            "pages": [
+              "webhooks/overview",
+              "webhooks/events"
+            ]
+          },
+          {
+            "group": "Dashboard",
+            "pages": [
+              "dashboard/overview",
+              "dashboard/transactions",
+              "dashboard/settlement",
+              "dashboard/invoices",
+              "dashboard/developers"
+            ]
+          },
+          {
+            "group": "Resources",
+            "pages": [
+              "resources/pricing",
+              "resources/changelog",
+              "resources/faqs",
+              "resources/support"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "icon": "square-terminal",
+        "groups": [
+          {
+            "group": "PayOrder",
+            "openapi": "/openapi.json",
+            "pages": [
+              "GET /pay-orders",
+              "POST /pay-orders",
+              "GET /pay-orders/{payorder_id}",
+              "POST /pay-orders/{payorder_id}/payment-details",
+              "GET /pay-orders/{payorder_id}/payment-methods",
+              "POST /pay-orders/{payorder_id}/quote",
+              "POST /pay-orders/{payorder_id}/refund"
+            ]
+          },
+          {
+            "group": "Swap",
+            "openapi": "/openapi.json",
+            "pages": [
+              "POST /swap/data",
+              "POST /swap/quote"
+            ]
+          },
+          {
+            "group": "Fees",
+            "openapi": "/openapi.json",
+            "pages": [
+              "GET /fees/balance",
+              "POST /fees/claim"
+            ]
+          },
+          {
+            "group": "KYC",
+            "openapi": "/openapi.json",
+            "pages": [
+              "GET /kyc",
+              "POST /kyc"
+            ]
+          },
+          {
+            "group": "Webhook",
+            "openapi": "/openapi.json",
+            "pages": [
+              "GET /webhooks",
+              "POST /webhooks",
+              "DELETE /webhooks/{webhook_id}",
+              "PUT /webhooks/{webhook_id}"
+            ]
+          },
+          {
+            "group": "Websocket",
+            "openapi": "/openapi.json",
+            "pages": [
+              "GET /ws"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

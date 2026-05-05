@@ -1,0 +1,87 @@
+---
+title: "Transactions: Search, Inspect, and Refund Payments"
+description: "Use the Transactions tab to search and filter payments, view full on-chain details, and initiate full or partial refunds directly from the dashboard."
+layout:
+  width: default
+  title:
+    visible: false
+  description:
+    visible: false
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
+  tags:
+    visible: true
+---
+
+The [Transactions tab](https://dashboard.coinvoyage.io/transactions) logs every crypto payment and settlement event processed through CoinVoyage. You can use it to monitor payment flow, debug failed or pending payments, confirm on-chain settlements, and issue refunds — all from a single interface.
+
+## Searching and filtering transactions
+
+The Transactions tab provides search and filter controls to help you isolate specific orders or payment events.
+
+- Use the **search bar** to look up transactions by order ID, wallet address, or other identifiers.
+- Apply **filters** to narrow results by status, date range, chain, or token.
+- The **analytics summary** at the top of the page gives you a snapshot of volume and activity trends across your filtered view.
+
+## Viewing transaction details
+
+Click any row in the transactions table to open the full detail page for that payment.
+
+The detail view includes:
+
+- **On-chain metadata** — The transaction hash, originating chain, token, and amount.
+- **Status** — Whether the payment is pending, complete, or failed.
+- **Associated hashes** — Links to on-chain records for the payment and any related settlement or swap transactions.
+
+Use this view to confirm that a specific payment settled correctly or to investigate unexpected statuses.
+
+## Initiating refunds
+
+You can issue a refund from any completed transaction's detail view. Refunds are executed as new on-chain transactions and are linked back to the original payment.
+
+<Note>
+  Refunds are recorded as child transactions under the original payment. They appear in the **Refund Transactions** section of the transaction detail page once submitted.
+</Note>
+
+### How to create a refund
+
+<Steps>
+  <Step title="Open the transaction detail">
+    From the Transactions tab, click the row for the completed payment you want to refund.
+  </Step>
+  <Step title="Click Refund">
+    In the transaction detail view, click the **Refund** button to open the refund modal.
+  </Step>
+  <Step title="Fill in the refund fields">
+    Complete the required fields in the modal:
+
+    - **`refund_amount`** — The amount to refund. Supports both full and partial refunds in the settlement currency.
+    - **`refund_reason`** — A required string explaining why the refund is being issued.
+    - **`note`** — An optional field for any additional context you want to record.
+    - **`recipient_address`** — The wallet address that will receive the refunded funds.
+  </Step>
+  <Step title="Proceed through the CoinVoyage widget">
+    Click **Proceed**. The CoinVoyage widget opens so you can select the currency for the refund and confirm the on-chain transaction.
+  </Step>
+</Steps>
+
+Once sent, refund status updates in real time within the dashboard. All refund transactions appear under the **Refund Transactions** section of the original payment's detail page.
+
+<Info>
+  Refunds are executed as a new on-chain transfer. They are not reversed charges — the refunded amount is sent directly to the recipient address you specify.
+</Info>
+
+### Full vs. partial refunds
+
+- **Full refund** — Set `refund_amount` to the total settled amount of the original payment.
+- **Partial refund** — Set `refund_amount` to any amount less than the original settlement amount. You can issue multiple partial refunds against the same payment, up to the original total.
+
+<Warning>
+  Once a refund transaction is confirmed on-chain, it cannot be reversed. Double-check the `recipient_address` and `refund_amount` before confirming.
+</Warning>

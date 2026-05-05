@@ -1,0 +1,267 @@
+---
+title: "PayOrders: DEPOSIT, SALE, REFUND modes and statuses"
+description: "Understand the PayOrder object at the center of every CoinVoyage payment — its three modes, full status lifecycle, and how to attach metadata."
+layout:
+  width: default
+  title:
+    visible: false
+  description:
+    visible: false
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
+  tags:
+    visible: true
+---
+
+A PayOrder is the core unit of work in CoinVoyage. Every payment — whether a user depositing funds to a wallet, a merchant collecting a sale, or a merchant issuing a refund — is represented as a PayOrder. You create one before showing the payment UI, and CoinVoyage updates it as the payment moves through detection, confirmation, execution, and settlement. Understanding the PayOrder object helps you handle each stage correctly in your integration.
+
+## PayOrder modes
+
+CoinVoyage supports three PayOrder modes. You choose the mode when you create the order, and it determines how settlement is handled.
+
+<Tabs>
+  <Tab title="DEPOSIT">
+    A `DEPOSIT` PayOrder moves funds directly to a wallet address you specify on a target chain. Use this when a user is topping up a wallet, funding an account, or making a transfer where you control the destination address.
+
+    You specify `toChain`, `toAddress`, and either `toAmount` (token units) or a fiat equivalent. CoinVoyage handles conversion from whatever the user pays with.
+
+    ```typescript
+    import { ApiClient, ChainId } from "@coin-voyage/paykit/server";
+
+    const { data, error } = await apiClient.createDepositPayOrder({
+      intent: {
+        asset: {
+          chain_id: ChainId.SUI,
+          address: null, // null = native token (SUI)
+        },
+        amount: {
+          token_amount: 10, // 10 SUI
+        },
+        receiving_address: "0xYourReceivingAddressHere",
+      },
+      metadata: {
+        items: [{ name: "Wallet top-up" }],
+      },
+    });
+    ```
+
+    <Note>
+      `DEPOSIT` PayOrders do not require an API secret for authorization. You can create them from client-side or server-side code using only your API key.
+    </Note>
+  </Tab>
+
+  <Tab title="SALE">
+    A `SALE` PayOrder represents a merchant collecting payment for goods or services. Settlement goes to your organization's configured settlement currency (set in the dashboard), or to a specific asset and chain if you provide `intent.asset`.
+
+    `SALE` orders require an API secret for authorization and must be created server-side.
+
+    ```typescript
+    const apiSecret = process.env.COIN_VOYAGE_API_SECRET!;
+
+    // Settle to your dashboard settlement currency
+    const { data, error } = await apiClient.createSalePayOrder(
+      {
+        intent: {
+          amount: {
+            fiat: {
+              amount: 200,
+              unit: "USD",
+            },
+          },
+        },
+        metadata: {
+          items: [
+            {
+              name: "t-shirt",
+              description: "A nice t-shirt",
+              image: "https://example.com/tshirt.jpg",
+              quantity: 1,
+              unit_price: 200,
+              currency: "USD",
+            },
+          ],
+        },
+      },
+      apiSecret
+    );
+    ```
+
+    If you want this specific PayOrder to settle to a particular on-chain asset instead of your dashboard default, include `intent.asset`:
+
+    ```typescript
+    const { data, error } = await apiClient.createSalePayOrder(
+      {
+        intent: {
+          amount: {
+            fiat: { amount: 570.52, unit: "USD" },
+          },
+          asset: {
+            chain_id: 30000000000001, // Solana
+            address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC on Solana
+          },
+        },
+      },
+      apiSecret
+    );
+    ```
+
+    <Warning>
+      Never call `createSalePayOrder` from the browser. The method signs the request with your API secret, which must remain confidential and server-side only.
+    </Warning>
+  </Tab>
+
+  <Tab title="REFUND">
+    A `REFUND` PayOrder sends funds back to a user for a previous payment — either a full refund or a partial one. You reference the original PayOrder ID and specify the amount and destination asset.
+
+    Like `SALE`, refunds require an API secret and must be created server-side.
+
+    ```typescript
+    const apiSecret = process.env.COIN_VOYAGE_API_SECRET!;
+
+    const { data: refundPayOrder, error } = await apiClient.createRefundPayOrder(
+      "original-payorder-id",
+      {
+        intent: {
+          asset: {
+            chain_id: 1, // Ethereum
+            address: null, // native ETH
+          },
+          receiving_address: "0x5678...efgh",
+          amount: {
+            fiat: {
+              amount: 100,
+              unit: "USD",
+            },
+          },
+        },
+        metadata: {
+          items: [
+            {
+              name: "refund",
+              description: "Refund for t-shirt purchase",
+              unit_price: 100,
+              currency: "USD",
+            },
+          ],
+          refund: {
+            reason: "Item out of stock",
+            refund_amount: 100,
+            currency: "USD",
+          },
+        },
+      },
+      apiSecret
+    );
+    ```
+  </Tab>
+</Tabs>
+
+## PayOrder statuses
+
+A PayOrder moves through a series of statuses as the payment progresses. Your webhook handler and any polling logic should account for each of these states.
+
+| Status | Description |
+|---|---|
+| `PENDING` | The PayOrder has been created but is not yet ready for payment. |
+| `AWAITING_PAYMENT` | The PayOrder is ready. CoinVoyage is waiting for the user to send funds. |
+| `AWAITING_CONFIRMATION` | A payment transaction has been detected on-chain and is pending confirmation. |
+| `OPTIMISTIC_CONFIRMED` | The transaction is optimistically confirmed; execution can begin before full finality. |
+| `EXECUTING_ORDER` | Payment is confirmed and CoinVoyage is routing funds through the provider chain. |
+| `COMPLETED` | Funds have arrived at the destination. The PayOrder is complete. |
+| `EXPIRED` | The payment window elapsed before the user sent funds. |
+| `REFUNDED` | Execution failed and funds were automatically returned to the user's refund address. |
+| `FAILED` | The PayOrder encountered an unrecoverable error during processing. |
+| `PARTIAL_PAYMENT` | The user sent less than the required amount; the order is in a terminal partial-payment state. |
+
+<Info>
+  Webhook subscription event types use uppercase `ORDER_*` identifiers (e.g., `ORDER_COMPLETED`), but the JSON `type` field in the delivered payload uses lowercase `payorder_*` values (e.g., `payorder_completed`).
+</Info>
+
+The typical happy-path progression is:
+
+```
+PENDING → AWAITING_PAYMENT → AWAITING_CONFIRMATION → OPTIMISTIC_CONFIRMED → EXECUTING_ORDER → COMPLETED
+```
+
+Failure paths branch to `EXPIRED`, `REFUNDED`, `FAILED`, or `PARTIAL_PAYMENT` depending on where the problem occurs.
+
+## PayOrder metadata
+
+You can attach structured metadata to any PayOrder when you create it. Metadata is visible in the dashboard and included in webhook payloads, making it useful for reconciliation, analytics, and displaying order context to the user.
+
+```typescript
+type PayOrderMetadata = {
+  items?: Array<{
+    name: string
+    description?: string
+    image?: string
+    quantity?: number
+    unit_price?: number
+    currency?: string
+  }>
+  refund?: {
+    name?: string
+    reason?: string
+    additional_info?: string
+    refund_amount?: number
+    currency?: string
+  }
+  // Up to 20 additional custom string fields
+  [key: string]: any
+}
+```
+
+### Items
+
+Use the `items` array to describe what the user is paying for. Each item can include a name, description, image URL, quantity, and unit price. This data surfaces in the payment modal and in dashboard order views.
+
+```typescript
+metadata: {
+  items: [
+    {
+      name: "Annual subscription",
+      description: "Pro plan — 12 months",
+      quantity: 1,
+      unit_price: 199,
+      currency: "USD",
+    },
+  ],
+}
+```
+
+### Refund details
+
+For `REFUND` PayOrders, populate the `refund` object to record the reason and amount being refunded:
+
+```typescript
+metadata: {
+  refund: {
+    reason: "Item damaged in shipping",
+    refund_amount: 49.99,
+    currency: "USD",
+  },
+}
+```
+
+### Custom fields
+
+You can add up to 20 additional top-level string fields to carry your own data — customer IDs, order references, campaign tags, or anything else useful for your backend. Each value must be a string with a maximum of 500 characters.
+
+```typescript
+metadata: {
+  items: [{ name: "Premium plan" }],
+  customer_id: "cust_12345",
+  order_reference: "ORD-2024-001",
+  campaign: "summer_sale",
+}
+```
+
+<Tip>
+  Custom metadata fields are indexed and searchable in the CoinVoyage dashboard, making them a reliable way to link CoinVoyage PayOrders back to records in your own system.
+</Tip>

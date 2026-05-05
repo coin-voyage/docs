@@ -1,0 +1,64 @@
+---
+title: "Invoices: Send Crypto Payment Requests to Customers"
+description: "Create and send crypto invoices directly from the CoinVoyage Dashboard. Customers pay via a link; you receive settlement in your preferred currency."
+layout:
+  width: default
+  title:
+    visible: false
+  description:
+    visible: false
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
+  tags:
+    visible: true
+---
+
+CoinVoyage invoices let you generate crypto payment requests directly from the dashboard and deliver them to customers by email. Your customer receives a link to pay in their preferred cryptocurrency, and you receive settlement in the asset and chain you have configured — no custom integration code required.
+
+## Before you start
+
+You need to configure your **organization profile** in the dashboard before you can create invoices. The organization profile supplies the sender details shown on the invoice and payment email your customer receives.
+
+<Info>
+  Set up your organization profile under **Organization Settings** before creating your first invoice.
+</Info>
+
+## Creating an invoice
+
+<Steps>
+  <Step title="Open the Invoices section">
+    Navigate to the Invoices section in your [CoinVoyage Dashboard](https://dashboard.coinvoyage.io/) and click **Create Invoice**.
+  </Step>
+  <Step title="Enter the invoice details">
+    Fill in the required fields:
+
+    - **Amount** — The payment amount you are requesting.
+    - **Currency** — The currency denomination for the invoice amount.
+    - **Customer details** — The recipient's name and email address.
+    - **Description** — A description of the goods or services being invoiced.
+    - **Due date** — Optionally set a date by which payment is expected.
+  </Step>
+  <Step title="Send the invoice">
+    Review the invoice and click **Send**. CoinVoyage emails the invoice to your customer with a payment link included.
+  </Step>
+</Steps>
+
+## How the customer pays
+
+Your customer receives an email containing the invoice details and a payment link. When they click the link, they are taken to a CoinVoyage-hosted payment page where they can complete the transaction using any supported cryptocurrency.
+
+The payment experience is the same widget your customers may already know from your checkout — they connect their wallet, select the token they want to pay with, and confirm the transaction on-chain.
+
+## How you receive settlement
+
+Once your customer completes the payment, CoinVoyage settles the funds to you in your preferred currency and chain, as configured in your [Settlement settings](/dashboard/settlement). You do not need to handle conversion or routing manually.
+
+<Tip>
+  Make sure you have at least one settlement currency configured before sending invoices so payments route correctly to your wallet.
+</Tip>

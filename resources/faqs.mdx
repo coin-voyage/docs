@@ -1,0 +1,91 @@
+---
+title: "CoinVoyage integration FAQ: auth, testing, and flows"
+description: "Common questions about testing, authentication, Deposit vs Sale flows, authorization signatures, and viewing transaction history in CoinVoyage."
+layout:
+  width: default
+  title:
+    visible: false
+  description:
+    visible: false
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
+  tags:
+    visible: true
+---
+
+These are the most common questions developers ask when integrating CoinVoyage. If you don't find your answer here, email [help@coinvoyage.io](mailto:help@coinvoyage.io).
+
+<AccordionGroup>
+  <Accordion title="How do I test CoinVoyage payments before going live?">
+    You can test both the **Deposit** and **Sale** flows using the [CoinVoyage example site](https://example.coinvoyage.io/).
+
+    Create an account in the [CoinVoyage Dashboard](https://dashboard.coinvoyage.io/), copy your **API Key** and **API Secret**, and add them to the example site. This connects the demo flow directly to your organization so you can verify the end-to-end payment experience before integrating into your own application.
+  </Accordion>
+
+  <Accordion title="Where do I find my API Key and Secret?">
+    Your API Key and Secret are available in the [CoinVoyage Dashboard](https://dashboard.coinvoyage.io/):
+
+    1. Navigate to **Developer** → **API Keys**
+    2. Create a new key
+    3. Store both the **API Key** and **Secret** securely
+
+    <Warning>
+      Your API Secret is shown only once at creation time. Store it in a secure secrets manager immediately. If you lose it, you will need to rotate the key.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="What's the difference between a Deposit and a Sale?">
+    These two payment flows serve different use cases:
+
+    **Deposit** — The user sends funds to a wallet address they control. For example, a user can fund their Sui wallet with native SUI while paying with USDC on mainnet. No server-side authorization is required.
+
+    **Sale** — A merchant or organization creates an order for the user to fulfill. The user's funds are routed to the configured [settlement wallet](https://dashboard.coinvoyage.io/settlement). This mode requires a server-side **Authorization** signature generated from your API Secret, and the signature must be created on your backend — never in client-side code.
+  </Accordion>
+
+  <Accordion title="How do I generate the Authorization signature?">
+    The Authorization signature is an HMAC-SHA256 hash computed over `method + path + timestamp`. The `method` and `path` must match the request exactly.
+
+    **Using the CoinVoyage PayKit SDK:**
+
+    ```typescript
+    const signature = apiClient.generateAuthorizationSignature(
+      process.env.COIN_VOYAGE_API_SECRET!,
+      "POST",
+      "/pay-orders"
+    );
+    ```
+
+    **Manual implementation:**
+
+    ```typescript
+    import { createHmac } from "crypto";
+
+    function generateAuthorizationSignature(
+      apiKey: string,
+      apiSecret: string,
+      method: string,
+      path: string
+    ): string {
+      const timestamp = Math.floor(Date.now() / 1000).toString();
+      const data = `${method}${path}${timestamp}`;
+      const signature = createHmac("sha256", apiSecret).update(data).digest("hex");
+
+      return `APIKey=${apiKey},signature=${signature},timestamp=${timestamp}`;
+    }
+    ```
+
+    <Warning>
+      Run this function only on the server. Never expose your API Secret in client-side code or commit it to source control.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Where can I view transaction history?">
+    A transaction overview and detailed transaction pages are available in the [CoinVoyage Dashboard](https://dashboard.coinvoyage.io/) under **Transactions**. You can filter by status, date range, and payment method from that view.
+  </Accordion>
+</AccordionGroup>

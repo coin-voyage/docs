@@ -1,0 +1,225 @@
+---
+title: "PayButton — ready-made crypto payment UI component"
+description: "Render a pre-styled payment button that opens a CoinVoyage modal for wallet selection, transaction signing, and real-time status tracking."
+layout:
+  width: default
+  title:
+    visible: false
+  description:
+    visible: false
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
+  tags:
+    visible: true
+---
+
+`PayButton` is a ready-made React component that renders a themed button and manages the full payment modal experience. When a user clicks it, a modal opens that lets them select a payment method, connect their wallet, and sign the transaction. The button handles quote fetching, transaction submission, and status polling internally — your application only needs to supply the payment parameters and react to the lifecycle callbacks.
+
+## Full example
+
+```tsx
+import { PayButton } from "@coin-voyage/paykit";
+import { ChainId } from "@coin-voyage/paykit/server";
+
+<PayButton
+  intent="Deposit"
+  toAddress="0xYourWalletToDepositInto"
+  toAmount={100}
+  toChain={ChainId.ETH}
+  toToken="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" // USDC
+
+  mode="auto"
+  style={{
+    backgroundColor: "#CF276B",
+    color: "white",
+  }}
+
+  onOpen={() => {
+    console.log("Modal Opened");
+  }}
+  onClose={() => {
+    console.log("Modal Closed");
+  }}
+  closeOnSuccess={true}
+
+  onPaymentCreationError={(event) => {
+    console.log(event.errorMessage);
+  }}
+  onPaymentStarted={() => {
+    console.log("Payment Started");
+  }}
+  onPaymentCompleted={() => {
+    console.log("Payment Complete");
+  }}
+  onPaymentBounced={() => {
+    console.error("Payment Bounced");
+  }}
+/>
+```
+
+<Warning>
+  **Required parameters:** You must provide either `payId` **or** all three of `toAddress`, `toChain`, and `toAmount`. Mixing both approaches in the same button is not supported.
+
+  - Use `payId` for server-generated `SALE` pay orders created via `ApiClient.createSalePayOrder`.
+  - Use `toAddress` + `toChain` + `toAmount` for client-side deposit flows.
+</Warning>
+
+## Props reference
+
+### Payment target
+
+<ParamField path="payId" type="string">
+  A pay order ID previously created on the server via the `ApiClient`. Use this for `SALE` pay orders or any flow where the server controls order creation. When `payId` is set, omit `toAddress`, `toChain`, and `toAmount`.
+</ParamField>
+
+<ParamField path="toChain" type="ChainId">
+  The destination chain ID to deposit to. Required when not using `payId`.
+</ParamField>
+
+<ParamField path="toToken" type="string">
+  The contract address of the destination token (ERC-20, SPL, or equivalent). Omit this prop (or pass `undefined`) to receive the chain's native token (ETH, SOL, SUI, etc.).
+</ParamField>
+
+<ParamField path="toAmount" type="number">
+  The amount of the destination token the recipient should receive, in human-readable format (e.g., `100` for 100 USDC). Required when not using `payId`.
+</ParamField>
+
+<ParamField path="toAddress" type="string">
+  The recipient address on the `toChain`. Must be a valid address for the destination chain. Required when not using `payId`.
+</ParamField>
+
+<ParamField path="metadata" type="PayOrderMetadata">
+  Metadata to attach to the pay order. Supports structured item details (name, description, image, quantity, price) and up to 20 custom key-value fields.
+</ParamField>
+
+<ParamField path="intent" type="string">
+  The verb shown on the button label, such as `"Pay"`, `"Deposit"`, or `"Purchase"`. Defaults to `"Pay"` when not set.
+</ParamField>
+
+### Appearance
+
+<ParamField path="style" type="React.CSSProperties">
+  Inline style overrides applied to the button element. Use this for quick branding adjustments like background color and text color.
+</ParamField>
+
+<ParamField path="mode" type="string" default="auto">
+  Color scheme for the payment modal. Accepted values: `"light"`, `"dark"`, or `"auto"`. Overrides the `mode` set on `PayKitProvider` for this button only.
+</ParamField>
+
+<ParamField path="theme" type="string">
+  Predefined visual theme for this button's modal. Overrides the `theme` set on `PayKitProvider`.
+</ParamField>
+
+<ParamField path="customTheme" type="object">
+  Custom theme object for this button's modal. Takes precedence over both `theme` and any `customTheme` set on `PayKitProvider`.
+</ParamField>
+
+<ParamField path="disabled" type="boolean" default="false">
+  When `true`, the button is rendered in a disabled state and the modal cannot be opened.
+</ParamField>
+
+<ParamField path="defaultOpen" type="boolean" default="false">
+  When `true`, the payment modal opens automatically on mount without requiring a click.
+</ParamField>
+
+### Modal lifecycle
+
+<ParamField path="closeOnSuccess" type="boolean" default="false">
+  When `true`, the payment modal closes automatically after the payment completes successfully.
+</ParamField>
+
+<ParamField path="onOpen" type="function">
+  Callback invoked when the payment modal opens.
+</ParamField>
+
+<ParamField path="onClose" type="function">
+  Callback invoked when the payment modal closes, whether by the user or programmatically.
+</ParamField>
+
+### Payment lifecycle
+
+<ParamField path="onPaymentCreationError" type="function">
+  Callback invoked when the pay order cannot be created due to invalid parameters. Receives an event object with an `errorMessage` string describing the failure.
+</ParamField>
+
+<ParamField path="onPaymentStarted" type="function">
+  Callback invoked when the user sends their payment transaction and it is detected on-chain. The payment is in progress at this point but not yet confirmed.
+</ParamField>
+
+<ParamField path="onPaymentCompleted" type="function">
+  Callback invoked when the destination transfer or contract call completes successfully. This is the appropriate place to trigger fulfillment logic or show a success message.
+</ParamField>
+
+<ParamField path="onPaymentBounced" type="function">
+  Callback invoked when the destination call reverts and the user's funds are automatically refunded. Use this to notify the user of the failure.
+</ParamField>
+
+---
+
+## PayButton.Custom
+
+`PayButton.Custom` is for situations where you need complete control over the button's appearance — for example, when integrating with an existing design system or triggering the modal from multiple UI elements. It accepts a render prop as `children` that receives `show` and `hide` functions to control modal visibility.
+
+`PayButton.Custom` accepts the same payment props and lifecycle callbacks as `PayButton` but replaces the styling props (`style`, `mode`, `theme`, `customTheme`, `disabled`) with the `children` render prop.
+
+### Usage
+
+```tsx
+import { PayButton } from "@coin-voyage/paykit";
+
+<PayButton.Custom
+  payId={payId}
+  onPaymentStarted={(event) => {
+    console.log("Payment started", event);
+  }}
+  onPaymentCompleted={(event) => {
+    console.log("Payment completed", event);
+  }}
+>
+  {({ show, hide }) => (
+    <button
+      onClick={show}
+      className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+    >
+      Pay With Crypto
+    </button>
+  )}
+</PayButton.Custom>
+```
+
+### Render prop
+
+The `children` function receives an object with two functions:
+
+<ResponseField name="show" type="function">
+  Opens the payment modal. Call this from your custom button's `onClick` handler or any other event.
+</ResponseField>
+
+<ResponseField name="hide" type="function">
+  Closes the payment modal programmatically. Useful when you need to dismiss the modal in response to an external event.
+</ResponseField>
+
+### Additional PayButton.Custom props
+
+<ParamField path="children" type="function" required>
+  A render function that receives `{ show, hide }`. Must return valid React elements.
+</ParamField>
+
+<ParamField path="defaultOpen" type="boolean" default="false">
+  When `true`, the payment modal opens automatically on mount.
+</ParamField>
+
+<Info>
+  **When to use `PayButton.Custom`:**
+
+  - You need full styling control beyond what inline `style` provides.
+  - You are integrating into an existing design system with strict component conventions.
+  - You want to trigger the payment modal from multiple distinct UI elements on the same page.
+  - You need to open or close the modal in response to programmatic events, not only user clicks.
+</Info>

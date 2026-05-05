@@ -1,0 +1,108 @@
+{
+  "projectType": "saas",
+  "projectName": "CoinVoyage",
+  "projectDescription": "CoinVoyage is a cross-chain crypto payment platform that lets you accept payments from any supported blockchain and settle them in your preferred asset and network.",
+  "theme": "luma",
+  "primaryColor": "#d6296f",
+  "lightColor": "#e688bd",
+  "darkColor": "#fc1777",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/how-it-works",
+              "concepts/pay-orders",
+              "concepts/supported-networks",
+              "concepts/supported-regions"
+            ]
+          },
+          {
+            "group": "SDK",
+            "pages": [
+              "sdk/overview",
+              "sdk/paykitprovider",
+              "sdk/walletprovider",
+              "sdk/paybutton",
+              "sdk/apiclient"
+            ]
+          },
+          {
+            "group": "Webhooks",
+            "pages": [
+              "webhooks/overview",
+              "webhooks/events"
+            ]
+          },
+          {
+            "group": "Dashboard",
+            "pages": [
+              "dashboard/overview",
+              "dashboard/transactions",
+              "dashboard/settlement",
+              "dashboard/invoices",
+              "dashboard/developers"
+            ]
+          },
+          {
+            "group": "Resources",
+            "pages": [
+              "resources/pricing",
+              "resources/migration-v1-to-v2",
+              "resources/changelog",
+              "resources/faqs",
+              "resources/support"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Accept crypto payments from BTC, Ethereum/EVM, Solana, and Sui",
+    "Settle payments in any preferred asset and chain",
+    "Non-custodial — funds never held by CoinVoyage",
+    "React SDK with PayButton component and provider setup",
+    "Real-time webhook notifications for payment lifecycle events",
+    "Dashboard for analytics, transactions, refunds, and invoices",
+    "Fiat off-ramp support (USD, EUR, BRL, MXN)",
+    "Multi-provider cross-chain route optimization"
+  ],
+  "publicApiSurface": [
+    "PayKitProvider",
+    "WalletProvider",
+    "PayButton",
+    "PayButton.Custom",
+    "ApiClient",
+    "ApiClient.createDepositPayOrder()",
+    "ApiClient.createSalePayOrder()",
+    "ApiClient.createRefundPayOrder()",
+    "ApiClient.getPayOrder()",
+    "ApiClient.payOrderQuote()",
+    "ApiClient.payOrderPaymentDetails()",
+    "ApiClient.getPayOrderPaymentMethods()",
+    "ApiClient.generateAuthorizationSignature()",
+    "ApiClient.subscribeOrderStatus()",
+    "ApiClient.listWebhooks()",
+    "ApiClient.createWebhook()",
+    "ApiClient.updateWebhook()",
+    "ApiClient.deleteWebhook()",
+    "ApiClient.getFeeBalances()",
+    "ApiClient.claimFees()",
+    "usePayStatus hook",
+    "PayOrderMode enum (SALE, DEPOSIT, REFUND)",
+    "PayOrderStatus enum",
+    "WebhookEventType enum",
+    "ChainId constants"
+  ]
+}

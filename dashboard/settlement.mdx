@@ -1,0 +1,103 @@
+---
+title: "Settlement currencies, withdrawals, and custom fees"
+description: "Define which asset and chain you receive payouts in, withdraw to your bank account, and set custom fee percentages that accrue as USDC."
+layout:
+  width: default
+  title:
+    visible: false
+  description:
+    visible: false
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
+  tags:
+    visible: true
+---
+
+The [Settlement tab](https://dashboard.coinvoyage.io/settlement) gives you control over how and where your payments are paid out. You can define which asset and chain you receive funds in regardless of what your customers pay with, withdraw settled balances to your bank account, and configure additional fees your organization charges per transaction.
+
+## Settlement currencies
+
+When a customer pays in any supported cryptocurrency — such as BTC, ETH, or SOL — CoinVoyage can automatically convert and settle the funds to the asset and chain you specify. You can configure multiple settlement currencies across different chains, and CoinVoyage will optimize routing by selecting the path with the best available quote.
+
+All settlements are non-custodial and executed on-chain.
+
+<Info>
+  Settlement currency configuration applies only to `PayOrder`s with `mode = "SALE"`. A `SALE` PayOrder without `intent.asset` requires at least one settlement currency configured in the dashboard. If a `SALE` PayOrder includes `intent.asset`, that order settles to the specified asset and chain instead of the dashboard default. For `mode = "DEPOSIT"`, the crypto asset settles directly to the wallet address specified in the PayOrder request.
+</Info>
+
+### Configuring a settlement currency
+
+<Steps>
+  <Step title="Open the Settlement tab">
+    Go to [dashboard.coinvoyage.io/settlement](https://dashboard.coinvoyage.io/settlement) and click **Add Settlement Currency**.
+  </Step>
+  <Step title="Select a chain">
+    Choose the blockchain network you want to receive settlement on.
+  </Step>
+  <Step title="Select an asset">
+    Choose the token or coin you want your payments converted and settled into on that chain.
+  </Step>
+  <Step title="Save">
+    Confirm the selection. The new settlement currency is now active and will be used for eligible incoming payments.
+  </Step>
+</Steps>
+
+You can add multiple settlement currencies to give CoinVoyage more routing options and improve settlement efficiency.
+
+## Withdrawals
+
+The Withdrawals flow lets you move supported settlement balances off-chain to a linked bank account. The withdrawals view also includes a history table so you can track the status, payment rail, withdrawn amount, and completion date for each payout.
+
+<Info>
+  Only coins you have already configured as settlement currencies appear as withdrawal options.
+</Info>
+
+### How to withdraw
+
+<Steps>
+  <Step title="Complete KYC or KYB">
+    Before you can withdraw, your organization must complete identity verification. Individual accounts require **KYC** (Know Your Customer); business accounts require **KYB** (Know Your Business).
+  </Step>
+  <Step title="Add and verify a bank account">
+    Link the bank account you want to receive fiat payouts. Follow the verification steps to confirm ownership.
+  </Step>
+  <Step title="Select a coin and bank account">
+    In the Withdrawals section, choose the settlement coin you want to off-ramp and the destination bank account.
+  </Step>
+  <Step title="Connect your wallet and confirm">
+    Connect the wallet holding your settlement balance and confirm the off-ramp transaction.
+  </Step>
+</Steps>
+
+## Custom fees
+
+Under **Organization Settings**, you can set a custom fee percentage that is charged to your customers on top of the CoinVoyage platform fee. This lets your organization collect an additional cut from each completed payment.
+
+Custom fees accrue over time and can be claimed in **USDC** on **EVM**, **Sui**, and **Solana**.
+
+### Setting up and claiming custom fees
+
+<Steps>
+  <Step title="Open Organization Settings">
+    Navigate to **Organization Settings** and select the **Custom Fee** tab.
+  </Step>
+  <Step title="Set your fee percentage">
+    Enter the additional fee percentage you want to charge on top of the CoinVoyage platform fee.
+  </Step>
+  <Step title="Save the setting">
+    Save your configuration. The custom fee is now applied to all new payments through CoinVoyage.
+  </Step>
+  <Step title="Claim accrued fees">
+    When fees have accrued, connect the wallet where you want to receive the funds and click **Claim** to receive them in USDC.
+  </Step>
+</Steps>
+
+<Tip>
+  Custom fees are a straightforward way to offset operational costs or generate additional revenue without modifying your integration code.
+</Tip>
