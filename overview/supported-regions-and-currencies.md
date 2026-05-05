@@ -81,7 +81,7 @@ All off-ramp activity is subject to KYC and AML screening. Verification scales w
 * Larger flows or business accounts require additional documentation: proof of address, beneficial ownership disclosures, and source of funds attestation where applicable.
 
 > [!NOTE]
-See the [KYC API reference](/broken/pages/fbc5fe9ecfdcc7c09a250f159b3daea02ee40181) for the programmatic flow.
+See the KYC API reference for the programmatic flow.
 
 ### On the Roadmap
 
