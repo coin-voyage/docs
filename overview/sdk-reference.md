@@ -12,31 +12,25 @@ The [`@coin-voyage/paykit`](https://www.npmjs.com/package/@coin-voyage/paykit) S
 
 Use your preferred package manager to install CoinVoyage PayKit.
 
-{% tabs %}
-{% tab title="npm" %}
+### npm
 ```sh
 npm i @coin-voyage/paykit @tanstack/react-query@^5.90.6
 ```
-{% endtab %}
 
-{% tab title="pnpm" %}
+### pnpm
 ```sh
 pnpm add @coin-voyage/paykit @tanstack/react-query@^5.90.6
 ```
-{% endtab %}
 
-{% tab title="yarn" %}
+### yarn
 ```sh
 yarn add @coin-voyage/paykit @tanstack/react-query@^5.90.6
 ```
-{% endtab %}
 
-{% tab title="bun" %}
+### bun
 ```sh
 bun add @coin-voyage/paykit @tanstack/react-query@^5.90.6
 ```
-{% endtab %}
-{% endtabs %}
 
 #### PayKitProvider
 
@@ -75,11 +69,26 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 **PayKitProvider Configuration Options**
 
-{% include "../.gitbook/includes/the-paykitprovider-allows-y....md" %}
+The `PayKitProvider` lets you configure the theme, style, and behavior of the `PayModal`. The `PayModal` guides the user through the payment process and opens when the user interacts with the `PayButton`.
+
+![PayKit modal](../.gitbook/assets/paykit_modal.png)
 
 The `PayKitProvider` accepts the following configuration parameters:
 
-<table><thead><tr><th width="218.4000244140625">Option</th><th width="146.5999755859375">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td>Yes</td><td>API Key of the organization, acquired in the developers tab of the <a href="https://dashboard.coinvoyage.io/developers">dashboard</a>.</td></tr><tr><td><code>customTheme</code></td><td>No</td><td>Gives you the flexibility to modify the PayKit modal styling. See also <a href="sdk-reference.md#themes-and-customization">Themes &#x26; customisation</a></td></tr><tr><td><code>environment</code></td><td>No</td><td><p>Environment to connect to:</p><ul><li>production (default)</li><li>development</li></ul><p>The development environment exposes additional testnet chains.</p></td></tr><tr><td><code>debugMode</code></td><td>No</td><td>Will log debug logs into the console, helpful when integrating.</td></tr><tr><td><code>mode</code></td><td>No</td><td>"light", "dark" or "auto"</td></tr><tr><td><code>onConnect</code></td><td>No</td><td>Callback triggered upon connection of a new wallet.</td></tr><tr><td><code>onConnectValidation</code></td><td>No</td><td>Allows you to pass a custom function that is run upon connecting of a wallet.</td></tr><tr><td><code>onDisconnect</code></td><td>No</td><td>Callback triggered upon disconnect of a wallet.</td></tr><tr><td><code>options</code></td><td>No</td><td><p>Global <code>PayKitOptions</code> applied across all pay buttons and payment flows.</p><p>Includes language, CTA visibility, overlay behavior, optimistic confirmation, and experimental feature flags such as <code>experimentalFeatures.cardPayments</code>.</p></td></tr><tr><td><code>theme</code></td><td>No</td><td><p>Select a predefined styling for the PayKit modal, options include:</p><ul><li>auto</li><li>web95</li><li>retro</li><li>soft</li><li>midnight</li><li>minimal</li><li>rounded</li><li>nouns</li></ul></td></tr></tbody></table>
+
+| Option | Required? | Description |
+| --- | --- | --- |
+| `apiKey` | Yes | API Key of the organization, acquired in the developers tab of the dashboard. |
+| `customTheme` | No | Gives you the flexibility to modify the PayKit modal styling. See also Themes & customisation |
+| `environment` | No | Environment to connect to:production (default); development; The development environment exposes additional testnet chains. |
+| `debugMode` | No | Will log debug logs into the console, helpful when integrating. |
+| `mode` | No | "light", "dark" or "auto" |
+| `onConnect` | No | Callback triggered upon connection of a new wallet. |
+| `onConnectValidation` | No | Allows you to pass a custom function that is run upon connecting of a wallet. |
+| `onDisconnect` | No | Callback triggered upon disconnect of a wallet. |
+| `options` | No | Global `PayKitOptions` applied across all pay buttons and payment flows. Includes language, CTA visibility, overlay behavior, optimistic confirmation, and experimental feature flags such as `experimentalFeatures.cardPayments`. |
+| `theme` | No | Select a predefined styling for the PayKit modal, options include:auto; web95; retro; soft; midnight; minimal; rounded; nouns |
+
 
 **PayKitProvider `options` (`PayKitOptions`)**
 
@@ -165,23 +174,26 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 The `WalletProvider` accepts the following configuration parameters:
 
-<table><thead><tr><th width="218.4000244140625">Option</th><th width="146.5999755859375">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>config</code></td><td>No</td><td>Object that contains chain type specific configurations.</td></tr><tr><td><code>config.evm</code></td><td>No</td><td><p>Configuration for EVM chain types. Allows configuration of wallets, connectors, and other evm specific properties.</p><p>Also includes options to configure <code>WalletConnect</code>, <code>Coinbase Wallet</code> and <code>MetaMask</code></p></td></tr><tr><td><code>config.solana</code></td><td>No</td><td>Configuration of the Solana chain. Set a custom <code>rpcUrl</code> and configure wallet adapters.</td></tr><tr><td><code>config.sui</code></td><td>No</td><td>Configuration of the Sui chain. Set a custom <code>rpcUrl</code> and configure wallet adapters.</td></tr><tr><td><code>config.utxo</code></td><td>No</td><td>Configuration of UTXO chain types. Allows configuration of wallet connectors and few additional options.</td></tr></tbody></table>
+
+| Option | Required? | Description |
+| --- | --- | --- |
+| `config` | No | Object that contains chain type specific configurations. |
+| `config.evm` | No | Configuration for EVM chain types. Allows configuration of wallets, connectors, and other evm specific properties. Also includes options to configure `WalletConnect`, `Coinbase Wallet` and `MetaMask` |
+| `config.solana` | No | Configuration of the Solana chain. Set a custom `rpcUrl` and configure wallet adapters. |
+| `config.sui` | No | Configuration of the Sui chain. Set a custom `rpcUrl` and configure wallet adapters. |
+| `config.utxo` | No | Configuration of UTXO chain types. Allows configuration of wallet connectors and few additional options. |
+
 
 #### PayButton
 
-{% columns %}
-{% column %}
 UI component you can add to your application. The button comes in multiple themes and its style is customizable to your branding.
 
 Clicking the button opens a modal that allows the user to select a payment methods in order to complete the pay order.
-{% endcolumn %}
 
-{% column %}
-<figure><img src="../.gitbook/assets/pay_button (1).png" alt="Pay Button"><figcaption></figcaption></figure>
-{% endcolumn %}
-{% endcolumns %}
+![Pay Button](../.gitbook/assets/pay_button (1).png)
 
-<pre class="language-tsx" data-title="deposit-pay-button-example" data-overflow="wrap"><code class="lang-tsx">&#x3C;PayButton
+```tsx
+<PayButton
     intent="Deposit"
     toAddress={"0xYourWalletToDepositInto"}
     toAmount={100}
@@ -189,8 +201,8 @@ Clicking the button opens a modal that allows the user to select a payment metho
     toToken={"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"} // USDC
     
     mode="auto"
-<strong>    style={{
-</strong>       backgroundColor: "#CF276B",
+    style={{
+       backgroundColor: "#CF276B",
        color: "white",
     }}
     onClose={() => {
@@ -218,17 +230,36 @@ Clicking the button opens a modal that allows the user to select a payment metho
        })
     }}
 />
-</code></pre>
+```
 
 **PayButton Configuration Options**
 
 The `PayButton` accepts the following configuration parameters:
 
-<table><thead><tr><th width="250">Option</th><th width="120">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>payId</code></td><td>Conditional*</td><td>The payment ID, generated via the Coin Voyage API. Replaces the deposit parameters below. Use this to display a pay order created on the <strong>server</strong>, like a <code>SALE</code> pay order.</td></tr><tr><td><code>toChain</code></td><td>Conditional*</td><td>Destination chain ID. The chain to deposit to.</td></tr><tr><td><code>toToken</code></td><td>No</td><td>The destination token to receive. Specify the contract address of the token (ERC-20/SPL/...). Omitting (<code>undefined</code>) indicates the native token (ETH/SOL/SUI/...).</td></tr><tr><td><code>toAmount</code></td><td>Conditional*</td><td>The amount of destination token to receive.</td></tr><tr><td><code>toAddress</code></td><td>Conditional*</td><td>The recipient of the deposit. Must be an address on the <code>toChain</code>.</td></tr><tr><td><code>metadata</code></td><td>No</td><td>Metadata to attach to the deposit.</td></tr><tr><td><code>intent</code></td><td>No</td><td>The intent verb displayed on the button, such as "Pay", "Deposit", or "Purchase".</td></tr><tr><td><code>onPaymentCreationError</code></td><td>No</td><td>Callback triggered when invalid properties are used to create a deposit payOrder.</td></tr><tr><td><code>onPaymentStarted</code></td><td>No</td><td>Callback triggered when user sends payment and transaction is seen on chain.</td></tr><tr><td><code>onPaymentCompleted</code></td><td>No</td><td>Callback triggered when destination transfer or call completes successfully.</td></tr><tr><td><code>onPaymentBounced</code></td><td>No</td><td>Callback triggered when destination call reverts and funds are refunded.</td></tr><tr><td><code>onOpen</code></td><td>No</td><td>Callback triggered when the modal is opened.</td></tr><tr><td><code>onClose</code></td><td>No</td><td>Callback triggered when the modal is closed.</td></tr><tr><td><code>defaultOpen</code></td><td>No</td><td>Open the modal by default on component mount.</td></tr><tr><td><code>mode</code></td><td>No</td><td>Visual appearance mode: "light", "dark", or "auto".</td></tr><tr><td><code>theme</code></td><td>No</td><td>Named theme preset. See <a href="sdk-reference.md#themes-and-customization">Themes &#x26; customization</a> for available options.</td></tr><tr><td><code>customTheme</code></td><td>No</td><td>Custom theme object for advanced styling. See <a href="sdk-reference.md#themes-and-customization">Themes &#x26; customization</a> for details.</td></tr></tbody></table>
 
-{% hint style="info" %}
+| Option | Required? | Description |
+| --- | --- | --- |
+| `payId` | Conditional* | The payment ID, generated via the Coin Voyage API. Replaces the deposit parameters below. Use this to display a pay order created on the **server**, like a `SALE` pay order. |
+| `toChain` | Conditional* | Destination chain ID. The chain to deposit to. |
+| `toToken` | No | The destination token to receive. Specify the contract address of the token (ERC-20/SPL/...). Omitting (`undefined`) indicates the native token (ETH/SOL/SUI/...). |
+| `toAmount` | Conditional* | The amount of destination token to receive. |
+| `toAddress` | Conditional* | The recipient of the deposit. Must be an address on the `toChain`. |
+| `metadata` | No | Metadata to attach to the deposit. |
+| `intent` | No | The intent verb displayed on the button, such as "Pay", "Deposit", or "Purchase". |
+| `onPaymentCreationError` | No | Callback triggered when invalid properties are used to create a deposit payOrder. |
+| `onPaymentStarted` | No | Callback triggered when user sends payment and transaction is seen on chain. |
+| `onPaymentCompleted` | No | Callback triggered when destination transfer or call completes successfully. |
+| `onPaymentBounced` | No | Callback triggered when destination call reverts and funds are refunded. |
+| `onOpen` | No | Callback triggered when the modal is opened. |
+| `onClose` | No | Callback triggered when the modal is closed. |
+| `defaultOpen` | No | Open the modal by default on component mount. |
+| `mode` | No | Visual appearance mode: "light", "dark", or "auto". |
+| `theme` | No | Named theme preset. See Themes & customization for available options. |
+| `customTheme` | No | Custom theme object for advanced styling. See Themes & customization for details. |
+
+
+> [!NOTE]
 **\*Required Parameters:** Either provide `payId` **OR** all three of `toAddress`, `toChain`, and `toAmount`. The `payId` approach is used for server-generated pay orders, while the direct parameters are used for client-side deposit flows.
-{% endhint %}
 
 #### PayButton.Custom
 
@@ -261,7 +292,25 @@ For advanced use cases where you need complete control over the button's appeara
 
 The `PayButton.Custom` component accepts all the same configuration parameters as `PayButton` (payment props, callbacks, etc.), except for the styling options. Instead of `style`, `mode`, `theme`, `customTheme`, and `disabled`, it provides a `children` render prop:
 
-<table><thead><tr><th width="250">Option</th><th width="120">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>children</code></td><td>Yes</td><td>A render function that receives <code>show</code> and <code>hide</code> functions to control the modal.</td></tr><tr><td><code>payId</code></td><td>Conditional*</td><td>The payment ID, generated via the Coin Voyage API.</td></tr><tr><td><code>toChain</code></td><td>Conditional*</td><td>Destination chain ID.</td></tr><tr><td><code>toToken</code></td><td>No</td><td>The destination token contract address or <code>undefined</code> for native token.</td></tr><tr><td><code>toAmount</code></td><td>Conditional*</td><td>The amount of destination token to receive.</td></tr><tr><td><code>toAddress</code></td><td>Conditional*</td><td>The recipient address on the destination chain.</td></tr><tr><td><code>metadata</code></td><td>No</td><td>Metadata to attach to the payment.</td></tr><tr><td><code>intent</code></td><td>No</td><td>The intent verb (not displayed on custom button).</td></tr><tr><td><code>onPaymentCreationError</code></td><td>No</td><td>Callback triggered when payment creation fails.</td></tr><tr><td><code>onPaymentStarted</code></td><td>No</td><td>Callback triggered when payment transaction is detected.</td></tr><tr><td><code>onPaymentCompleted</code></td><td>No</td><td>Callback triggered when payment completes successfully.</td></tr><tr><td><code>onPaymentBounced</code></td><td>No</td><td>Callback triggered when payment fails and is refunded.</td></tr><tr><td><code>onOpen</code></td><td>No</td><td>Callback triggered when modal opens.</td></tr><tr><td><code>onClose</code></td><td>No</td><td>Callback triggered when modal closes.</td></tr><tr><td><code>defaultOpen</code></td><td>No</td><td>Open the modal by default on mount.</td></tr></tbody></table>
+
+| Option | Required? | Description |
+| --- | --- | --- |
+| `children` | Yes | A render function that receives `show` and `hide` functions to control the modal. |
+| `payId` | Conditional* | The payment ID, generated via the Coin Voyage API. |
+| `toChain` | Conditional* | Destination chain ID. |
+| `toToken` | No | The destination token contract address or `undefined` for native token. |
+| `toAmount` | Conditional* | The amount of destination token to receive. |
+| `toAddress` | Conditional* | The recipient address on the destination chain. |
+| `metadata` | No | Metadata to attach to the payment. |
+| `intent` | No | The intent verb (not displayed on custom button). |
+| `onPaymentCreationError` | No | Callback triggered when payment creation fails. |
+| `onPaymentStarted` | No | Callback triggered when payment transaction is detected. |
+| `onPaymentCompleted` | No | Callback triggered when payment completes successfully. |
+| `onPaymentBounced` | No | Callback triggered when payment fails and is refunded. |
+| `onOpen` | No | Callback triggered when modal opens. |
+| `onClose` | No | Callback triggered when modal closes. |
+| `defaultOpen` | No | Open the modal by default on mount. |
+
 
 **Render Props**
 
@@ -272,14 +321,13 @@ The `children` function receives an object with the following functions:
 | `show()` | Opens the payment modal. Call this from your custom button's `onClick` handler. |
 | `hide()` | Closes the payment modal programmatically.                                      |
 
-{% hint style="info" %}
+> [!NOTE]
 **When to use PayButton.Custom:**
 
 * You need complete control over button styling beyond CSS customization
 * You want to integrate the payment modal into an existing design system
 * You need to trigger the modal from multiple UI elements
 * You want to programmatically control modal visibility
-{% endhint %}
 
 #### ApiClient
 
@@ -300,7 +348,14 @@ const apiClient = new ApiClient({
 
 **Configuration Options**
 
-<table><thead><tr><th width="200">Option</th><th width="120">Required?</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td>Yes</td><td>API Key of the organization, acquired in the developers tab of the <a href="https://dashboard.coinvoyage.io/developers">dashboard</a>.</td></tr><tr><td><code>environment</code></td><td>No</td><td>Environment to connect to: <code>production</code> (default) or <code>development</code>.</td></tr><tr><td><code>sessionId</code></td><td>No</td><td>Optional session identifier for request tracking.</td></tr><tr><td><code>version</code></td><td>No</td><td>Optional client version string sent via <code>X-Client-Version</code> header.</td></tr></tbody></table>
+
+| Option | Required? | Description |
+| --- | --- | --- |
+| `apiKey` | Yes | API Key of the organization, acquired in the developers tab of the dashboard. |
+| `environment` | No | Environment to connect to: `production` (default) or `development`. |
+| `sessionId` | No | Optional session identifier for request tracking. |
+| `version` | No | Optional client version string sent via `X-Client-Version` header. |
+
 
 **Common Request Options**
 
@@ -316,10 +371,10 @@ type Opts = {
 
 **API Response Structure**
 
-All ApiClient methods return responses wrapped in an `APIResponse<T>` object that provides consistent error handling:
+All ApiClient methods return responses wrapped in an `APIResponse&lt;T&gt;` object that provides consistent error handling:
 
 ```tsx
-interface APIResponse<T> {
+interface APIResponse&lt;T&gt; {
   data?: T
   error?: {
     path: string
@@ -369,7 +424,7 @@ const { data: payOrder, error } = await apiClient.getPayOrder(
 
 * `payOrderId` (string): The unique identifier of the PayOrder.
 
-**Returns:** `Promise<APIResponse<PayOrder>>` - The PayOrder object wrapped in an API response.
+**Returns:** `Promise&lt;APIResponse&lt;PayOrder&gt;&gt;` - The PayOrder object wrapped in an API response.
 
 **Response Structure:**
 
@@ -394,9 +449,8 @@ const { data: payOrder, error } = await apiClient.getPayOrder(
 
 Generates an authorization signature for API requests that require enhanced security. This signature is required for creating `SALE` and `REFUND` PayOrders.
 
-{% hint style="warning" %}
+> [!WARNING]
 **Security Warning:** This function should only be run on the server. It uses the API secret, which must remain confidential. Never expose your API secret in client-side code.
-{% endhint %}
 
 ```tsx
 const apiSecret = process.env.COIN_VOYAGE_API_SECRET!;
@@ -455,11 +509,10 @@ const { data, error } = await apiClient.createDepositPayOrder({
   * `metadata` (optional): Additional metadata for the PayOrder
 * `opts` (optional): Additional request options such as custom headers
 
-**Returns:** `Promise<APIResponse<PayOrder>>` - The created PayOrder object wrapped in an API response.
+**Returns:** `Promise&lt;APIResponse&lt;PayOrder&gt;&gt;` - The created PayOrder object wrapped in an API response.
 
-{% hint style="warning" %}
+> [!WARNING]
 **Amount validation:** You must provide either `token_amount` OR `fiat`, but not both. The amount must be greater than zero.
-{% endhint %}
 
 **Built-in Validation:** The method automatically validates input parameters using Zod schemas. If validation fails, it returns an error response without making the API call:
 
@@ -482,9 +535,8 @@ const { error } = await apiClient.createDepositPayOrder({
 
 Creates a PayOrder with mode `SALE`. This is used for merchant sales. If you omit `intent.asset`, CoinVoyage settles the payment to a settlement currency configured in the dashboard. If you provide `intent.asset`, the PayOrder settles to that specific asset and chain instead.
 
-{% hint style="info" %}
+> [!NOTE]
 This method requires an API secret for authorization. The signature is generated internally using `generateAuthorizationSignature`.
-{% endhint %}
 
 | `SALE` request shape    | Settlement behavior                                        | Requirement                                                          |
 | ----------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------- |
@@ -558,7 +610,7 @@ const { data, error } = await apiClient.createSalePayOrder(
 * `apiSecret` (string): API secret used to generate the authorization signature
 * `opts` (optional): Additional request options such as custom headers
 
-**Returns:** `Promise<APIResponse<PayOrder>>` - The created PayOrder object wrapped in an API response.
+**Returns:** `Promise&lt;APIResponse&lt;PayOrder&gt;&gt;` - The created PayOrder object wrapped in an API response.
 
 ***
 
@@ -566,9 +618,8 @@ const { data, error } = await apiClient.createSalePayOrder(
 
 Creates a PayOrder with mode `REFUND` for an existing PayOrder. This allows merchants to refund full or partial payments.
 
-{% hint style="info" %}
+> [!NOTE]
 This method requires an API secret for authorization. The signature is generated internally using `generateAuthorizationSignature`.
-{% endhint %}
 
 ```tsx
 const apiSecret = process.env.COIN_VOYAGE_API_SECRET!;
@@ -613,7 +664,7 @@ const { data: refundPayOrder, error } = await apiClient.createRefundPayOrder(
 * `apiSecret` (string): API secret used to generate the authorization signature
 * `opts` (optional): Additional request options such as custom headers
 
-**Returns:** `Promise<APIResponse<PayOrder>>` - Response object containing either the PayOrder data or error information.
+**Returns:** `Promise&lt;APIResponse&lt;PayOrder&gt;&gt;` - Response object containing either the PayOrder data or error information.
 
 ***
 
@@ -642,7 +693,7 @@ const { data, error } = await apiClient.createPayOrder(
 * `signature` (optional): Authorization signature. Required for `SALE` and `REFUND` PayOrders.
 * `opts` (optional): Additional request options such as custom headers.
 
-**Returns:** `Promise<APIResponse<PayOrder>>` - The created PayOrder wrapped in an API response.
+**Returns:** `Promise&lt;APIResponse&lt;PayOrder&gt;&gt;` - The created PayOrder wrapped in an API response.
 
 ***
 
@@ -667,7 +718,7 @@ const { data: quote, error } = await apiClient.payOrderQuote("pay-order-id", {
   * `chain_id`: The specific chain ID
 * `opts` (optional): Additional request options such as custom headers.
 
-**Returns:** `Promise<APIResponse<RouteQuote[]>>` - Response object containing available payment options or error information.
+**Returns:** `Promise&lt;APIResponse&lt;RouteQuote[]&gt;&gt;` - Response object containing available payment options or error information.
 
 ***
 
@@ -686,7 +737,7 @@ const { data: paymentMethods, error } = await apiClient.getPayOrderPaymentMethod
 * `payOrderId` (string): The unique identifier of the PayOrder.
 * `opts` (optional): Additional request options such as custom headers.
 
-**Returns:** `Promise<APIResponse<PaymentMethodsResponse>>` - Response object containing available payment rails, tokens, and availability information.
+**Returns:** `Promise&lt;APIResponse&lt;PaymentMethodsResponse&gt;&gt;` - Response object containing available payment rails, tokens, and availability information.
 
 ***
 
@@ -715,7 +766,7 @@ const { data: paymentDetails, error } = await apiClient.payOrderPaymentDetails({
   * `refund_address` (optional): The address where funds will be refunded in case of failure
 * `opts` (optional): Additional request options such as custom headers.
 
-**Returns:** `Promise<APIResponse<PaymentDetails>>` - Response object containing payment details or error information.
+**Returns:** `Promise&lt;APIResponse&lt;PaymentDetails&gt;&gt;` - Response object containing payment details or error information.
 
 ***
 
@@ -732,7 +783,7 @@ const { data: balances, error } = await apiClient.getFeeBalances(apiSecret);
 * `apiSecret` (string): API secret used to generate the authorization signature.
 * `opts` (optional): Additional request options such as custom headers.
 
-**Returns:** `Promise<APIResponse<GetFeeBalancesResponse>>` - Claimable fee balances wrapped in an API response.
+**Returns:** `Promise&lt;APIResponse&lt;GetFeeBalancesResponse&gt;&gt;` - Claimable fee balances wrapped in an API response.
 
 ***
 
@@ -753,7 +804,7 @@ const { data: claimResult, error } = await apiClient.claimFees(
 * `apiSecret` (string): API secret used to generate the authorization signature.
 * `opts` (optional): Additional request options such as custom headers.
 
-**Returns:** `Promise<APIResponse<ClaimFeesResponse>>` - Fee claim result wrapped in an API response.
+**Returns:** `Promise&lt;APIResponse&lt;ClaimFeesResponse&gt;&gt;` - Fee claim result wrapped in an API response.
 
 ***
 
@@ -770,7 +821,7 @@ const { data: webhooks, error } = await apiClient.listWebhooks(apiSecret);
 * `apiSecret` (string): API secret used to generate the authorization signature.
 * `opts` (optional): Additional request options such as custom headers.
 
-**Returns:** `Promise<APIResponse<WebhookResponse[]>>` - The organization's configured webhooks.
+**Returns:** `Promise&lt;APIResponse&lt;WebhookResponse[]&gt;&gt;` - The organization's configured webhooks.
 
 ***
 
@@ -791,7 +842,7 @@ const { data: webhook, error } = await apiClient.createWebhook(
 * `apiSecret` (string): API secret used to generate the authorization signature.
 * `opts` (optional): Additional request options such as custom headers.
 
-**Returns:** `Promise<APIResponse<WebhookResponse>>` - The created webhook wrapped in an API response.
+**Returns:** `Promise&lt;APIResponse&lt;WebhookResponse&gt;&gt;` - The created webhook wrapped in an API response.
 
 ***
 
@@ -814,7 +865,7 @@ const { data: webhook, error } = await apiClient.updateWebhook(
 * `apiSecret` (string): API secret used to generate the authorization signature.
 * `opts` (optional): Additional request options such as custom headers.
 
-**Returns:** `Promise<APIResponse<WebhookResponse>>` - The updated webhook wrapped in an API response.
+**Returns:** `Promise&lt;APIResponse&lt;WebhookResponse&gt;&gt;` - The updated webhook wrapped in an API response.
 
 ***
 
@@ -832,7 +883,7 @@ const { error } = await apiClient.deleteWebhook("webhook-id", apiSecret);
 * `apiSecret` (string): API secret used to generate the authorization signature.
 * `opts` (optional): Additional request options such as custom headers.
 
-**Returns:** `Promise<APIResponse<void>>` - Empty success response or an error.
+**Returns:** `Promise&lt;APIResponse&lt;void&gt;&gt;` - Empty success response or an error.
 
 ***
 
@@ -849,7 +900,7 @@ const { data: quote, error } = await apiClient.swapQuote(params);
 * `params` (SwapQuoteRequest): Swap quote parameters.
 * `opts` (optional): Additional request options such as custom headers.
 
-**Returns:** `Promise<APIResponse<SwapQuoteResponse>>` - Swap quote data wrapped in an API response.
+**Returns:** `Promise&lt;APIResponse&lt;SwapQuoteResponse&gt;&gt;` - Swap quote data wrapped in an API response.
 
 ***
 
@@ -866,7 +917,7 @@ const { data: swapTx, error } = await apiClient.swapData(params);
 * `params` (SwapDataRequest): Parameters required to build the swap transaction data.
 * `opts` (optional): Additional request options such as custom headers.
 
-**Returns:** `Promise<APIResponse<SwapDataResponse>>` - Executable swap transaction data wrapped in an API response.
+**Returns:** `Promise&lt;APIResponse&lt;SwapDataResponse&gt;&gt;` - Executable swap transaction data wrapped in an API response.
 
 ***
 
@@ -900,11 +951,10 @@ socket.onMessage((msg) => {
 
 ***
 
-{% hint style="info" %}
+> [!NOTE]
 The current ApiClient does not expose `processPayOrder()`. PayOrder processing is automatic once funds are detected.
 
 The `GET /pay-orders` endpoint is available in the HTTP API, but there is no `listPayOrders()` helper in the current ApiClient.
-{% endhint %}
 
 #### Types
 
@@ -962,7 +1012,13 @@ enum PayOrderMode {
 }
 ```
 
-<table><thead><tr><th width="150">Value</th><th>Description</th></tr></thead><tbody><tr><td><code>SALE</code></td><td>Merchant sale. If <code>intent.asset</code> is omitted, payment settles to the configured settlement currency; if provided, payment settles to the specified asset and chain.</td></tr><tr><td><code>DEPOSIT</code></td><td>Direct deposit to a specified address on a target chain.</td></tr><tr><td><code>REFUND</code></td><td>Refund of a previous PayOrder (full or partial).</td></tr></tbody></table>
+
+| Value | Description |
+| --- | --- |
+| `SALE` | Merchant sale. If `intent.asset` is omitted, payment settles to the configured settlement currency; if provided, payment settles to the specified asset and chain. |
+| `DEPOSIT` | Direct deposit to a specified address on a target chain. |
+| `REFUND` | Refund of a previous PayOrder (full or partial). |
+
 
 ***
 
@@ -1028,11 +1084,28 @@ type PayOrderMetadata = {
 
 **Items Array**
 
-<table><thead><tr><th width="150">Field</th><th width="120">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>name</code></td><td><code>string</code></td><td>Name of the item being purchased/donated/deposited.</td></tr><tr><td><code>description</code></td><td><code>string</code></td><td>Optional description of the item.</td></tr><tr><td><code>image</code></td><td><code>string</code></td><td>Optional URL to an image of the item.</td></tr><tr><td><code>quantity</code></td><td><code>number</code></td><td>Optional quantity (integer).</td></tr><tr><td><code>unit_price</code></td><td><code>number</code></td><td>Optional price per unit.</td></tr><tr><td><code>currency</code></td><td><code>string</code></td><td>Optional currency code for the price (e.g., "USD").</td></tr></tbody></table>
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | Name of the item being purchased/donated/deposited. |
+| `description` | `string` | Optional description of the item. |
+| `image` | `string` | Optional URL to an image of the item. |
+| `quantity` | `number` | Optional quantity (integer). |
+| `unit_price` | `number` | Optional price per unit. |
+| `currency` | `string` | Optional currency code for the price (e.g., "USD"). |
+
 
 **Refund Object**
 
-<table><thead><tr><th width="180">Field</th><th width="120">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>name</code></td><td><code>string</code></td><td>Optional name/label for the refund.</td></tr><tr><td><code>reason</code></td><td><code>string</code></td><td>Optional reason for the refund.</td></tr><tr><td><code>additional_info</code></td><td><code>string</code></td><td>Optional additional information.</td></tr><tr><td><code>refund_amount</code></td><td><code>number</code></td><td>Optional refund amount.</td></tr><tr><td><code>currency</code></td><td><code>string</code></td><td>Optional currency code for the refund amount.</td></tr></tbody></table>
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | Optional name/label for the refund. |
+| `reason` | `string` | Optional reason for the refund. |
+| `additional_info` | `string` | Optional additional information. |
+| `refund_amount` | `number` | Optional refund amount. |
+| `currency` | `string` | Optional currency code for the refund amount. |
+
 
 **Custom Fields**
 
@@ -1061,7 +1134,12 @@ type PayOrderParams = {
 }
 ```
 
-<table><thead><tr><th width="150">Field</th><th width="200">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>intent</code></td><td><code>PayOrderIntent</code></td><td>The intent of the order, specifying asset, amount, and destination.</td></tr><tr><td><code>metadata</code></td><td><code>PayOrderMetadata</code></td><td>Optional metadata to attach to the PayOrder.</td></tr></tbody></table>
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `intent` | `PayOrderIntent` | The intent of the order, specifying asset, amount, and destination. |
+| `metadata` | `PayOrderMetadata` | Optional metadata to attach to the PayOrder. |
+
 
 ***
 
@@ -1077,7 +1155,13 @@ type PayOrderIntent = {
 }
 ```
 
-<table><thead><tr><th width="200">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>asset</code></td><td><code>CurrencyBase</code></td><td>Optional desired fulfillment asset with <code>chain_id</code> and <code>address</code>. For <code>SALE</code> PayOrders, omit this field to use the dashboard settlement currency, or provide it to settle this PayOrder to a specific asset and chain.</td></tr><tr><td><code>amount</code></td><td><code>IntentAmount</code></td><td>Amount expected to fulfill the order.</td></tr><tr><td><code>receiving_address</code></td><td><code>string</code></td><td>Optional address to fulfill to. If not provided, a settlement address will be selected for the chosen asset or settlement currency.</td></tr></tbody></table>
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `asset` | `CurrencyBase` | Optional desired fulfillment asset with `chain_id` and `address`. For `SALE` PayOrders, omit this field to use the dashboard settlement currency, or provide it to settle this PayOrder to a specific asset and chain. |
+| `amount` | `IntentAmount` | Amount expected to fulfill the order. |
+| `receiving_address` | `string` | Optional address to fulfill to. If not provided, a settlement address will be selected for the chosen asset or settlement currency. |
+
 
 ***
 
@@ -1095,7 +1179,12 @@ type IntentAmount = {
 }
 ```
 
-<table><thead><tr><th width="180">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>token_amount</code></td><td><code>number</code></td><td>Token amount in human-readable format (e.g., 10 for 10 tokens). Must be greater than zero.</td></tr><tr><td><code>fiat</code></td><td><code>object</code></td><td>Fiat amount with <code>amount</code> (number, must be > 0) and <code>unit</code> (FiatCurrency, e.g., "USD").</td></tr></tbody></table>
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `token_amount` | `number` | Token amount in human-readable format (e.g., 10 for 10 tokens). Must be greater than zero. |
+| `fiat` | `object` | Fiat amount with `amount` (number, must be > 0) and `unit` (FiatCurrency, e.g., "USD"). |
+
 
 ***
 
@@ -1121,11 +1210,16 @@ type PaymentDetails = {
 }
 ```
 
-<table><thead><tr><th width="220">Field</th><th width="180">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>payorder_id</code></td><td><code>string</code></td><td>The PayOrder identifier.</td></tr><tr><td><code>status</code></td><td><code>PayOrderStatus</code></td><td>Current status of the PayOrder.</td></tr><tr><td><code>data</code></td><td><code>PaymentData</code></td><td>Full payment data with source, destination, and payment step details.</td></tr></tbody></table>
 
-{% hint style="warning" %}
+| Field | Type | Description |
+| --- | --- | --- |
+| `payorder_id` | `string` | The PayOrder identifier. |
+| `status` | `PayOrderStatus` | Current status of the PayOrder. |
+| `data` | `PaymentData` | Full payment data with source, destination, and payment step details. |
+
+
+> [!WARNING]
 **Deprecated fields:** The top-level fields `expires_at`, `refund_address`, `deposit_address`, `receiving_address`, `source_currency`, `source_amount`, `destination_currency`, and `destination_amount` are deprecated. Use the corresponding fields in the `data` object instead.
-{% endhint %}
 
 ***
 
@@ -1189,9 +1283,8 @@ Key fields:
 * `steps`: Canonical step-by-step payment instructions, including fiat onramp and crypto execution data.
 * `expires_at`: When the payment expires.
 
-{% hint style="warning" %}
+> [!WARNING]
 `deposit_address`, `receiving_address`, and `refund_address` are legacy fields. Prefer `steps` for rail-specific payment instructions and provider data.
-{% endhint %}
 
 ***
 
@@ -1248,7 +1341,14 @@ interface CurrencyAmount {
 }
 ```
 
-<table><thead><tr><th width="200">Field</th><th width="120">Type</th><th>Description</th></tr></thead><tbody><tr><td><code>ui_amount</code></td><td><code>number</code></td><td>Human-readable amount (e.g., 1.5 for 1.5 ETH).</td></tr><tr><td><code>ui_amount_display</code></td><td><code>string</code></td><td>Formatted display string.</td></tr><tr><td><code>raw_amount</code></td><td><code>string</code></td><td>Raw amount as string (to prevent BigInt precision loss).</td></tr><tr><td><code>value_usd</code></td><td><code>number</code></td><td>USD value of the amount.</td></tr></tbody></table>
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `ui_amount` | `number` | Human-readable amount (e.g., 1.5 for 1.5 ETH). |
+| `ui_amount_display` | `string` | Formatted display string. |
+| `raw_amount` | `string` | Raw amount as string (to prevent BigInt precision loss). |
+| `value_usd` | `number` | USD value of the amount. |
+
 
 ***
 
@@ -1366,7 +1466,7 @@ function PaymentTracker() {
 
 **Return Value**
 
-Returns `{ paymentId: string; status: PaymentStatus } | undefined`
+Returns an object with `paymentId` and `status`, or `undefined`
 
 * `paymentId`: The unique identifier of the PayOrder
 * `status`: The current payment status (see below)
@@ -1374,7 +1474,16 @@ Returns `{ paymentId: string; status: PaymentStatus } | undefined`
 
 **Payment Status Values**
 
-<table><thead><tr><th width="220">Status</th><th>Description</th></tr></thead><tbody><tr><td><code>payment_pending</code></td><td>The user has not paid yet. The PayOrder is awaiting payment.</td></tr><tr><td><code>payment_started</code></td><td>The user has paid and the payment is in progress. This status typically lasts a few seconds while the transaction is being confirmed.</td></tr><tr><td><code>payment_completed</code></td><td>The final call or transfer succeeded. Payment completed successfully.</td></tr><tr><td><code>payment_bounced</code></td><td>The final call or transfer reverted. Funds were sent to the payment's configured refund address on the destination chain.</td></tr><tr><td><code>payment_expired</code></td><td>The payment expired before the user paid.</td></tr><tr><td><code>payment_failed</code></td><td>The payment failed for some reason.</td></tr></tbody></table>
+
+| Status | Description |
+| --- | --- |
+| `payment_pending` | The user has not paid yet. The PayOrder is awaiting payment. |
+| `payment_started` | The user has paid and the payment is in progress. This status typically lasts a few seconds while the transaction is being confirmed. |
+| `payment_completed` | The final call or transfer succeeded. Payment completed successfully. |
+| `payment_bounced` | The final call or transfer reverted. Funds were sent to the payment's configured refund address on the destination chain. |
+| `payment_expired` | The payment expired before the user paid. |
+| `payment_failed` | The payment failed for some reason. |
+
 
 **Status Mapping**
 
@@ -1411,7 +1520,18 @@ Apply a theme to your PayKit modal by setting the `theme` prop on the `PayKitPro
 
 **Available Themes**
 
-<table><thead><tr><th width="180">Theme Name</th><th>Description</th></tr></thead><tbody><tr><td><code>auto</code></td><td>Automatically adapts to system light/dark mode preferences (default).</td></tr><tr><td><code>web95</code></td><td>Retro Windows 95-inspired design with classic UI elements.</td></tr><tr><td><code>retro</code></td><td>Vintage aesthetic with nostalgic styling.</td></tr><tr><td><code>soft</code></td><td>Gentle, rounded design with soft colors and shadows.</td></tr><tr><td><code>midnight</code></td><td>Dark theme optimized for low-light environments.</td></tr><tr><td><code>minimal</code></td><td>Clean, minimalist design with reduced visual elements.</td></tr><tr><td><code>rounded</code></td><td>Emphasis on rounded corners and smooth edges.</td></tr><tr><td><code>nouns</code></td><td>Nouns DAO-inspired design with bold, playful elements.</td></tr></tbody></table>
+
+| Theme Name | Description |
+| --- | --- |
+| `auto` | Automatically adapts to system light/dark mode preferences (default). |
+| `web95` | Retro Windows 95-inspired design with classic UI elements. |
+| `retro` | Vintage aesthetic with nostalgic styling. |
+| `soft` | Gentle, rounded design with soft colors and shadows. |
+| `midnight` | Dark theme optimized for low-light environments. |
+| `minimal` | Clean, minimalist design with reduced visual elements. |
+| `rounded` | Emphasis on rounded corners and smooth edges. |
+| `nouns` | Nouns DAO-inspired design with bold, playful elements. |
+
 
 ***
 
@@ -1464,39 +1584,133 @@ The `customTheme` object accepts CSS variable overrides organized by component:
 
 **Connect Button**
 
-<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-connectbutton-font-size</code></td><td>Font size for the connect button text</td></tr><tr><td><code>--ck-connectbutton-color</code></td><td>Text color of the connect button</td></tr><tr><td><code>--ck-connectbutton-background</code></td><td>Background color of the connect button</td></tr><tr><td><code>--ck-connectbutton-background-secondary</code></td><td>Secondary background color</td></tr><tr><td><code>--ck-connectbutton-hover-color</code></td><td>Text color on hover</td></tr><tr><td><code>--ck-connectbutton-hover-background</code></td><td>Background color on hover</td></tr><tr><td><code>--ck-connectbutton-active-color</code></td><td>Text color when active/pressed</td></tr><tr><td><code>--ck-connectbutton-active-background</code></td><td>Background color when active/pressed</td></tr><tr><td><code>--ck-connectbutton-balance-color</code></td><td>Text color for balance display</td></tr><tr><td><code>--ck-connectbutton-balance-background</code></td><td>Background color for balance display</td></tr><tr><td><code>--ck-connectbutton-balance-box-shadow</code></td><td>Box shadow for balance display</td></tr><tr><td><code>--ck-connectbutton-balance-hover-background</code></td><td>Balance background on hover</td></tr><tr><td><code>--ck-connectbutton-balance-hover-box-shadow</code></td><td>Balance box shadow on hover</td></tr><tr><td><code>--ck-connectbutton-balance-active-background</code></td><td>Balance background when active</td></tr><tr><td><code>--ck-connectbutton-balance-active-box-shadow</code></td><td>Balance box shadow when active</td></tr></tbody></table>
+
+| Variable | Description |
+| --- | --- |
+| `--ck-connectbutton-font-size` | Font size for the connect button text |
+| `--ck-connectbutton-color` | Text color of the connect button |
+| `--ck-connectbutton-background` | Background color of the connect button |
+| `--ck-connectbutton-background-secondary` | Secondary background color |
+| `--ck-connectbutton-hover-color` | Text color on hover |
+| `--ck-connectbutton-hover-background` | Background color on hover |
+| `--ck-connectbutton-active-color` | Text color when active/pressed |
+| `--ck-connectbutton-active-background` | Background color when active/pressed |
+| `--ck-connectbutton-balance-color` | Text color for balance display |
+| `--ck-connectbutton-balance-background` | Background color for balance display |
+| `--ck-connectbutton-balance-box-shadow` | Box shadow for balance display |
+| `--ck-connectbutton-balance-hover-background` | Balance background on hover |
+| `--ck-connectbutton-balance-hover-box-shadow` | Balance box shadow on hover |
+| `--ck-connectbutton-balance-active-background` | Balance background when active |
+| `--ck-connectbutton-balance-active-box-shadow` | Balance box shadow when active |
+
 
 **Primary Button**
 
-<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-primary-button-border-radius</code></td><td>Border radius for primary buttons</td></tr><tr><td><code>--ck-primary-button-color</code></td><td>Text color for primary buttons</td></tr><tr><td><code>--ck-primary-button-background</code></td><td>Background color for primary buttons</td></tr><tr><td><code>--ck-primary-button-box-shadow</code></td><td>Box shadow for primary buttons</td></tr><tr><td><code>--ck-primary-button-font-weight</code></td><td>Font weight for primary button text</td></tr><tr><td><code>--ck-primary-button-hover-color</code></td><td>Text color on hover</td></tr><tr><td><code>--ck-primary-button-hover-background</code></td><td>Background color on hover</td></tr><tr><td><code>--ck-primary-button-hover-box-shadow</code></td><td>Box shadow on hover</td></tr><tr><td><code>--ck-primary-button-active-background</code></td><td>Background color when active/pressed</td></tr></tbody></table>
+
+| Variable | Description |
+| --- | --- |
+| `--ck-primary-button-border-radius` | Border radius for primary buttons |
+| `--ck-primary-button-color` | Text color for primary buttons |
+| `--ck-primary-button-background` | Background color for primary buttons |
+| `--ck-primary-button-box-shadow` | Box shadow for primary buttons |
+| `--ck-primary-button-font-weight` | Font weight for primary button text |
+| `--ck-primary-button-hover-color` | Text color on hover |
+| `--ck-primary-button-hover-background` | Background color on hover |
+| `--ck-primary-button-hover-box-shadow` | Box shadow on hover |
+| `--ck-primary-button-active-background` | Background color when active/pressed |
+
 
 **Secondary & Tertiary Buttons**
 
-<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-secondary-button-border-radius</code></td><td>Border radius for secondary buttons</td></tr><tr><td><code>--ck-secondary-button-color</code></td><td>Text color for secondary buttons</td></tr><tr><td><code>--ck-secondary-button-background</code></td><td>Background color for secondary buttons</td></tr><tr><td><code>--ck-secondary-button-box-shadow</code></td><td>Box shadow for secondary buttons</td></tr><tr><td><code>--ck-secondary-button-font-weight</code></td><td>Font weight for secondary button text</td></tr><tr><td><code>--ck-secondary-button-hover-background</code></td><td>Background color on hover</td></tr><tr><td><code>--ck-tertiary-button-background</code></td><td>Background color for tertiary buttons</td></tr></tbody></table>
+
+| Variable | Description |
+| --- | --- |
+| `--ck-secondary-button-border-radius` | Border radius for secondary buttons |
+| `--ck-secondary-button-color` | Text color for secondary buttons |
+| `--ck-secondary-button-background` | Background color for secondary buttons |
+| `--ck-secondary-button-box-shadow` | Box shadow for secondary buttons |
+| `--ck-secondary-button-font-weight` | Font weight for secondary button text |
+| `--ck-secondary-button-hover-background` | Background color on hover |
+| `--ck-tertiary-button-background` | Background color for tertiary buttons |
+
 
 **Modal & Body**
 
-<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-modal-box-shadow</code></td><td>Box shadow for the modal container</td></tr><tr><td><code>--ck-overlay-background</code></td><td>Background color for the modal overlay</td></tr><tr><td><code>--ck-body-color</code></td><td>Primary text color for modal content</td></tr><tr><td><code>--ck-body-color-muted</code></td><td>Muted/secondary text color</td></tr><tr><td><code>--ck-body-color-muted-hover</code></td><td>Muted text color on hover</td></tr><tr><td><code>--ck-body-background</code></td><td>Primary background color for modal body</td></tr><tr><td><code>--ck-body-background-transparent</code></td><td>Transparent background variant</td></tr><tr><td><code>--ck-body-background-secondary</code></td><td>Secondary background color</td></tr><tr><td><code>--ck-body-background-secondary-hover-background</code></td><td>Secondary background on hover</td></tr><tr><td><code>--ck-body-background-secondary-hover-outline</code></td><td>Outline color on hover</td></tr><tr><td><code>--ck-body-background-tertiary</code></td><td>Tertiary background color</td></tr><tr><td><code>--ck-body-action-color</code></td><td>Color for actionable elements</td></tr><tr><td><code>--ck-body-divider</code></td><td>Color for divider lines</td></tr><tr><td><code>--ck-body-divider-secondary</code></td><td>Secondary divider color</td></tr><tr><td><code>--ck-body-color-danger</code></td><td>Color for error/danger states</td></tr><tr><td><code>--ck-body-color-valid</code></td><td>Color for success/valid states</td></tr><tr><td><code>--ck-siwe-border</code></td><td>Border color for Sign-In with Ethereum elements</td></tr></tbody></table>
+
+| Variable | Description |
+| --- | --- |
+| `--ck-modal-box-shadow` | Box shadow for the modal container |
+| `--ck-overlay-background` | Background color for the modal overlay |
+| `--ck-body-color` | Primary text color for modal content |
+| `--ck-body-color-muted` | Muted/secondary text color |
+| `--ck-body-color-muted-hover` | Muted text color on hover |
+| `--ck-body-background` | Primary background color for modal body |
+| `--ck-body-background-transparent` | Transparent background variant |
+| `--ck-body-background-secondary` | Secondary background color |
+| `--ck-body-background-secondary-hover-background` | Secondary background on hover |
+| `--ck-body-background-secondary-hover-outline` | Outline color on hover |
+| `--ck-body-background-tertiary` | Tertiary background color |
+| `--ck-body-action-color` | Color for actionable elements |
+| `--ck-body-divider` | Color for divider lines |
+| `--ck-body-divider-secondary` | Secondary divider color |
+| `--ck-body-color-danger` | Color for error/danger states |
+| `--ck-body-color-valid` | Color for success/valid states |
+| `--ck-siwe-border` | Border color for Sign-In with Ethereum elements |
+
 
 **Disclaimer**
 
-<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-body-disclaimer-background</code></td><td>Background color for disclaimer sections</td></tr><tr><td><code>--ck-body-disclaimer-box-shadow</code></td><td>Box shadow for disclaimer sections</td></tr><tr><td><code>--ck-body-disclaimer-color</code></td><td>Text color for disclaimers</td></tr><tr><td><code>--ck-body-disclaimer-link-color</code></td><td>Link color in disclaimers</td></tr><tr><td><code>--ck-body-disclaimer-link-hover-color</code></td><td>Link color on hover</td></tr></tbody></table>
+
+| Variable | Description |
+| --- | --- |
+| `--ck-body-disclaimer-background` | Background color for disclaimer sections |
+| `--ck-body-disclaimer-box-shadow` | Box shadow for disclaimer sections |
+| `--ck-body-disclaimer-color` | Text color for disclaimers |
+| `--ck-body-disclaimer-link-color` | Link color in disclaimers |
+| `--ck-body-disclaimer-link-hover-color` | Link color on hover |
+
 
 **Tooltips**
 
-<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-tooltip-background</code></td><td>Background color for tooltips</td></tr><tr><td><code>--ck-tooltip-background-secondary</code></td><td>Secondary background for tooltips</td></tr><tr><td><code>--ck-tooltip-color</code></td><td>Text color for tooltips</td></tr><tr><td><code>--ck-tooltip-shadow</code></td><td>Shadow for tooltip containers</td></tr></tbody></table>
+
+| Variable | Description |
+| --- | --- |
+| `--ck-tooltip-background` | Background color for tooltips |
+| `--ck-tooltip-background-secondary` | Secondary background for tooltips |
+| `--ck-tooltip-color` | Text color for tooltips |
+| `--ck-tooltip-shadow` | Shadow for tooltip containers |
+
 
 **Network Dropdown**
 
-<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-dropdown-button-color</code></td><td>Text color for dropdown buttons</td></tr><tr><td><code>--ck-dropdown-button-box-shadow</code></td><td>Box shadow for dropdown buttons</td></tr><tr><td><code>--ck-dropdown-button-background</code></td><td>Background color for dropdown buttons</td></tr><tr><td><code>--ck-dropdown-button-hover-color</code></td><td>Text color on hover</td></tr><tr><td><code>--ck-dropdown-button-hover-background</code></td><td>Background color on hover</td></tr></tbody></table>
+
+| Variable | Description |
+| --- | --- |
+| `--ck-dropdown-button-color` | Text color for dropdown buttons |
+| `--ck-dropdown-button-box-shadow` | Box shadow for dropdown buttons |
+| `--ck-dropdown-button-background` | Background color for dropdown buttons |
+| `--ck-dropdown-button-hover-color` | Text color on hover |
+| `--ck-dropdown-button-hover-background` | Background color on hover |
+
 
 **QR Code**
 
-<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-qr-dot-color</code></td><td>Color of QR code dots</td></tr><tr><td><code>--ck-qr-border-color</code></td><td>Border color around QR code</td></tr></tbody></table>
+
+| Variable | Description |
+| --- | --- |
+| `--ck-qr-dot-color` | Color of QR code dots |
+| `--ck-qr-border-color` | Border color around QR code |
+
 
 **Miscellaneous**
 
-<table><thead><tr><th width="350">Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>--ck-focus-color</code></td><td>Color for focused elements</td></tr><tr><td><code>--ck-spinner-color</code></td><td>Color for loading spinners</td></tr><tr><td><code>--ck-copytoclipboard-stroke</code></td><td>Stroke color for copy-to-clipboard icons</td></tr></tbody></table>
+
+| Variable | Description |
+| --- | --- |
+| `--ck-focus-color` | Color for focused elements |
+| `--ck-spinner-color` | Color for loading spinners |
+| `--ck-copytoclipboard-stroke` | Stroke color for copy-to-clipboard icons |
+
 
 ***
 
@@ -1536,6 +1750,5 @@ The `customTheme` object accepts CSS variable overrides organized by component:
 </PayKitProvider>
 ```
 
-{% hint style="info" %}
+> [!NOTE]
 **Tip:** You can combine a predefined `theme` with `customTheme` to override specific variables while maintaining the base theme's styling.
-{% endhint %}

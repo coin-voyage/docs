@@ -25,31 +25,25 @@ This guide gets you from installation to a working CoinVoyage payment button in 
 
 Install `@coin-voyage/paykit` and its React Query peer dependency.
 
-{% tabs %}
-{% tab title="npm" %}
+### npm
 ```sh
 npm i @coin-voyage/paykit @tanstack/react-query@^5.90.6
 ```
-{% endtab %}
 
-{% tab title="pnpm" %}
+### pnpm
 ```sh
 pnpm add @coin-voyage/paykit @tanstack/react-query@^5.90.6
 ```
-{% endtab %}
 
-{% tab title="yarn" %}
+### yarn
 ```sh
 yarn add @coin-voyage/paykit @tanstack/react-query@^5.90.6
 ```
-{% endtab %}
 
-{% tab title="bun" %}
+### bun
 ```sh
 bun add @coin-voyage/paykit @tanstack/react-query@^5.90.6
 ```
-{% endtab %}
-{% endtabs %}
 
 ## 2. Create an API Key
 
@@ -57,11 +51,10 @@ Open the [CoinVoyage Dashboard](https://dashboard.coinvoyage.io/) and create an 
 
 Then go to **Developers** and create an API key for that organization. For client-side SDK usage, expose the public key as `NEXT_PUBLIC_COIN_VOYAGE_API_KEY`.
 
-{% hint style="info" %}
+> [!NOTE]
 Keep your API secret on the server. Only the public API key belongs in client-side code.
-{% endhint %}
 
-<figure><img src="../.gitbook/assets/developers-api-keys (1).png" alt="CoinVoyage dashboard - Developers"><figcaption></figcaption></figure>
+![CoinVoyage dashboard - Developers](../.gitbook/assets/developers-api-keys (1).png)
 
 ## 3. Add the Providers
 

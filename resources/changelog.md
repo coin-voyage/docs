@@ -19,9 +19,8 @@ layout:
 
 All notable changes to CoinVoyage SDK, API, and platform behavior are documented here.
 
-{% hint style="info" %}
+> [!NOTE]
 Entries below are ordered by release date, newest first. `2.0.0` marks the v2 migration release.
-{% endhint %}
 
 ***
 
@@ -92,9 +91,8 @@ Entries below are ordered by release date, newest first. `2.0.0` marks the v2 mi
 
 * **Top-level response fields**: `source_currency`, `source_amount`, `destination_currency`, `destination_amount`, `deposit_address`, `receiving_address`, `refund_address`, and `expires_at` are deprecated. Use the corresponding nested fields in `payment` and `fulfillment` instead.
 
-{% hint style="info" %}
+> [!NOTE]
 See the [Migration Guide](migration-v1-to-v2.md) for detailed upgrade instructions.
-{% endhint %}
 
 ***
 

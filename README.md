@@ -34,14 +34,8 @@ Whether you are building ecommerce checkout, global payments, deposits, or crypt
 
 Start with the quickest path to a working integration, then go deeper into the SDK and dashboard guides.
 
-{% content-ref url="introduction/quickstart.md" %}
 [quickstart.md](introduction/quickstart.md)
-{% endcontent-ref %}
 
-{% content-ref url="overview/sdk-reference.md" %}
 [sdk-reference.md](overview/sdk-reference.md)
-{% endcontent-ref %}
 
-{% content-ref url="dashboard/index.md" %}
 [index.md](dashboard/index.md)
-{% endcontent-ref %}

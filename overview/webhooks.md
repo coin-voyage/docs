@@ -18,13 +18,11 @@ You can register and manage webhook endpoints in the [CoinVoyage Dashboard](http
 4. Select the events you want to subscribe to
 5. Save your webhook and securely store the **Webhook Secret**
 
-{% hint style="info" %}
+> [!NOTE]
 Your webhook endpoint must be publicly accessible and respond with a 2xx status code within 30 seconds to be considered successful.
-{% endhint %}
 
-{% hint style="info" %}
+> [!NOTE]
 When you configure a webhook, you subscribe using uppercase event identifiers such as `ORDER_CREATED` and `ORDER_COMPLETED`. The delivered JSON payload uses lowercase `payorder_*` values in the `type` field, such as `payorder_created` and `payorder_completed`.
-{% endhint %}
 
 ***
 
@@ -32,7 +30,18 @@ When you configure a webhook, you subscribe using uppercase event identifiers su
 
 Use the following subscription events when creating or updating a webhook:
 
-<table><thead><tr><th width="240">Subscription Event</th><th width="220">Payload <code>type</code></th><th width="320">Key Fields</th><th>Description</th></tr></thead><tbody><tr><td><code>ORDER_CREATED</code></td><td><code>payorder_created</code></td><td><code>payorder_id</code>, <code>status</code>, <code>metadata?</code></td><td>Triggered when a new PayOrder is created.</td></tr><tr><td><code>ORDER_AWAITING_PAYMENT</code></td><td><code>payorder_started</code></td><td><code>payorder_id</code>, <code>status</code>, <code>metadata?</code>, <code>payment_data</code></td><td>Triggered when the PayOrder is ready and awaiting payment from the user.</td></tr><tr><td><code>ORDER_CONFIRMING</code></td><td><code>payorder_confirming</code></td><td><code>payorder_id</code>, <code>status</code>, <code>metadata?</code>, <code>payment_data</code></td><td>Triggered when payment has been received and is being confirmed on-chain.</td></tr><tr><td><code>ORDER_EXECUTING</code></td><td><code>payorder_executing</code></td><td><code>payorder_id</code>, <code>status</code>, <code>metadata?</code>, <code>payment_data</code></td><td>Triggered when CoinVoyage starts executing the destination transfer or contract call.</td></tr><tr><td><code>ORDER_COMPLETED</code></td><td><code>payorder_completed</code></td><td><code>payorder_id</code>, <code>status</code>, <code>metadata?</code>, <code>payment_data</code></td><td>Triggered when the PayOrder completes successfully.</td></tr><tr><td><code>ORDER_ERROR</code></td><td><code>payorder_error</code></td><td><code>payorder_id</code>, <code>status</code>, <code>metadata?</code>, <code>message</code></td><td>Triggered when an error occurs during PayOrder processing.</td></tr><tr><td><code>ORDER_REFUNDED</code></td><td><code>payorder_refunded</code></td><td><code>payorder_id</code>, <code>status</code>, <code>metadata?</code>, <code>refund_tx_hash</code>, <code>refund_address</code></td><td>Triggered when funds are refunded to the user.</td></tr><tr><td><code>ORDER_EXPIRED</code></td><td><code>payorder_expired</code></td><td><code>payorder_id</code>, <code>status</code></td><td>Triggered when a PayOrder expires before payment is received.</td></tr></tbody></table>
+
+| Subscription Event | Payload `type` | Key Fields | Description |
+| --- | --- | --- | --- |
+| `ORDER_CREATED` | `payorder_created` | `payorder_id`, `status`, `metadata?` | Triggered when a new PayOrder is created. |
+| `ORDER_AWAITING_PAYMENT` | `payorder_started` | `payorder_id`, `status`, `metadata?`, `payment_data` | Triggered when the PayOrder is ready and awaiting payment from the user. |
+| `ORDER_CONFIRMING` | `payorder_confirming` | `payorder_id`, `status`, `metadata?`, `payment_data` | Triggered when payment has been received and is being confirmed on-chain. |
+| `ORDER_EXECUTING` | `payorder_executing` | `payorder_id`, `status`, `metadata?`, `payment_data` | Triggered when CoinVoyage starts executing the destination transfer or contract call. |
+| `ORDER_COMPLETED` | `payorder_completed` | `payorder_id`, `status`, `metadata?`, `payment_data` | Triggered when the PayOrder completes successfully. |
+| `ORDER_ERROR` | `payorder_error` | `payorder_id`, `status`, `metadata?`, `message` | Triggered when an error occurs during PayOrder processing. |
+| `ORDER_REFUNDED` | `payorder_refunded` | `payorder_id`, `status`, `metadata?`, `refund_tx_hash`, `refund_address` | Triggered when funds are refunded to the user. |
+| `ORDER_EXPIRED` | `payorder_expired` | `payorder_id`, `status` | Triggered when a PayOrder expires before payment is received. |
+
 
 ***
 

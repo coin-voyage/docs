@@ -202,9 +202,8 @@ If any step fails:
 3. PayOrder status updates to `REFUNDED`
 4. Webhook event sent: `payorder_refunded`
 
-{% hint style="info" %}
+> [!NOTE]
 Webhook subscriptions are configured with uppercase `ORDER_*` identifiers, but delivered payloads use lowercase `payorder_*` values in the JSON `type` field.
-{% endhint %}
 
 ---
 

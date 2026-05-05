@@ -36,43 +36,36 @@ CoinVoyage settles crypto into the fiat currencies your customers actually use. 
 
 &#x20;Currency details
 
-{% tabs %}
-{% tab title="USD" %}
+### USD
 **Rails:** ACH, Wire
 
 * **Settlement.** ACH credits typically settle in 1–3 US business days. Wires settle the same day during banking hours.
 * **Coverage.** All US states **except New York** for new customers. Businesses incorporated in New York but operating primarily out of another state may still qualify on a case by case basis  contact support.
 * **Recipient info required.** Routing + account number (ACH) or full wire instructions, plus SSN (individuals) or EIN (businesses).
-{% endtab %}
 
-{% tab title="EUR" %}
+### EUR
 **Rails:** SEPA, SEPA Instant
 
 * **Settlement.** 0–1 business day across the SEPA zone. SEPA Instant is used automatically where the recipient bank supports it.
 * **Coverage.** All 36 SEPA jurisdictions, including the EU, EEA (Iceland, Liechtenstein, Norway), Switzerland, Monaco, San Marino, Andorra, the United Kingdom, and Vatican City.
 * **Recipient info required.** IBAN and BIC (where required by the bank).
 
-{% hint style="warning" %}
+> [!WARNING]
 **MiCA notice for EEA residents.** Per the EU's Markets in Crypto-Assets regulation, USDT is not available to users resident in the EEA. Use **USDC** or **EURC** as the stablecoin leg for EEA off-ramps.
-{% endhint %}
-{% endtab %}
 
-{% tab title="BRL" %}
+### BRL
 **Rail:** Pix
 
 * **Settlement.** Instant, 24/7 via Pix.
 * **Coverage.** Brazil.
 * **Recipient info required.** A valid Pix key — CPF, CNPJ, email, phone number, or random key, plus the matching CPF (individuals) or CNPJ (businesses) for KYC.
-{% endtab %}
 
-{% tab title="MXN" %}
+### MXN
 **Rail:** SPEI
 
 * **Settlement.** Typically a few minutes, SPEI runs 24/7 at most participating banks.
 * **Coverage.** Mexico.
 * **Recipient info required.** 18-digit CLABE; RFC and Mexican government-issued ID for individuals, or CSF (Constancia de Situación Fiscal) for businesses.
-{% endtab %}
-{% endtabs %}
 
 #### Country availability
 
@@ -97,9 +90,8 @@ All off-ramp activity is subject to KYC and AML screening. Verification scales w
 * Small flows can complete with a single hosted KYC link (ID + selfie).
 * Larger flows or business accounts require additional documentation: proof of address, beneficial ownership disclosures, and source of funds attestation where applicable.
 
-{% hint style="info" %}
+> [!NOTE]
 See the [KYC API reference](/broken/pages/fbc5fe9ecfdcc7c09a250f159b3daea02ee40181) for the programmatic flow.
-{% endhint %}
 
 ### On the roadmap
 

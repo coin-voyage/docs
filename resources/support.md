@@ -28,10 +28,10 @@ Contact the CoinVoyage team at [help@coinvoyage.io](mailto:help@coinvoyage.io) f
 
 If you found a bug in the public examples or documentation flow, open an issue in the examples repository:
 
-{% embed url="https://github.com/coin-voyage/examples/issues" %}
+[https://github.com/coin-voyage/examples/issues](https://github.com/coin-voyage/examples/issues)
 
 ## Browse CoinVoyage on GitHub
 
 Explore public repositories, examples, and updates on GitHub:
 
-{% embed url="https://github.com/coin-voyage" %}
+[https://github.com/coin-voyage](https://github.com/coin-voyage)
