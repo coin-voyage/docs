@@ -1,5 +1,6 @@
 ---
-title: "Introduction"
+title: "CoinVoyage: accept crypto payments across any chain"
+description: CoinVoyage is a non-custodial crypto payments platform that lets users pay with any supported token while you settle in the asset and chain you choose.
 ---
 
 CoinVoyage lets you accept crypto payments from supported chains and settle them in the asset and network that fit your product.
