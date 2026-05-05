@@ -92,7 +92,7 @@ Entries below are ordered by release date, newest first. `2.0.0` marks the v2 mi
 * **Top-level response fields**: `source_currency`, `source_amount`, `destination_currency`, `destination_amount`, `deposit_address`, `receiving_address`, `refund_address`, and `expires_at` are deprecated. Use the corresponding nested fields in `payment` and `fulfillment` instead.
 
 > [!NOTE]
-See the [Migration Guide](migration-v1-to-v2.md) for detailed upgrade instructions.
+See the [Migration Guide](/resources/migration-guide-v1-to-v2) for detailed upgrade instructions.
 
 ***
 

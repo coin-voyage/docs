@@ -84,8 +84,10 @@ All off-ramp activity is subject to KYC and AML screening. Verification scales w
 * Small flows can complete with a single hosted KYC link (ID + selfie).
 * Larger flows or business accounts require additional documentation: proof of address, beneficial ownership disclosures, and source of funds attestation where applicable.
 
+{/* TODO: The KYC API reference link below points to a broken GitBook page (/broken/pages/fbc5fe9ecfdcc7c09a250f159b3daea02ee40181). The correct destination could not be determined; restore the link once the target page is available. */}
+
 > [!NOTE]
-See the [KYC API reference](/broken/pages/fbc5fe9ecfdcc7c09a250f159b3daea02ee40181) for the programmatic flow.
+See the KYC API reference for the programmatic flow.
 
 ### On the roadmap
 

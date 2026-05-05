@@ -34,7 +34,7 @@ bun add @coin-voyage/paykit @tanstack/react-query@^5.90.6
 
 #### PayKitProvider
 
-The `PayKitProvider` is required if you want to utilize the [PayButton](sdk-reference.md#paybutton) and [usePayStatus](sdk-reference.md#usepaystatus). It wraps the client application and tracks the state of the PayOrder flow.
+The `PayKitProvider` is required if you want to utilize the [PayButton](/overview/sdk-reference#paybutton) and [usePayStatus](/overview/sdk-reference#usepaystatus). It wraps the client application and tracks the state of the PayOrder flow.
 
 ```tsx
 "use client";
@@ -128,7 +128,7 @@ Key options:
 
 #### WalletProvider
 
-The `WalletProvider` wraps the `PayKitProvider` , and is required if you want to utilize the [PayButton](sdk-reference.md#paybutton) and [usePayStatus](sdk-reference.md#usepaystatus). It facilitates the configuration of specific chain types, such as setting a specific `rpcUrl` or adding additional wallet connectors.
+The `WalletProvider` wraps the `PayKitProvider` , and is required if you want to utilize the [PayButton](/overview/sdk-reference#paybutton) and [usePayStatus](/overview/sdk-reference#usepaystatus). It facilitates the configuration of specific chain types, such as setting a specific `rpcUrl` or adding additional wallet connectors.
 
 ```tsx
 "use client"
@@ -1422,7 +1422,7 @@ enum WebhookEventType {
 
 Recent SDK versions also export dedicated typed event payloads for newer terminal outcomes, including `PayOrderPartialPaymentEvent`.
 
-For webhook configuration details, see the [Webhooks documentation](webhooks.md).
+For webhook configuration details, see the [Webhooks documentation](/overview/webhooks).
 
 #### usePayStatus
 

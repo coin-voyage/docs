@@ -236,7 +236,7 @@ The entire process is:
 
 ### Learn More
 
-- [SDK Reference](sdk-reference.md) - Integrate payments into your app
-- [Webhooks](webhooks.md) - Receive real-time payment updates
-- [Supported Networks](supported-networks.md) - View all supported chains
-- [Dashboard](../dashboard/index.md) - Monitor payments in real time
+- [SDK Reference](/overview/sdk-reference) - Integrate payments into your app
+- [Webhooks](/overview/webhooks) - Receive real-time payment updates
+- [Supported Networks](/overview/supported-networks) - View all supported chains
+- [Dashboard](/dashboard/index) - Monitor payments in real time

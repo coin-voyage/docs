@@ -88,7 +88,7 @@ CoinVoyage supports payments across multiple blockchain networks:
 * **Solana** (SOL)
 * **Sui** (SUI)
 
-See the complete list of [Supported Networks](supported-networks.md).
+See the complete list of [Supported Networks](/overview/supported-networks).
 
 ***
 
@@ -102,7 +102,7 @@ Create and send crypto payment invoices directly from the dashboard:
 * Send automatic email notifications
 * Support itemized billing
 
-Learn more in the [Dashboard Documentation](../dashboard/index.md#invoices).
+Learn more in the [Dashboard Documentation](/dashboard/index#invoices).
 
 ***
 
@@ -117,7 +117,7 @@ For businesses processing high transaction volume, CoinVoyage offers custom pric
 * Priority support
 * Custom integration support
 
-Contact [help@coinvoyage.io](mailto:help@coinvoyage.io) or see [Support](../resources/support.md) to discuss enterprise pricing.
+Contact [help@coinvoyage.io](mailto:help@coinvoyage.io) or see [Support](/resources/support) to discuss enterprise pricing.
 
 ***
 
