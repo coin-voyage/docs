@@ -40,7 +40,7 @@ CoinVoyage settles crypto into the fiat currencies your customers actually use. 
 **Rails:** ACH, Wire
 
 * **Settlement.** ACH credits typically settle in 1–3 US business days. Wires settle the same day during banking hours.
-* **Coverage.** All US states **except New York** for new customers. Businesses incorporated in New York but operating primarily out of another state may still qualify on a case by case basis  contact support.
+* **Coverage.** All US states **except New York** for new customers. Businesses incorporated in New York but operating primarily out of another state may still qualify on a case by case basis — contact support.
 * **Recipient info required.** Routing + account number (ACH) or full wire instructions, plus SSN (individuals) or EIN (businesses).
 
 ### EUR
