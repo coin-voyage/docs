@@ -4,10 +4,10 @@
   "description": "CoinVoyage enables seamless crypto payments into your app from any supported chain and coin.",
   "theme": "mint",
   "logo": {
-    "light": "https://media.brand.dev/f2f0fc75-17b5-4a79-8e7d-f114475b8678.svg",
-    "dark": "https://media.brand.dev/f2f0fc75-17b5-4a79-8e7d-f114475b8678.svg"
+    "light": "/assets/logo-light.svg",
+    "dark": "/assets/logo.svg"
   },
-  "favicon": "https://media.brand.dev/0347e3d6-865e-439f-8864-bd815f892f46.jpg",
+  "favicon": "/assets/favicon.ico",
   "colors": {
     "primary": "#d6296f",
     "light": "#e688bd",
