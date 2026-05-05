@@ -31,6 +31,11 @@
       "x": "https://x.com/Coin_Voyage"
     }
   },
+  "api": {
+    "playground": {
+      "display": "interactive"
+    }
+  },
   "navigation": {
     "tabs": [
       {
@@ -93,63 +98,10 @@
       {
         "tab": "API Reference",
         "icon": "square-terminal",
-        "groups": [
-          {
-            "group": "PayOrder",
-            "openapi": "/openapi.json",
-            "pages": [
-              "GET /pay-orders",
-              "POST /pay-orders",
-              "GET /pay-orders/{payorder_id}",
-              "POST /pay-orders/{payorder_id}/payment-details",
-              "GET /pay-orders/{payorder_id}/payment-methods",
-              "POST /pay-orders/{payorder_id}/quote",
-              "POST /pay-orders/{payorder_id}/refund"
-            ]
-          },
-          {
-            "group": "Swap",
-            "openapi": "/openapi.json",
-            "pages": [
-              "POST /swap/data",
-              "POST /swap/quote"
-            ]
-          },
-          {
-            "group": "Fees",
-            "openapi": "/openapi.json",
-            "pages": [
-              "GET /fees/balance",
-              "POST /fees/claim"
-            ]
-          },
-          {
-            "group": "KYC",
-            "openapi": "/openapi.json",
-            "pages": [
-              "GET /kyc",
-              "POST /kyc"
-            ]
-          },
-          {
-            "group": "Webhook",
-            "openapi": "/openapi.json",
-            "pages": [
-              "GET /webhooks",
-              "POST /webhooks",
-              "DELETE /webhooks/{webhook_id}",
-              "PUT /webhooks/{webhook_id}"
-            ]
-          },
-          {
-            "group": "Websocket",
-            "openapi": "/openapi.json",
-            "pages": [
-              "GET /ws"
-            ]
-          }
-        ],
-        "openapi": "https://api.coinvoyage.io/v2/openapi.json"
+        "openapi": {
+          "source": "https://api.coinvoyage.io/v2/openapi.json",
+          "directory": "api-reference"
+        }
       }
     ]
   }
