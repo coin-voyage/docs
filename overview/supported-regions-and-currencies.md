@@ -21,31 +21,25 @@ layout:
 
 # Supported Regions & Currencies
 
-### Supported Regions & Currencies
-
-&#x20;
-
 CoinVoyage settles crypto into the fiat currencies your customers actually use. We currently support off-ramps in four fiat currencies spanning North America, Europe, and Latin America, with new rails added on a rolling basis.
 
-&#x20;
-
-| Currency       | Symbol | Payment rail       | Settlement                                 |
+| Currency       | Symbol | Payment Rail       | Settlement                                 |
 | -------------- | ------ | ------------------ | ------------------------------------------ |
 | US Dollar      | `USD`  | ACH, Wire          | ACH 1–3 business days · Wire same-day      |
 | Euro           | `EUR`  | SEPA, SEPA Instant | 0–1 business day · Instant where available |
 | Brazilian Real | `BRL`  | Pix                | Instant, 24/7                              |
 | Mexican Peso   | `MXN`  | SPEI               | Minutes, 24/7                              |
 
-&#x20;Currency details
+### Currency Details
 
-### USD
+#### USD
 **Rails:** ACH, Wire
 
 * **Settlement.** ACH credits typically settle in 1–3 US business days. Wires settle the same day during banking hours.
 * **Coverage.** All US states **except New York** for new customers. Businesses incorporated in New York but operating primarily out of another state may still qualify on a case by case basis — contact support.
 * **Recipient info required.** Routing + account number (ACH) or full wire instructions, plus SSN (individuals) or EIN (businesses).
 
-### EUR
+#### EUR
 **Rails:** SEPA, SEPA Instant
 
 * **Settlement.** 0–1 business day across the SEPA zone. SEPA Instant is used automatically where the recipient bank supports it.
@@ -55,21 +49,21 @@ CoinVoyage settles crypto into the fiat currencies your customers actually use. 
 > [!WARNING]
 **MiCA notice for EEA residents.** Per the EU's Markets in Crypto-Assets regulation, USDT is not available to users resident in the EEA. Use **USDC** or **EURC** as the stablecoin leg for EEA off-ramps.
 
-### BRL
+#### BRL
 **Rail:** Pix
 
 * **Settlement.** Instant, 24/7 via Pix.
 * **Coverage.** Brazil.
 * **Recipient info required.** A valid Pix key — CPF, CNPJ, email, phone number, or random key, plus the matching CPF (individuals) or CNPJ (businesses) for KYC.
 
-### MXN
+#### MXN
 **Rail:** SPEI
 
 * **Settlement.** Typically a few minutes, SPEI runs 24/7 at most participating banks.
 * **Coverage.** Mexico.
 * **Recipient info required.** 18-digit CLABE; RFC and Mexican government-issued ID for individuals, or CSF (Constancia de Situación Fiscal) for businesses.
 
-#### Country Availability
+### Country Availability
 
 CoinVoyage onboards individuals and businesses globally, with the exceptions listed below.
 
@@ -79,7 +73,7 @@ We are unable to onboard customers resident or registered in:
 
 Afghanistan, Belarus, Cuba, Democratic Republic of the Congo, Gaza Strip, Iran, Iraq, Lebanon, Libya, Myanmar, North Korea, Russian Federation, Somalia, South Sudan, Sudan, Syria, Ukrainian Territories (Crimea, Donetsk, Luhansk), Venezuela, West Bank, Yemen.
 
-#### KYC & Compliance
+### KYC & Compliance
 
 All off-ramp activity is subject to KYC and AML screening. Verification scales with transaction volume:
 
@@ -95,4 +89,4 @@ We're actively expanding rail coverage. Currencies in active integration:
 
 * **GBP** — Faster Payments (United Kingdom)
 * **COP** — Bre-B / domestic bank transfer (Colombia)
-* Additional APAC currencies under evaluation&#x20;
+* Additional APAC currencies under evaluation
