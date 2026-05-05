@@ -92,7 +92,56 @@
           {
             "tab": "API Reference",
             "icon": "square-terminal",
-            "openapi": "https://acc-api.coinvoyage.io/v2/openapi.json"
+            "groups": [
+              {
+                "group": "PayOrder",
+                "pages": [
+                  "api-reference/get-pay-orders",
+                  "api-reference/post-pay-orders",
+                  "api-reference/get-pay-orders-payorder-id",
+                  "api-reference/post-pay-orders-payorder-id-payment-details",
+                  "api-reference/get-pay-orders-payorder-id-payment-methods",
+                  "api-reference/post-pay-orders-payorder-id-quote",
+                  "api-reference/post-pay-orders-payorder-id-refund"
+                ]
+              },
+              {
+                "group": "Swap",
+                "pages": [
+                  "api-reference/post-swap-data",
+                  "api-reference/post-swap-quote"
+                ]
+              },
+              {
+                "group": "Fees",
+                "pages": [
+                  "api-reference/get-fees-balance",
+                  "api-reference/post-fees-claim"
+                ]
+              },
+              {
+                "group": "KYC",
+                "pages": [
+                  "api-reference/get-kyc",
+                  "api-reference/post-kyc"
+                ]
+              },
+              {
+                "group": "Webhook",
+                "pages": [
+                  "api-reference/get-webhooks",
+                  "api-reference/post-webhooks",
+                  "api-reference/delete-webhooks-webhook-id",
+                  "api-reference/put-webhooks-webhook-id"
+                ]
+              },
+              {
+                "group": "Websocket",
+                "pages": [
+                  "api-reference/get-ws"
+                ]
+              }
+            ]
           }
         ]
       }
