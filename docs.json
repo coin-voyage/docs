@@ -92,7 +92,7 @@
           {
             "tab": "API Reference",
             "icon": "square-terminal",
-            "openapi": "openapi.json"
+            "openapi": "https://acc-api.coinvoyage.io/v2/openapi.json"
           }
         ]
       }
