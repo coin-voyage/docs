@@ -40,7 +40,7 @@
         "default": true,
         "tabs": [
           {
-            "tab": "Guide",
+            "tab": "Documentation",
             "icon": "book-open",
             "groups": [
               {
@@ -92,7 +92,7 @@
           {
             "tab": "API Reference",
             "icon": "square-terminal",
-            "href": "https://api.coinvoyage.io/v2/docs"
+            "openapi": "openapi.json"
           }
         ]
       }
