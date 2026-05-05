@@ -1,22 +1,10 @@
 ---
 title: "Set up webhooks for real-time payment notifications"
+sidebarTitle: "Overview"
 description: "Register a CoinVoyage webhook endpoint, verify HMAC-SHA256 delivery signatures, and handle PayOrder lifecycle events in your server."
 layout:
-  width: default
-  title:
-    visible: false
   description:
     visible: false
-  tableOfContents:
-    visible: true
-  outline:
-    visible: true
-  pagination:
-    visible: true
-  metadata:
-    visible: true
-  tags:
-    visible: true
 ---
 
 Webhooks let you receive real-time notifications in your application whenever a PayOrder changes status. Rather than polling the CoinVoyage API for updates, you register an HTTPS endpoint and CoinVoyage delivers a `POST` request with the event details each time something happens — payment received, confirmed on-chain, completed, refunded, and more.

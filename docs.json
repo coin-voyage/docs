@@ -2,7 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "name": "CoinVoyage",
   "description": "CoinVoyage enables seamless crypto payments into your app from any supported chain and coin.",
-  "theme": "luma",
+  "theme": "mint",
   "logo": {
     "light": "https://media.brand.dev/f2f0fc75-17b5-4a79-8e7d-f114475b8678.svg",
     "dark": "https://media.brand.dev/f2f0fc75-17b5-4a79-8e7d-f114475b8678.svg"

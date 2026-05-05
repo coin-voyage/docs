@@ -1,22 +1,10 @@
 ---
 title: "ApiClient — server-side CoinVoyage REST API client"
+sidebarTitle: "ApiClient"
 description: "Use ApiClient from @coin-voyage/paykit/server to create pay orders, fetch quotes, manage webhooks, stream real-time order status, and claim fees."
 layout:
-  width: default
-  title:
-    visible: false
   description:
     visible: false
-  tableOfContents:
-    visible: true
-  outline:
-    visible: true
-  pagination:
-    visible: true
-  metadata:
-    visible: true
-  tags:
-    visible: true
 ---
 
 `ApiClient` is the server-side interface to the CoinVoyage API. Import it from `@coin-voyage/paykit/server` and use it in your API routes, server actions, or backend services to create pay orders, retrieve quotes, manage webhooks, and more. Every method returns an `APIResponse<T>` wrapper that provides consistent, type-safe error handling without throwing exceptions.

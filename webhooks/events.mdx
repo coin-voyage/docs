@@ -1,22 +1,10 @@
 ---
 title: "CoinVoyage webhook event types and payload reference"
+sidebarTitle: "Events"
 description: "Every PayOrder webhook event with its subscription identifier, payload type value, and full JSON example delivered to your endpoint."
 layout:
-  width: default
-  title:
-    visible: false
   description:
     visible: false
-  tableOfContents:
-    visible: true
-  outline:
-    visible: true
-  pagination:
-    visible: true
-  metadata:
-    visible: true
-  tags:
-    visible: true
 ---
 
 CoinVoyage emits a webhook event at each stage of the PayOrder lifecycle. For every event you subscribe to, CoinVoyage delivers a `POST` request to your endpoint containing a JSON payload that describes what changed. This page covers every event type, the payload structures you can expect, and a full example for each.

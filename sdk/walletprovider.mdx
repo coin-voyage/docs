@@ -1,22 +1,10 @@
 ---
 title: "WalletProvider — configure multi-chain wallet connectors"
+sidebarTitle: "WalletProvider"
 description: "Configure WalletProvider with chain-specific settings for EVM, Solana, Sui, and UTXO wallets including RPC URLs, adapters, and connectors."
 layout:
-  width: default
-  title:
-    visible: false
   description:
     visible: false
-  tableOfContents:
-    visible: true
-  outline:
-    visible: true
-  pagination:
-    visible: true
-  metadata:
-    visible: true
-  tags:
-    visible: true
 ---
 
 `WalletProvider` manages wallet connections for the CoinVoyage PayKit SDK. It wraps `PayKitProvider` in your provider tree and is required to use `PayButton` and `usePayStatus`. Without it, the payment modal cannot connect to a user's wallet. You configure it through a `config` prop that accepts per-chain settings — you only need to supply configuration for the chains your application uses.

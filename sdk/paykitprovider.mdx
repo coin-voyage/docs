@@ -1,22 +1,10 @@
 ---
 title: "PayKitProvider — set up your global payment context"
+sidebarTitle: "PayKitProvider"
 description: "Configure PayKitProvider with your API key, theme, environment, wallet callbacks, and global PayKitOptions to control every aspect of the payment modal."
 layout:
-  width: default
-  title:
-    visible: false
   description:
     visible: false
-  tableOfContents:
-    visible: true
-  outline:
-    visible: true
-  pagination:
-    visible: true
-  metadata:
-    visible: true
-  tags:
-    visible: true
 ---
 
 `PayKitProvider` is the top-level React context provider for the CoinVoyage PayKit SDK. Wrapping your application with it enables the `PayButton` component and the `usePayStatus` hook anywhere in the component tree. It connects to the CoinVoyage API using your `apiKey`, tracks pay order state, and exposes global configuration that applies to every payment flow on the page.
