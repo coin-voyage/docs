@@ -17,7 +17,7 @@ layout:
     visible: true
 ---
 
-# Supported regions & currencies
+# Supported Regions & Currencies
 
 ### Supported Regions & Currencies
 
@@ -67,17 +67,17 @@ CoinVoyage settles crypto into the fiat currencies your customers actually use. 
 * **Coverage.** Mexico.
 * **Recipient info required.** 18-digit CLABE; RFC and Mexican government-issued ID for individuals, or CSF (Constancia de Situación Fiscal) for businesses.
 
-#### Country availability
+#### Country Availability
 
 CoinVoyage onboards individuals and businesses globally, with the exceptions listed below.
 
-#### Not currently supported
+#### Not Currently Supported
 
 We are unable to onboard customers resident or registered in:
 
 Afghanistan, Belarus, Cuba, Democratic Republic of the Congo, Gaza Strip, Iran, Iraq, Lebanon, Libya, Myanmar, North Korea, Russian Federation, Somalia, South Sudan, Sudan, Syria, Ukrainian Territories (Crimea, Donetsk, Luhansk), Venezuela, West Bank, Yemen.
 
-#### KYC & compliance
+#### KYC & Compliance
 
 All off-ramp activity is subject to KYC and AML screening. Verification scales with transaction volume:
 
@@ -87,7 +87,7 @@ All off-ramp activity is subject to KYC and AML screening. Verification scales w
 > [!NOTE]
 See the [KYC API reference](/broken/pages/fbc5fe9ecfdcc7c09a250f159b3daea02ee40181) for the programmatic flow.
 
-### On the roadmap
+### On the Roadmap
 
 We're actively expanding rail coverage. Currencies in active integration:
 
