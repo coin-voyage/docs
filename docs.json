@@ -80,6 +80,8 @@
               "dashboard/overview",
               "dashboard/transactions",
               "dashboard/settlement",
+              "dashboard/withdrawals",
+              "dashboard/custom-fees",
               "dashboard/invoices",
               "dashboard/developers"
             ]
