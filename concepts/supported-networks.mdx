@@ -11,22 +11,17 @@ CoinVoyage accepts payments from and settles to a growing set of blockchain netw
 
 ## Supported networks
 
-| Chain | Chain ID | Testnet? |
-|---|---|---|
-| Bitcoin | `20000000000001` | No |
-| Solana | `30000000000001` | No |
-| Ethereum Mainnet | `1` | No |
-| Optimism | `10` | No |
-| Arbitrum | `42161` | No |
-| Base | `8453` | No |
-| Binance Smart Chain (BSC) | `56` | No |
-| Polygon | `137` | No |
-| Sui | `30000000000002` | No |
-| Stable (testnet) | `2201` | Yes |
-
-<Note>
-  The **Stable** network (chain ID `2201`) is a testnet environment. Use it during development and integration testing. To access testnet chains in the SDK, initialize `PayKitProvider` or `ApiClient` with `environment: "development"`.
-</Note>
+| Chain                     | Chain ID         |
+| ------------------------- | ---------------- |
+| Bitcoin                   | `20000000000001` |
+| Solana                    | `30000000000001` |
+| Ethereum Mainnet          | `1`              |
+| Optimism                  | `10`             |
+| Arbitrum                  | `42161`          |
+| Base                      | `8453`           |
+| Binance Smart Chain (BSC) | `56`             |
+| Polygon                   | `137`            |
+| Sui                       | `30000000000002` |
 
 ## Using chain IDs in your integration
 
@@ -60,5 +55,7 @@ CoinVoyage is actively expanding network coverage. Networks currently in integra
 - Additional Ethereum L2s
 
 <Info>
-  Network availability may differ between the `production` and `development` environments. The development environment may include early-access chains not yet available in production.
+  Network availability may differ between the `production` and `development`
+  environments. The development environment may include early-access chains not
+  yet available in production.
 </Info>
