@@ -1,0 +1,103 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "CoinVoyage",
+  "description": "CoinVoyage enables seamless crypto payments into your app from any supported chain and coin.",
+  "colors": {
+    "primary": "#007B50",
+    "light": "#009966",
+    "dark": "#005C3C"
+  },
+  "favicon": "/.gitbook/assets/favicon.ico",
+  "appearance": {
+    "default": "system"
+  },
+  "icons": {
+    "library": "lucide"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "X",
+        "href": "https://x.com/Coin_Voyage",
+        "icon": "twitter"
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/Coin_Voyage"
+    }
+  },
+  "metadata": {
+    "timestamp": true
+  },
+  "navigation": {
+    "versions": [
+      {
+        "version": "v2",
+        "tag": "current",
+        "default": true,
+        "tabs": [
+          {
+            "tab": "Guide",
+            "icon": "book-open",
+            "groups": [
+              {
+                "group": "Introduction",
+                "root": "README",
+                "pages": [
+                  "introduction/quickstart"
+                ]
+              },
+              {
+                "group": "Overview",
+                "icon": "compass",
+                "pages": [
+                  "overview/how-it-works",
+                  "overview/pricing",
+                  "overview/supported-networks",
+                  "overview/supported-regions-and-currencies",
+                  "overview/sdk-reference",
+                  "overview/webhooks"
+                ]
+              },
+              {
+                "group": "Dashboard",
+                "icon": "layout-dashboard",
+                "pages": [
+                  "dashboard/index"
+                ]
+              },
+              {
+                "group": "Resources",
+                "icon": "life-buoy",
+                "pages": [
+                  "resources/migration-guide-v1-to-v2",
+                  "resources/faqs",
+                  "resources/support",
+                  "resources/changelog",
+                  "resources/open-source-example"
+                ]
+              },
+              {
+                "group": "Additional Examples",
+                "icon": "credit-card",
+                "pages": [
+                  "additional-examples/payment"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "API Reference",
+            "icon": "square-terminal",
+            "pages": [
+              "resources/api-reference"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
