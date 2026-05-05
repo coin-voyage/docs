@@ -26,6 +26,16 @@ Entries below are ordered by release date, newest first. `2.0.0` marks the v2 mi
 
 ***
 
+## Platform - 2026-05-05
+
+### Added
+
+* **Public API reference**: The full CoinVoyage REST API is now browseable in the [API Reference](/api-reference/get-pay-orders), covering PayOrders, Swap, Fees, KYC, Webhooks, and the WebSocket endpoint.
+* **Supported regions & currencies page**: Published a [single source of truth](/overview/supported-regions-and-currencies) for off-ramp coverage — USD (ACH, Wire), EUR (SEPA, SEPA Instant), BRL (Pix), and MXN (SPEI) — including settlement times, KYC requirements, and unsupported jurisdictions.
+* **SALE PayOrder asset override**: `SALE` PayOrders now accept an optional `intent.asset` to settle a single order to a specific asset and chain, bypassing the default dashboard settlement currency. Omit `intent.asset` to keep using the configured dashboard default. See the [SDK reference](/overview/sdk-reference) for the request shape.
+
+***
+
 ## @coin-voyage/paykit [2.4.1] - 2026-04-08
 
 ### Added
