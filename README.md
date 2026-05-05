@@ -1,14 +1,17 @@
 ---
+title: Introduction
+sidebarTitle: Introduction
+description: Accept crypto payments from supported chains and settle in the asset and network that fit your product.
 layout:
-  width: default
+  width: wide
   title:
     visible: false
   description:
     visible: false
   tableOfContents:
-    visible: true
+    visible: false
   outline:
-    visible: true
+    visible: false
   pagination:
     visible: true
   metadata:
@@ -17,7 +20,7 @@ layout:
 
 # Introduction
 
-CoinVoyage lets you accept crypto payments from any supported chain and settle them in the asset and network that fit your product.
+CoinVoyage lets you accept crypto payments from supported chains and settle them in the asset and network that fit your product.
 
 * **Flexible**: Let customers pay with the tokens and chains they already use.
 * **Fast**: Routes are optimized for speed and pricing across providers.
@@ -34,8 +37,10 @@ Whether you are building ecommerce checkout, global payments, deposits, or crypt
 
 Start with the quickest path to a working integration, then go deeper into the SDK and dashboard guides.
 
-[quickstart.md](introduction/quickstart.md)
+* [Quickstart](introduction/quickstart.md)
+* [SDK reference](overview/sdk-reference.md)
+* [Dashboard overview](dashboard/index.md)
 
-[sdk-reference.md](overview/sdk-reference.md)
+## API Reference
 
-[index.md](dashboard/index.md)
+Use the API reference tab in the header for the hosted REST API documentation.
