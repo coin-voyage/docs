@@ -31,4 +31,4 @@ Use the [example site](https://example.coinvoyage.io/) to test Deposit and Sale 
 
 ## Need Help?
 
-If you get stuck while adapting an example, see [Support](support.md).
+If you get stuck while adapting an example, see [Support](/resources/support).

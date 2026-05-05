@@ -5,7 +5,7 @@ description: "Reference for the @coin-voyage/paykit SDK: installation, providers
 
 # SDK Reference
 
-The [`@coin-voyage/paykit`](https://www.npmjs.com/package/@coin-voyage/paykit) SDK offers client-side and server-side functionality that abstracts the integration of the API, while also exporting UI components. This SDK reduces the amount of boilerplate code you need and lets you easily integrate payment and deposit flow into your web application.
+The [`@coin-voyage/paykit`](https://www.npmjs.com/package/@coin-voyage/paykit) SDK offers client-side and server-side functionality that abstracts the integration of the API, while also exporting UI components. This SDK reduces the amount of boilerplate code you need and lets you easily integrate payment and deposit flows into your web application.
 
 ***
 
@@ -35,7 +35,7 @@ bun add @coin-voyage/paykit @tanstack/react-query@^5.90.6
 
 #### PayKitProvider
 
-The `PayKitProvider` is required if you want to utilize the [PayButton](sdk-reference.md#paybutton) and [usePayStatus](sdk-reference.md#usepaystatus). It wraps the client application and tracks the state of the PayOrder flow.
+The `PayKitProvider` is required if you want to utilize the [PayButton](#paybutton) and [usePayStatus](#usepaystatus). It wraps the client application and tracks the state of the PayOrder flow.
 
 ```tsx
 "use client";
@@ -129,7 +129,7 @@ Key options:
 
 #### WalletProvider
 
-The `WalletProvider` wraps the `PayKitProvider` , and is required if you want to utilize the [PayButton](sdk-reference.md#paybutton) and [usePayStatus](sdk-reference.md#usepaystatus). It facilitates the configuration of specific chain types, such as setting a specific `rpcUrl` or adding additional wallet connectors.
+The `WalletProvider` wraps the `PayKitProvider` , and is required if you want to utilize the [PayButton](#paybutton) and [usePayStatus](#usepaystatus). It facilitates the configuration of specific chain types, such as setting a specific `rpcUrl` or adding additional wallet connectors.
 
 ```tsx
 "use client"
@@ -189,7 +189,7 @@ The `WalletProvider` accepts the following configuration parameters:
 
 UI component you can add to your application. The button comes in multiple themes and its style is customizable to your branding.
 
-Clicking the button opens a modal that allows the user to select a payment methods in order to complete the pay order.
+Clicking the button opens a modal that allows the user to select a payment method and complete the pay order.
 
 ![Pay Button](../.gitbook/assets/pay_button%20%281%29.png)
 
@@ -1423,7 +1423,7 @@ enum WebhookEventType {
 
 Recent SDK versions also export dedicated typed event payloads for newer terminal outcomes, including `PayOrderPartialPaymentEvent`.
 
-For webhook configuration details, see the [Webhooks documentation](webhooks.md).
+For webhook configuration details, see the [Webhooks documentation](/overview/webhooks).
 
 #### usePayStatus
 
