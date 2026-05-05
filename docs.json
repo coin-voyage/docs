@@ -47,6 +47,7 @@
                 "group": "Introduction",
                 "root": "README",
                 "pages": [
+                  "introduction",
                   "introduction/quickstart"
                 ]
               },
@@ -73,7 +74,6 @@
                 "group": "Resources",
                 "icon": "life-buoy",
                 "pages": [
-                  "resources/migration-guide-v1-to-v2",
                   "resources/faqs",
                   "resources/support",
                   "resources/changelog",
@@ -92,7 +92,7 @@
           {
             "tab": "API Reference",
             "icon": "square-terminal",
-            "openapi": "https://acc-api.coinvoyage.io/v2/openapi.json"
+            "openapi": "openapi.json"
           }
         ]
       }
