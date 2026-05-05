@@ -148,7 +148,8 @@
               "GET /ws"
             ]
           }
-        ]
+        ],
+        "openapi": "https://api.coinvoyage.io/v2/openapi.json"
       }
     ]
   }
