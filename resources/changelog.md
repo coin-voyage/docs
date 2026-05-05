@@ -26,6 +26,24 @@ Entries below are ordered by release date, newest first. `2.0.0` marks the v2 mi
 
 ***
 
+## @coin-voyage/paykit [2.5.0] - 2026-05-05
+
+### Added
+
+* **Fiat off-ramp settlement**: Settle crypto payments directly into local currency. Initial rails include USD (ACH and wire), EUR (SEPA and SEPA Instant), BRL (Pix), and MXN (SPEI). See [Supported Regions & Currencies](/overview/supported-regions-and-currencies) for coverage details.
+* **KYC flow for off-ramp customers**: New hosted KYC link supports both individual and business verification, with statuses for questionnaire, UBO collection, and review. Verification scales with transaction volume.
+* **Payment rail selection**: PayOrders accept a new `payment_rail` parameter (`CRYPTO` or `FIAT`) so you can route a single order to a crypto wallet or fiat bank account.
+* **Payment details endpoint**: New `payOrderPaymentDetails` SDK method (and corresponding API endpoint) lets you lock in the source currency, payment rail, refund address, and quote for a PayOrder before payment. See the [SDK reference](/overview/sdk-reference).
+* **Fiat-denominated intents**: PayOrder `intent.amount` now accepts a `fiat` shape (for example `{ amount: 570.52, unit: "USD" }`) so you can price orders directly in fiat.
+* **Payment method availability metadata**: Available payment methods now include `available`, `reason`, and `minimum_amount` fields so you can surface why a method is gated and the minimum amount required to use it.
+
+### Changed
+
+* **API version**: The CoinVoyage API is now at version `2.2.0`. The published OpenAPI specification powering the API reference has been updated accordingly.
+* **Organization settings**: `Organization.settings` now exposes typed fields including `card_payments` and `hide_footer`, while still accepting additional custom properties.
+
+***
+
 ## @coin-voyage/paykit [2.4.1] - 2026-04-08
 
 ### Added
