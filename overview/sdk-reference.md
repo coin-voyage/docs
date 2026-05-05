@@ -2,7 +2,7 @@
 description: Production-ready SDK for CoinVoyage integration.
 ---
 
-# SDK reference
+# SDK Reference
 
 The [`@coin-voyage/paykit`](https://www.npmjs.com/package/@coin-voyage/paykit) SDK offers client-side and server-side functionality that abstracts the integration of the API, while also exporting UI components. This SDK reduce the amount of boilerplate code you need and lets you easily integrate payment and deposit flow into your web application.
 

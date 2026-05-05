@@ -177,7 +177,7 @@ Additional top-level fields may be present depending on the event type.
 
 ***
 
-### Handling webhook events
+### Handling Webhook Events
 
 This example shows how to verify webhook signatures and handle incoming events by reading the payload `type`.
 
