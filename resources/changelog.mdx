@@ -28,8 +28,8 @@ All notable changes to the CoinVoyage SDK, API, and platform behavior are docume
 
 **Added**
 
-- **Stripe onramp integration**: Full Stripe fiat-to-crypto onramp support, including geo-blocking for restricted regions.
-- **`PaymentSteps` model**: Tracks granular payment progress across stages such as onramp, swap, and delivery.
+- **Stripe on-ramp integration**: Full Stripe fiat-to-crypto on-ramp support, including geo-blocking for restricted regions.
+- **`PaymentSteps` model**: Tracks granular payment progress across stages such as on-ramp, swap, and delivery.
 - **Payment methods endpoint**: `GET /pay-orders/{payorder_id}/payment-methods` returns available payment methods for a given PayOrder.
 - **Organization settings in PayOrder responses**: `Organization.settings` is now a JSON field and is returned in `GET /pay-orders` and `GET /pay-orders/{payorder_id}` responses.
 - **`hosted_url` field**: Added to `GET /pay-orders` and `GET /pay-orders/{payorder_id}` responses so you can link customers directly to the hosted pay page.
