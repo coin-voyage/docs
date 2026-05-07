@@ -46,14 +46,14 @@
         "tab": "Documentation",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Get started",
             "pages": [
               "introduction",
               "quickstart"
             ]
           },
           {
-            "group": "Core Concepts",
+            "group": "Core concepts",
             "pages": [
               "concepts/how-it-works",
               "concepts/pay-orders",
@@ -102,7 +102,7 @@
         ]
       },
       {
-        "tab": "API Reference",
+        "tab": "API reference",
         "icon": "square-terminal",
         "openapi": {
           "source": "https://api.coinvoyage.io/v2/openapi.json",
