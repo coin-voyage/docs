@@ -91,6 +91,12 @@
             ]
           },
           {
+            "group": "Guides",
+            "pages": [
+              "guides/production-checklist"
+            ]
+          },
+          {
             "group": "Resources",
             "pages": [
               "resources/pricing",
