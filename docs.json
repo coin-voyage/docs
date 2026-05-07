@@ -23,6 +23,10 @@
         "label": "X",
         "href": "https://x.com/Coin_Voyage",
         "icon": "twitter"
+      },
+      {
+        "href": "https://github.com/coin-voyage/",
+        "label": "Github"
       }
     ]
   },
