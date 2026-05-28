@@ -1,0 +1,81 @@
+---
+title: "useOrderStatusWS - order status WebSocket hook"
+sidebarTitle: "useOrderStatusWS"
+description: "Subscribe to CoinVoyage PayOrder status events from React with automatic reconnects and connection-state callbacks."
+layout:
+  description:
+    visible: false
+---
+
+`useOrderStatusWS` subscribes to PayOrder status events over the CoinVoyage backend WebSocket from inside a React component. Use it when you need live payment state outside the default `PayButton` lifecycle callbacks, such as a custom checkout page, payment status panel, or embedded dashboard view.
+
+<Note>
+  `useOrderStatusWS` must run inside `PayKitProvider` because it uses the configured backend API client from context.
+</Note>
+
+## Import
+
+```tsx
+import { useOrderStatusWS } from "@coin-voyage/paykit";
+```
+
+## Basic usage
+
+```tsx
+"use client";
+
+import { useState } from "react";
+import { useOrderStatusWS } from "@coin-voyage/paykit";
+
+export function OrderStatusPanel({ orderId }: { orderId?: string }) {
+  const [connected, setConnected] = useState(false);
+
+  useOrderStatusWS({
+    orderId,
+    enabled: Boolean(orderId),
+    onConnectedChange: setConnected,
+    onEvent: (event) => {
+      console.log("PayOrder event:", event);
+    },
+    onError: (error) => {
+      console.error("Order status stream failed:", error);
+    },
+  });
+
+  return <p>{connected ? "Connected" : "Connecting"}</p>;
+}
+```
+
+## Options
+
+<ParamField path="orderId" type="string">
+  PayOrder ID to subscribe to. The hook does not connect until `orderId` is available.
+</ParamField>
+
+<ParamField path="enabled" type="boolean" default="true">
+  Controls whether the WebSocket should be active. Set this to `false` to pause the subscription without unmounting the component.
+</ParamField>
+
+<ParamField path="onEvent" type="(event: PayOrderEvent) => void">
+  Called for each PayOrder event delivered by the backend WebSocket.
+</ParamField>
+
+<ParamField path="onError" type="(error: unknown) => void">
+  Called when the WebSocket errors, authentication times out, or the backend returns an error message.
+</ParamField>
+
+<ParamField path="onConnectedChange" type="(connected: boolean) => void">
+  Called when the connection becomes authenticated or disconnects.
+</ParamField>
+
+## Behavior
+
+- Connects only when `enabled` is true and `orderId` is present.
+- Subscribes to the specified PayOrder after the WebSocket opens.
+- Waits for backend authentication before reporting `connected: true`.
+- Reconnects with exponential backoff after close, error, or authentication timeout.
+- Cleans up timers and closes the socket when the component unmounts or dependencies change.
+
+<Tip>
+  Use this hook for UI responsiveness only. Fulfillment should still be driven by verified webhooks on your server.
+</Tip>
