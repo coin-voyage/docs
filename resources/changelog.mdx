@@ -1,17 +1,56 @@
 ---
 title: "CoinVoyage SDK and API changelog — release notes"
 sidebarTitle: "Changelog"
-description: "All notable changes to the CoinVoyage SDK, API, and platform, ordered newest-first. Includes breaking changes, new features, and bug fixes."
+description: "Integration-facing CoinVoyage SDK and API changes, ordered newest-first. Includes breaking changes, new features, and user-visible fixes."
 layout:
   description:
     visible: false
 ---
 
-All notable changes to the CoinVoyage SDK, API, and platform behavior are documented here. Releases follow [Semantic Versioning](https://semver.org/): major versions for breaking changes, minor for new backward-compatible functionality, and patch for bug fixes.
+Integration-facing changes to the CoinVoyage SDK, API, and platform behavior are documented here. Internal implementation details are omitted unless they change what you configure, call, receive, or need to handle in production. Releases follow [Semantic Versioning](https://semver.org/): major versions for breaking changes, minor for new backward-compatible functionality, and patch for bug fixes.
 
 <Info>
   `2.0.0` marks the v2 migration release. If you are upgrading from v1, see the [Migration Guide](/resources/migration-v1-to-v2) for step-by-step upgrade instructions.
 </Info>
+
+---
+
+## 2.5.0 - 2026-05-27
+
+**Added**
+
+- **KYC helpers**: `ApiClient.createKYCLink()` creates an identity-verification link for an organization, and `ApiClient.getKYCStatus()` retrieves the current KYC and terms-of-service status.
+
+**Changed**
+
+- **Signed organization methods**: `ApiClient.listPayOrders()`, `ApiClient.listWithdrawals()`, and `ApiClient.createWithdrawal()` now require `apiSecret` as an argument. Server integrations that call these methods must pass the API secret from server-side code.
+
+---
+
+## 2.4.6 - 2026-05-27
+
+**Added**
+
+- **PayKit Headless (Preview)**: Added `@coin-voyage/paykit-headless` for server and agent runtimes that need to satisfy CoinVoyage x402 `PAYMENT-REQUIRED` challenges. Sui x402 signing is supported through this package.
+- **Order status WebSocket hook**: Added `useOrderStatusWS()` for React integrations that need live backend PayOrder events outside the default PayButton UI.
+- **Backend API access**: Added `useBackendApi()` for advanced PayKit integrations that need direct access to the configured API client.
+- **ApiClient helpers**: Added `currencySearch()`, `portfolio()`, `listPayOrders()`, `listBankAccounts()`, `getBankAccount()`, `addBankAccount()`, `listWithdrawals()`, and `createWithdrawal()`.
+- **Organization-wide WebSocket subscriptions**: `ApiClient.subscribeOrderStatus()` can now subscribe to all organization PayOrder events when called with a server-generated authorization signature for `GET /ws`.
+
+**Changed**
+
+- **Quote filters**: `PayOrderQuoteParams` now accepts `chain_ids` instead of a single `chain_id`.
+- **Swap requests**: Swap requests now support `payment_rail` and nested `crypto` input options, including `source_currency`, `sender_address`, and `slippage_bps`.
+- **Route quote field**: Route quote responses use `quote_id`.
+- **Payment details**: Payment details now use the shared `PaymentDataBase` shape for rail-specific payment instruction data.
+
+**Fixed**
+
+- **PayButton order creation errors**: Backend order-creation failures are now surfaced to consumers.
+- **PayButton lifecycle callbacks**: Payment lifecycle callbacks continue working across multiple orders for the same button.
+- **`resetOnSuccess` behavior**: Successful payments reset payment state when configured.
+- **EVM transaction errors**: User-facing EVM transaction errors are clearer.
+- **Desktop WalletConnect**: Desktop WalletConnect routes through the QR flow correctly.
 
 ---
 

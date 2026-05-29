@@ -1,7 +1,7 @@
 ---
 title: "CoinVoyage PayKit SDK — overview and installation guide"
 sidebarTitle: "Overview"
-description: "Install @coin-voyage/paykit and learn how PayKitProvider, WalletProvider, PayButton, ApiClient, and usePayStatus fit into your integration."
+description: "Install @coin-voyage/paykit and learn how PayKitProvider, WalletProvider, PayButton, ApiClient, and status hooks fit into your integration."
 layout:
   description:
     visible: false
@@ -57,9 +57,15 @@ The SDK exports several building blocks. Here is what each one does and when you
 
 ### ApiClient
 
-`ApiClient` is a server-side helper imported from `@coin-voyage/paykit/server`. It wraps every CoinVoyage REST endpoint — creating pay orders, fetching quotes, managing webhooks, and more — behind a typed interface that returns consistent `APIResponse<T>` objects. Use it in your API routes or server actions to create pay orders securely before passing the resulting `payId` to the client.
+`ApiClient` is a server-side helper imported from `@coin-voyage/paykit/server`. It wraps CoinVoyage REST endpoints for creating pay orders, listing orders, fetching quotes, swaps, managing KYC links, bank accounts, withdrawals, webhooks, and more behind a typed interface that returns consistent `APIResponse<T>` objects. Use it in your API routes or server actions to create pay orders securely before passing the resulting `payId` to the client.
 
 [Read the ApiClient reference →](/sdk/apiclient)
+
+### PayKit Headless (Preview)
+
+`@coin-voyage/paykit-headless` is a separate Preview package for agent and server runtimes that need to satisfy x402 `PAYMENT-REQUIRED` challenges without browser wallet UI. Use it only for x402 flows; regular checkout and deposit integrations should use `@coin-voyage/paykit`.
+
+[Read the PayKit Headless reference →](/sdk/paykit-headless)
 
 ### usePayStatus
 
@@ -68,6 +74,12 @@ The SDK exports several building blocks. Here is what each one does and when you
 <Note>
   `usePayStatus` requires both `WalletProvider` and `PayKitProvider` to be present in the component tree.
 </Note>
+
+### useOrderStatusWS
+
+`useOrderStatusWS` is a React hook that subscribes to backend PayOrder WebSocket events with reconnect handling. Use it for custom payment status panels or dashboard-style views that need live order events outside the default PayButton UI.
+
+[Read the useOrderStatusWS reference →](/sdk/useorderstatusws)
 
 ## Recommended setup
 

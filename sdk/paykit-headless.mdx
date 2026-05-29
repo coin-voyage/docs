@@ -1,0 +1,169 @@
+---
+title: "PayKit Headless (Preview) - x402 payments for agents and servers"
+sidebarTitle: "PayKit Headless (Preview)"
+description: "Use the Preview @coin-voyage/paykit-headless package to satisfy CoinVoyage x402 PAYMENT-REQUIRED challenges without browser wallet UI."
+layout:
+  description:
+    visible: false
+---
+
+`@coin-voyage/paykit-headless` is a Preview package that provides server and agent runtime helpers for CoinVoyage x402 payments. Use it when your application needs to fetch a protected resource, handle an x402 `PAYMENT-REQUIRED` challenge, sign the selected payment requirement, and retry the request without showing the PayKit browser modal.
+
+<Warning>
+  x402 support is in Preview. Supported chains, payload details, and helper APIs may change before general availability.
+</Warning>
+
+<Info>
+  The headless package is separate from `@coin-voyage/paykit`. Install it only for agent, server, or automation flows that need x402 payment signing.
+</Info>
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm i @coin-voyage/paykit-headless
+```
+
+```bash pnpm
+pnpm add @coin-voyage/paykit-headless
+```
+
+```bash yarn
+yarn add @coin-voyage/paykit-headless
+```
+
+```bash bun
+bun add @coin-voyage/paykit-headless
+```
+
+</CodeGroup>
+
+## Exports
+
+```typescript
+import { readResponseBody } from "@coin-voyage/paykit-headless";
+import {
+  createSuiX402PaymentSignatureHeader,
+  decodeX402PaymentRequiredHeader,
+  executeX402AgentPayment,
+  type X402AgentPaymentRequest,
+} from "@coin-voyage/paykit-headless/x402";
+```
+
+Use the package entry points shown above. Do not import internal files such as `x402/agent` or `x402/sui`.
+
+## Agent payment flow
+
+Use `executeX402AgentPayment()` when an agent should fetch a `PAYMENT-REQUIRED` challenge, create a `PAYMENT-SIGNATURE`, and retry the protected resource.
+
+```typescript
+import { executeX402AgentPayment } from "@coin-voyage/paykit-headless/x402";
+
+const coinType =
+  "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC";
+const privateKey = process.env.AGENT_SUI_PRIVATE_KEY;
+
+if (!privateKey) {
+  throw new Error("AGENT_SUI_PRIVATE_KEY is required");
+}
+
+const url = new URL("https://example.com/api/agent/payment-required");
+url.searchParams.set("preferred_chain_type", "SUI");
+url.searchParams.set("preferred_chain_id", "30000000000002");
+url.searchParams.set("preferred_token_address", coinType);
+
+const result = await executeX402AgentPayment({
+  url: url.toString(),
+  chainType: "SUI",
+  network: "sui:mainnet",
+  asset: coinType,
+  maxAmount: "20000",
+  privateKey,
+});
+
+if (!result.ok) {
+  throw new Error(result.message);
+}
+```
+
+<Warning>
+  The package does not read private keys or RPC URLs from environment variables. Your application is responsible for loading the correct key and passing it to the helper.
+</Warning>
+
+## Supported key types
+
+| `chainType` | Expected key |
+|---|---|
+| `EVM` | EVM private key for `eip155:*` payment requirements |
+| `SOL` | Solana private key for `solana:*` payment requirements |
+| `SUI` | Sui Ed25519 private key for `sui:*` payment requirements |
+
+The agent filters returned `accepts[]` entries by `chainType`, then by `network`, `asset`, `paymentIdentifier`, and `maxAmount` when those fields are provided.
+
+## Payment requirement preferences
+
+`X402RequirementRequest` is optional. If you send preference fields, include both `preferred_chain_type` and `preferred_token_address`.
+
+```json
+{
+  "preferred_chain_type": "SUI",
+  "preferred_chain_id": 30000000000002,
+  "preferred_token_address": "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC"
+}
+```
+
+Do not request only `preferred_chain_type`. If you do not need a tailored token response, omit all preference fields and choose from the returned `accepts[]`.
+
+## Existing PAYMENT-REQUIRED header
+
+If you already fetched the challenge, pass the header directly:
+
+The examples below assume `paymentRequiredHeader`, `coinType`, and `privateKey` are already defined.
+
+```typescript
+const result = await executeX402AgentPayment({
+  url: "https://example.com/api/agent/payment-required",
+  paymentRequiredHeader,
+  chainType: "SUI",
+  network: "sui:mainnet",
+  asset: coinType,
+  maxAmount: "20000",
+  privateKey,
+});
+```
+
+For Sui-only integrations that need only the signature header:
+
+```typescript
+import { createSuiX402PaymentSignatureHeader } from "@coin-voyage/paykit-headless/x402";
+
+const { paymentSignature } = await createSuiX402PaymentSignatureHeader(
+  paymentRequiredHeader,
+  {
+    network: "sui:mainnet",
+    asset: coinType,
+    maxAmount: "20000",
+    privateKey,
+    rpcUrl: process.env.SUI_RPC_URL,
+  }
+);
+```
+
+## Sui payment signatures
+
+Sui x402 support uses a CoinVoyage-specific payload carried in the standard base64 `PAYMENT-SIGNATURE` header. The SDK:
+
+- Selects the returned `sui:mainnet` `accepts[]` entry without changing `scheme`, `network`, `asset`, `amount`, `payTo`, or `paymentIdentifier`.
+- Builds a Sui programmable transaction block when the backend does not provide transaction bytes.
+- Transfers the exact raw `amount` of the exact Sui coin type to `payTo`.
+- Signs the transaction with the configured Sui Ed25519 key.
+- Encodes the signed transaction bytes, signature, payer address, selected accept, and CoinVoyage Sui payload fields into `PAYMENT-SIGNATURE`.
+
+If the server provides prepared Sui transaction bytes in `accept.transactionBytes`, `accept.txBytes`, `accept.extra.sui.transactionBytes`, or `accept.extra.sui.txBytes`, the SDK signs those bytes instead of constructing a transfer transaction.
+
+## Current limits
+
+- Native ETH and native SOL accepts are not supported by the headless agent. Use token accepts such as USDC.
+- Sui accepts require this SDK or another client that implements CoinVoyage's Sui `PAYMENT-SIGNATURE` payload.
+- `maxAmount` is compared against the raw token amount, not display units.

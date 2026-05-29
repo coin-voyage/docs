@@ -62,13 +62,27 @@
             ]
           },
           {
+            "group": "Flows",
+            "pages": [
+              "flows/overview"
+            ]
+          },
+          {
             "group": "SDK",
             "pages": [
               "sdk/overview",
               "sdk/paykitprovider",
               "sdk/walletprovider",
               "sdk/paybutton",
-              "sdk/apiclient"
+              "sdk/apiclient",
+              "sdk/useorderstatusws",
+              "sdk/paykit-headless"
+            ]
+          },
+          {
+            "group": "API",
+            "pages": [
+              "api/overview"
             ]
           },
           {
