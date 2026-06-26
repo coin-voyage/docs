@@ -10,26 +10,8 @@ layout:
 Integration-facing changes to the CoinVoyage SDK, API, and platform behavior are documented here. Internal implementation details are omitted unless they change what you configure, call, receive, or need to handle in production. Releases follow [Semantic Versioning](https://semver.org/): major versions for breaking changes, minor for new backward-compatible functionality, and patch for bug fixes.
 
 <Info>
-  Current docs describe the v3 API and PayKit `3.0.0-beta.5` surface. If you are upgrading from v2, start with the [v2 to v3 migration guide](/resources/migration-v2-to-v3). Older entries below are retained for historical context.
+  `2.0.0` marks the v2 migration release. If you are upgrading from v1, see the [Migration Guide](/v2/resources/migration-v1-to-v2) for step-by-step upgrade instructions.
 </Info>
-
----
-
-## 3.0.0-beta.5 - 2026-06-23
-
-**Changed**
-
-- **API base URL**: Current API requests use `https://api.coinvoyage.io/v3`; the generated OpenAPI reference is served from `/v3/openapi.json`.
-- **Order API naming**: SDK helpers now use `Order` naming: `createDepositOrder()`, `createSaleOrder()`, `createRefundOrder()`, `getOrder()`, `listOrders()`, `orderQuotes()`, `createPayment()`, and `getOrderPaymentMethods()`.
-- **PayButton lifecycle callbacks**: Payment lifecycle callbacks are now split into `onAwaitingPayment`, `onConfirmingPayment`, `onExecutingPayment`, `onPaymentCompleted`, and `onPaymentBounced`.
-- **Off-ramp API naming**: Verification and fiat payout APIs use `createOffRampVerification()`, `getOffRampVerificationStatus()`, `listOffRampIntents()`, and `createOffRampIntent()`.
-- **Webhook payloads**: Webhook deliveries now use the v3 envelope `{ event, delivered_at, order }` with uppercase `ORDER_*` event identifiers.
-
-See the [v2 to v3 migration guide](/resources/migration-v2-to-v3) for before-and-after examples.
-
-**Removed**
-
-- **Legacy PayOrder client helper names**: `createDepositPayOrder()`, `createSalePayOrder()`, `createRefundPayOrder()`, `getPayOrder()`, `listPayOrders()`, `payOrderQuote()`, `payOrderPaymentDetails()`, `getPayOrderPaymentMethods()`, and `swapData()` are no longer the current PayKit API surface.
 
 ---
 
@@ -115,7 +97,7 @@ See the [v2 to v3 migration guide](/resources/migration-v2-to-v3) for before-and
 ## 2.0.0 — 2026-01-28
 
 <Warning>
-  This release contains breaking changes. See the [Migration Guide](/resources/migration-v1-to-v2) before upgrading.
+  This release contains breaking changes. See the [Migration Guide](/v2/resources/migration-v1-to-v2) before upgrading.
 </Warning>
 
 **Added**

@@ -1,0 +1,85 @@
+---
+title: "Manage API keys and webhooks in the Developers tab"
+sidebarTitle: "Developers"
+description: "Generate and rotate your CoinVoyage API key pair, configure webhook endpoints, and follow security best practices for your integration."
+layout:
+  description:
+    visible: false
+---
+
+The [Developers tab](https://dashboard.coinvoyage.io/developers) is where you manage the credentials and event integrations that connect your backend to CoinVoyage. From here you can generate your API key pair, rotate credentials when needed, and configure webhook endpoints to receive real-time payment events.
+
+## API keys
+
+CoinVoyage issues two credentials for your integration:
+
+- **Public API key** — Used client-side to identify your organization when initializing the SDK.
+- **Secret** — Used server-side to authenticate requests to the CoinVoyage API.
+
+### Creating an API key
+
+<Steps>
+  <Step title="Open the Developers tab">
+    Go to [dashboard.coinvoyage.io/developers](https://dashboard.coinvoyage.io/developers).
+  </Step>
+  <Step title="Generate a key pair">
+    Click **Generate API Key**. CoinVoyage creates a public key and a secret for your organization.
+  </Step>
+  <Step title="Copy your secret immediately">
+    The secret is shown only once at the time of creation. Copy it and store it securely — you will not be able to retrieve it again from the dashboard.
+  </Step>
+</Steps>
+
+<Warning>
+  Store your secret in a secure secrets manager or environment variable. Never commit it to source control or expose it in client-side code.
+</Warning>
+
+### Rotating API keys
+
+If your secret is compromised, or as part of routine credential hygiene, you can rotate your API key pair from the Developers tab.
+
+<Steps>
+  <Step title="Click Rotate">
+    In the Developers tab, find your existing key pair and click **Rotate**.
+  </Step>
+  <Step title="Confirm the rotation">
+    Confirm the action. CoinVoyage invalidates the existing credentials and generates a new public key and secret.
+  </Step>
+  <Step title="Update your integration">
+    Replace the old credentials in your application with the new key pair before the old ones expire or are invalidated.
+  </Step>
+</Steps>
+
+<Note>
+  Rotating your API key immediately invalidates the previous secret. Make sure your updated credentials are deployed before rotating to avoid downtime.
+</Note>
+
+## Webhook endpoints
+
+Webhooks allow CoinVoyage to notify your backend in real time when payment events occur, such as a payment confirmation or a dispute. You can register one or more endpoint URLs and subscribe to the specific events you care about.
+
+### Adding a webhook endpoint
+
+<Steps>
+  <Step title="Open the Webhooks section">
+    In the Developers tab, scroll to the **Webhooks** section and click **Add Endpoint**.
+  </Step>
+  <Step title="Enter your endpoint URL">
+    Provide the HTTPS URL on your server that will receive webhook payloads.
+  </Step>
+  <Step title="Select events to subscribe to">
+    Choose the event types you want to receive — for example, payment confirmations or dispute notifications.
+  </Step>
+  <Step title="Save the endpoint">
+    Save the configuration. CoinVoyage will begin sending events to your endpoint for the subscribed event types.
+  </Step>
+</Steps>
+
+For implementation details including payload structure and signature verification, see the [Webhooks overview](/v2/webhooks/overview).
+
+## Security best practices
+
+- **Keep your secret server-side.** Never include your API secret in frontend code, browser bundles, or mobile apps.
+- **Use environment variables.** Store credentials in your deployment environment rather than hardcoding them in your codebase.
+- **Rotate immediately if compromised.** If you suspect your secret has been exposed, rotate your API key pair right away and update your integration with the new credentials.
+- **Validate webhook signatures.** Always verify the signature on incoming webhook payloads before acting on the event data.

@@ -1,13 +1,13 @@
 ---
 title: "CoinVoyage API overview"
 sidebarTitle: "Overview"
-description: "Learn how to call the CoinVoyage API directly, including environments, authentication, swaps, request conventions, error handling, pagination, and webhook-driven processing."
+description: "Learn how to call the CoinVoyage v3 API directly, including environments, authentication, orders, swaps, off-ramp flows, request conventions, errors, pagination, and webhook-driven processing."
 layout:
   description:
     visible: false
 ---
 
-Use the CoinVoyage API when you need direct control over pay order creation, quote selection, standalone swaps, webhook management, refunds, fee claims, or backend reconciliation. Most React integrations should start with the [PayKit SDK](/sdk/overview), then use the API directly for server-side workflows that should never run in the browser.
+Use the CoinVoyage API when you need direct control over order creation, quote selection, payment instructions, standalone swaps, webhook management, refunds, fee claims, off-ramp verification, bank accounts, or backend reconciliation. Most React integrations should start with the [PayKit SDK](/sdk/overview), then use the API directly for server-side workflows that should never run in the browser.
 
 <Info>
   Endpoint-level schemas, request bodies, and response examples are available in the generated [API Reference](/api-reference). This page explains the conventions that apply across the API.
@@ -18,23 +18,25 @@ Use the CoinVoyage API when you need direct control over pay order creation, quo
 Production API requests use:
 
 ```text
-https://api.coinvoyage.io/v2
+https://api.coinvoyage.io/v3
 ```
 
 SDK integrations select the base URL through the `environment` option:
 
 ```typescript
-import { ApiClient } from "@coin-voyage/paykit/server";
+import { ApiClient, ChainId } from "@coin-voyage/paykit/server";
 
-const apiClient = new ApiClient({
+const apiClient = ApiClient({
   apiKey: process.env.COIN_VOYAGE_API_KEY!,
   environment: "production",
 });
 ```
 
-| Environment | Use for | Notes |
+| Environment | Base URL | Use for |
 |---|---|---|
-| `production` | Live payments and settlement | Uses production networks, routes, and dashboard configuration. |
+| `production` | `https://api.coinvoyage.io/v3` | Live payments and settlement. |
+| `development` | `https://acc-api.coinvoyage.io/v3` | Acceptance/integration testing. |
+| `local` | `http://localhost:8000/v3` | Local backend development. |
 
 ## Authentication
 
@@ -42,45 +44,53 @@ CoinVoyage uses two credential types:
 
 | Credential | Where to use it | Purpose |
 |---|---|---|
-| API key | Browser or server | Identifies your organization. Safe to expose in client-side code. |
-| API secret | Server only | Signs privileged operations such as sales, refunds, PayOrder listing, KYC links, bank account management, withdrawals, webhooks, and fee claims. |
+| API key | Browser or server | Identifies your organization. Safe to expose in client-side code. Sent as `X-API-KEY`. |
+| API secret | Server only | Generates HMAC-SHA256 signatures for privileged operations. Never expose it to clients. |
 
-Keep the API secret in a server-side environment variable or secrets manager. Never expose it through frontend bundles, mobile apps, public repositories, logs, analytics events, or client-side error reporting.
+Signed requests use the `Authorization` header value:
 
-### Public API key flows
+```text
+APIKey=<apiKey>,signature=<signature>,timestamp=<timestamp>
+```
 
-`DEPOSIT` PayOrders can be created with the public API key because the destination address is supplied by the integration and no merchant settlement configuration is modified.
+When signing v3 requests, compute the signature over `METHOD + path + timestamp`, where `path` excludes the `/v3` prefix. For example, sign `POST /orders`, not `POST /v3/orders`.
 
 ```typescript
-const { data, error } = await apiClient.createDepositPayOrder({
-  intent: {
-    asset: {
-      chain_id: ChainId.SUI,
-      address: null,
-    },
-    amount: {
-      token_amount: 10,
-    },
-    receiving_address: "0xYourReceivingAddress",
+const authorization = apiClient.generateAuthorizationSignature(
+  process.env.COIN_VOYAGE_API_SECRET!,
+  "POST",
+  "/orders"
+);
+```
+
+<Warning>
+  Generate authorization signatures on your server only. A leaked API secret can create sales, refunds, off-ramp intents, webhooks, and fee claims for your organization.
+</Warning>
+
+## Public API key flows
+
+`DEPOSIT` orders can be created with the public API key because the recipient address is supplied by the integration and no merchant settlement configuration is modified.
+
+```typescript
+const { data, error } = await apiClient.createDepositOrder({
+  amount: "10",
+  currency: {
+    chain_id: ChainId.SUI,
+    address: null,
   },
+  recipient: "0xYourReceivingAddress",
 });
 ```
 
-### Signed server-side flows
+## Signed server-side flows
 
-`SALE`, `REFUND`, PayOrder listing, KYC links, bank account management, withdrawals, webhook management, and fee operations require your API secret. The SDK generates the authorization signature internally when you pass the raw secret to the relevant method.
+`SALE` orders, refunds, order listing, off-ramp verification, bank account management, off-ramp intents, webhook management, and fee operations require your API secret.
 
 ```typescript
-const { data, error } = await apiClient.createSalePayOrder(
+const { data, error } = await apiClient.createSaleOrder(
   {
-    intent: {
-      amount: {
-        fiat: {
-          amount: 49.99,
-          unit: "USD",
-        },
-      },
-    },
+    amount: "49.99",
+    fiat_unit: "USD",
     metadata: {
       order_id: "order_123",
     },
@@ -89,57 +99,37 @@ const { data, error } = await apiClient.createSalePayOrder(
 );
 ```
 
-If you call the HTTP API manually, generate an HMAC-SHA256 authorization value from the HTTP method, request path, and timestamp. The SDK helper returns the header value in the required format:
+## Where off-ramp APIs fit
 
-```typescript
-const authorization = apiClient.generateAuthorizationSignature(
-  process.env.COIN_VOYAGE_API_SECRET!,
-  "POST",
-  "/pay-orders"
-);
-```
-
-```text
-APIKey=<apiKey>,signature=<signature>,timestamp=<timestamp>
-```
-
-<Warning>
-  Generate authorization signatures on your server only. A leaked API secret can create merchant sales, refunds, KYC links, bank account changes, withdrawals, webhooks, and fee claims for your organization.
-</Warning>
-
-## Where payout APIs fit
-
-KYC, bank accounts, and withdrawals are part of the optional fiat off-ramp flow. They do not replace PayOrders, and they are not required when you only want on-chain settlement to a wallet.
+Off-ramp verification, bank accounts, and off-ramp intents are optional. They do not replace orders, and they are not required when you only want on-chain settlement to a wallet.
 
 | API area | When to use it | Credential |
 |---|---|---|
-| KYC | Create a hosted verification link or check whether an organization is approved for fiat payout activity. | API secret |
+| Off-ramp verification | Create a hosted KYC/KYB verification link or check whether an organization is approved for fiat payout activity. | API secret |
 | Bank accounts | Add and retrieve linked payout destinations for a verified individual or business. | API secret |
-| Withdrawals | Move a supported on-chain settlement balance to a linked bank account. | API secret, plus wallet execution when required |
+| Off-ramp intents | Move a supported on-chain settlement balance to a linked bank account. | API secret, plus wallet execution when required |
 
 <Info>
-  Withdrawals to bank accounts are optional. You can bring your own externally owned account (EOA), receive funds there, and move funds anywhere you want from that wallet. Use withdrawals only when your product needs a CoinVoyage-managed fiat payout to a linked bank account.
+  Bank-account payouts are optional. You can bring your own externally owned account (EOA), receive funds there, and move funds anywhere you want from that wallet. Use off-ramp intents only when your product needs a CoinVoyage-managed fiat payout to a linked bank account.
 </Info>
 
-See [Integration flows](/flows/overview) for the end-to-end KYC -> bank account -> withdrawal sequence.
+See [Integration flows](/flows/overview) for the end-to-end verification -> bank account -> off-ramp intent sequence.
 
 ## Where swap APIs fit
 
-Swap APIs are for standalone on-chain asset exchanges. They are separate from PayOrders: a PayOrder may use swaps internally while routing a payment, but `swapQuote()` and `swapData()` are useful when your product wants to quote and execute a swap as its own user action.
+Swap APIs are for standalone on-chain asset exchanges. They are separate from checkout and deposit orders: an order may use swaps internally while routing a payment, but `swapQuote()` and `swapExecute()` are useful when your product wants to quote and execute a swap as its own user action.
 
 | API area | When to use it | Credential |
 |---|---|---|
-| Swap quotes | Show the expected route, output amount, and fees before the user signs. | API key |
-| Swap execution data | Retrieve the transaction data the source wallet needs to sign and submit. | API key, plus source-wallet signing |
-
-See [Integration flows](/flows/overview) for the standalone swap sequence.
+| Swap quote | Show the expected route, output amount, and fees before the user signs. | API key |
+| Swap execute | Create payment instructions for funding the swap. | API key, plus source-wallet signing |
 
 ## Request conventions
 
 - Send JSON request bodies with `Content-Type: application/json`.
 - Use ISO 8601 timestamps in UTC for stored times and event payloads.
-- Treat IDs as opaque strings. Do not parse structure out of `payorder_id`, webhook IDs, quote IDs, or transaction hashes.
-- Store token amounts exactly as returned by the API when reconciling payments. Prefer raw string amounts for accounting systems that require exact precision.
+- Treat IDs as opaque strings. Do not parse structure out of order IDs, webhook IDs, quote IDs, transaction hashes, or off-ramp intent IDs.
+- Store token amounts exactly as returned by the API. Prefer raw string amounts for accounting systems that require exact precision.
 - Attach your own order, user, or invoice identifiers in `metadata` so webhook handlers can reconcile events without a separate lookup.
 
 ## Response shape
@@ -154,6 +144,7 @@ type APIResponse<T> = {
     statusCode: number
     status: string
     message: string
+    details?: unknown
   }
 }
 ```
@@ -161,10 +152,14 @@ type APIResponse<T> = {
 Check `error` before using `data`:
 
 ```typescript
-const { data, error } = await apiClient.getPayOrder("payorder_123");
+const { data, error } = await apiClient.getOrder("order_123");
 
 if (error) {
   console.error(error.statusCode, error.message);
+  return;
+}
+
+if (!data) {
   return;
 }
 
@@ -177,11 +172,10 @@ Handle API errors by status code category:
 
 | Status | Meaning | Recommended action |
 |---|---|---|
-| `400` | Invalid request body, parameters, or mode-specific constraints | Show a validation error and fix the request before retrying. |
-| `401` | Missing, invalid, or expired authorization | Check API key, signature, timestamp, and server-side secret configuration. |
+| `400` | Invalid request parameters or path values | Show a validation error and fix the request before retrying. |
+| `401` | Missing, invalid, or expired authentication | Check API key, signature, timestamp, and server-side secret configuration. |
 | `403` | Credential is valid but not allowed to perform the action | Confirm organization permissions, environment, and feature access. |
 | `404` | Resource not found | Confirm the ID belongs to the same organization and environment. |
-| `409` | Request conflicts with current resource state | Refresh the PayOrder and decide whether the action is still valid. |
 | `422` | Semantically valid JSON that fails business validation | Surface the message to the operator or correct the integration mapping. |
 | `429` | Too many requests | Back off and retry after the limit resets. |
 | `5xx` | Temporary platform or provider error | Retry with backoff for safe operations and alert if failures persist. |
@@ -205,7 +199,7 @@ When consuming paginated endpoints:
 - Keep the original filter set stable while walking pages.
 - Store the last successful cursor, page, or timestamp checkpoint for long-running jobs.
 - Expect new records to appear while you paginate.
-- Reconcile by PayOrder ID rather than by page position.
+- Reconcile by order ID rather than by page position.
 
 See the generated [API Reference](/api-reference) for the exact pagination parameters supported by each endpoint.
 
@@ -213,22 +207,22 @@ See the generated [API Reference](/api-reference) for the exact pagination param
 
 Network requests can time out after CoinVoyage receives them. Design your integration so retrying does not create duplicate business effects:
 
-- Store your internal order ID in PayOrder `metadata`.
-- Before creating a replacement PayOrder, check whether your order already has an active PayOrder.
-- Treat webhook event IDs as delivery IDs and PayOrder IDs as payment lifecycle IDs.
-- Make fulfillment idempotent by recording the PayOrder ID and terminal status before shipping goods, crediting balances, or updating inventory.
+- Store your internal order ID in order `metadata`.
+- Before creating a replacement order, check whether your internal order already has an active CoinVoyage order.
+- Treat webhook deliveries as at-least-once events and order IDs as payment lifecycle IDs.
+- Make fulfillment idempotent by recording the CoinVoyage order ID and terminal status before shipping goods, crediting balances, or updating inventory.
 
-For server retries, use exponential backoff with jitter. Retry read operations freely. Retry create or mutation operations only when your application can detect duplicates by metadata, PayOrder ID, or its own internal state.
+For server retries, use exponential backoff with jitter. Retry read operations freely. Retry create or mutation operations only when your application can detect duplicates by metadata, order ID, or its own internal state.
 
 ## Webhook-first processing
 
 Production integrations should use webhooks for payment state changes:
 
-1. Create a PayOrder from your server.
-2. Store the PayOrder ID against your internal order or account.
+1. Create an order from your server.
+2. Store the CoinVoyage order ID against your internal order or account.
 3. Show the payment modal to the user.
 4. Verify webhook signatures before parsing the event.
-5. Update internal state from terminal events such as `payorder_completed`, `payorder_refunded`, `payorder_expired`, or `payorder_error`.
+5. Update internal state from terminal events such as `ORDER_COMPLETED`, `ORDER_REFUNDED`, `ORDER_EXPIRED`, `ORDER_ERROR`, or `ORDER_PARTIAL_PAYMENT`.
 6. Run a scheduled reconciliation job that compares your internal state with the CoinVoyage API.
 
 See [Webhooks overview](/webhooks/overview) and [Webhook events](/webhooks/events) for delivery setup and payload examples.
@@ -241,7 +235,7 @@ Before using production credentials, confirm that:
 - Webhook signature verification is enabled.
 - Fulfillment is idempotent.
 - Failed, expired, refunded, and partial-payment states are handled.
-- Your settlement currency and wallet address are configured in the dashboard.
-- You have tested a full payment, refund, and webhook flow in the development environment.
+- Your settlement currency and wallet address are configured in the dashboard if you create `SALE` orders without explicit `currency` and `recipient` values.
+- You have tested a full payment, refund, and webhook flow in the intended environment.
 
 Use the [Production checklist](/guides/production-checklist) before launch.

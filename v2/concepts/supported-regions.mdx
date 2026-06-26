@@ -1,0 +1,90 @@
+---
+title: "Fiat off-ramp regions, currencies, and payment rails"
+sidebarTitle: "Supported regions"
+description: "Learn which fiat currencies CoinVoyage supports for settlement, the payment rails used in each region, settlement timing, and KYC requirements."
+layout:
+  description:
+    visible: false
+---
+
+CoinVoyage settles crypto into the fiat currencies your customers actually use. You can currently accept payments that settle in four fiat currencies spanning North America, Europe, and Latin America. New rails are added on a rolling basis, and additional currencies are in active integration. Each currency has its own payment rail, settlement timing, and recipient information requirements — the details for each are below.
+
+## Supported fiat currencies
+
+| Currency | Symbol | Payment rail | Settlement |
+|---|---|---|---|
+| US Dollar | `USD` | ACH, Wire | ACH 1–3 business days · Wire same-day |
+| Euro | `EUR` | SEPA, SEPA Instant | 0–1 business day · Instant where available |
+| Brazilian Real | `BRL` | Pix | Instant, 24/7 |
+| Mexican Peso | `MXN` | SPEI | Minutes, 24/7 |
+
+## Per-currency details
+
+<Tabs>
+  <Tab title="USD">
+    **Rails:** ACH, Wire
+
+    - **Settlement.** ACH credits typically settle in 1–3 US business days. Wires settle the same day during banking hours.
+    - **Coverage.** All US states **except New York** for new customers. Businesses incorporated in New York but operating primarily out of another state may still qualify on a case-by-case basis — contact support.
+    - **Recipient info required.** Routing number and account number (ACH), or full wire instructions. Individuals must provide an SSN; businesses must provide an EIN.
+  </Tab>
+
+  <Tab title="EUR">
+    **Rails:** SEPA, SEPA Instant
+
+    - **Settlement.** 0–1 business day across the SEPA zone. SEPA Instant is used automatically where the recipient bank supports it.
+    - **Coverage.** All 36 SEPA jurisdictions, including the EU, EEA (Iceland, Liechtenstein, Norway), Switzerland, Monaco, San Marino, Andorra, the United Kingdom, and Vatican City.
+    - **Recipient info required.** IBAN and BIC (where required by the recipient bank).
+
+    <Warning>
+      **MiCA notice for EEA residents.** Per the EU's Markets in Crypto-Assets regulation, USDT is not available to users resident in the EEA. Use **USDC** or **EURC** as the stablecoin leg for EEA off-ramps.
+    </Warning>
+  </Tab>
+
+  <Tab title="BRL">
+    **Rail:** Pix
+
+    - **Settlement.** Instant, 24/7 via Pix.
+    - **Coverage.** Brazil.
+    - **Recipient info required.** A valid Pix key — CPF, CNPJ, email address, phone number, or random key — plus the matching CPF (individuals) or CNPJ (businesses) for KYC.
+  </Tab>
+
+  <Tab title="MXN">
+    **Rail:** SPEI
+
+    - **Settlement.** Typically a few minutes. SPEI runs 24/7 at most participating banks.
+    - **Coverage.** Mexico.
+    - **Recipient info required.** 18-digit CLABE. Individuals must provide an RFC and a Mexican government-issued ID. Businesses must provide a CSF (Constancia de Situación Fiscal).
+  </Tab>
+</Tabs>
+
+## KYC and compliance
+
+All off-ramp activity is subject to KYC and AML screening. The level of verification required scales with transaction volume:
+
+- **Small flows** can complete with a single hosted KYC link (government-issued ID and a selfie).
+- **Larger flows and business accounts** require additional documentation: proof of address, beneficial ownership disclosures, and source-of-funds attestation where applicable.
+
+<Info>
+  For questions about KYC requirements for your organization, contact [help@coinvoyage.io](mailto:help@coinvoyage.io).
+</Info>
+
+## Country availability
+
+CoinVoyage onboards individuals and businesses globally, with the exceptions listed below.
+
+<AccordionGroup>
+  <Accordion title="Sanctioned jurisdictions — not currently supported">
+    CoinVoyage is unable to onboard customers who are resident or registered in the following jurisdictions:
+
+    Afghanistan, Belarus, Cuba, Democratic Republic of the Congo, Gaza Strip, Iran, Iraq, Lebanon, Libya, Myanmar, North Korea, Russian Federation, Somalia, South Sudan, Sudan, Syria, Ukrainian Territories (Crimea, Donetsk, Luhansk), Venezuela, West Bank, Yemen.
+  </Accordion>
+</AccordionGroup>
+
+## On the roadmap
+
+CoinVoyage is actively expanding rail coverage. Currencies currently in active integration:
+
+- **GBP** — Faster Payments (United Kingdom)
+- **COP** — Bre-B / domestic bank transfer (Colombia)
+- Additional APAC currencies under evaluation

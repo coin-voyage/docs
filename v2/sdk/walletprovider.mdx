@@ -40,9 +40,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
               wallets: [customWalletAdapter()],
             },
           },
-          sui: {
-            grpcUrl: "https://fullnode.mainnet.sui.io:443",
-          },
           utxo: {
             lazy: true,
           },
@@ -88,18 +85,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <ParamField path="config.evm.metaMask" type="object">
       Configuration passed to the MetaMask connector. Useful when you need to customize MetaMask-specific behavior or pass additional connector options.
     </ParamField>
-
-    <ParamField path="config.evm.rpcConfig" type="object">
-      Optional RPC transport configuration keyed by EVM chain ID.
-    </ParamField>
-
-    <ParamField path="config.evm.connectors" type="array">
-      Custom Wagmi connector factories to include with the default EVM connectors.
-    </ParamField>
-
-    <ParamField path="config.evm.lazy" type="boolean">
-      When `true`, lazy-loads wallet SDKs unless the wallet was the most recently connected wallet.
-    </ParamField>
   </Expandable>
 </ParamField>
 
@@ -127,8 +112,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   Configuration for the Sui chain.
 
   <Expandable title="Sui options">
-    <ParamField path="config.sui.grpcUrl" type="string">
-      Custom Sui gRPC URL for connecting to a specific full node.
+    <ParamField path="config.sui.rpcUrl" type="string">
+      Custom Sui RPC URL for connecting to a specific full node.
     </ParamField>
 
     <ParamField path="config.sui.walletConfiguration" type="object">
@@ -145,10 +130,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
   <Expandable title="UTXO options">
     <ParamField path="config.utxo.lazy" type="boolean">
       When `true`, defers loading UTXO wallet connectors until they are actually needed. This can reduce initial bundle parsing time in applications where UTXO payments are infrequent.
-    </ParamField>
-
-    <ParamField path="config.utxo.rpcConfig" type="object">
-      Optional Bitcoin RPC transport configuration.
     </ParamField>
   </Expandable>
 </ParamField>

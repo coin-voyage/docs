@@ -16,7 +16,7 @@ When a customer pays in any supported cryptocurrency, such as BTC, ETH, or SOL, 
 All settlements are non-custodial and executed on-chain.
 
 <Info>
-  Settlement currency configuration applies only to orders with `mode = "SALE"`. A `SALE` order without explicit `currency` and `recipient` values requires at least one settlement currency configured in the dashboard. If a `SALE` order includes `currency` and `recipient`, that order settles to the specified asset and address instead of the dashboard default. For `mode = "DEPOSIT"`, the crypto asset settles directly to the recipient address specified in the order request.
+  Settlement currency configuration applies only to `PayOrder`s with `mode = "SALE"`. A `SALE` PayOrder without `intent.asset` requires at least one settlement currency configured in the dashboard. If a `SALE` PayOrder includes `intent.asset`, that order settles to the specified asset and chain instead of the dashboard default. For `mode = "DEPOSIT"`, the crypto asset settles directly to the wallet address specified in the PayOrder request.
 </Info>
 
 ## Configuring a settlement currency

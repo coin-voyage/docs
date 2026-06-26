@@ -17,18 +17,18 @@ Use this checklist before switching a CoinVoyage integration to production. It i
 ## Settlement configuration
 
 - [ ] The production organization has at least one settlement currency configured if you plan to use `SALE` orders.
-- [ ] If not using a settlement currency, make sure order generation specifies `recipient` and `currency` at all times.
+- [ ] If not using a settlement currency, make sure pay-order generation specifies a `receiving_address` and `asset` at all times.
 - [ ] Settlement wallet addresses have been checked on the correct chain.
 - [ ] It has been confirmed who owns each receiving wallet, and they have access to them.
 - [ ] A small live payment has been completed and reconciled before opening the flow to all users.
 - [ ] Off-ramp settings, bank details, and KYC or KYB status are complete if you plan to withdraw to fiat.
 
-## Order creation
+## PayOrder creation
 
-- [ ] `SALE` and `REFUND` orders are created from server-side code only.
-- [ ] Each order stores your internal order, invoice, account, or customer ID in `metadata`.
-- [ ] Your backend stores the CoinVoyage order ID before showing the payment modal.
-- [ ] Your integration validates amount, currency, destination chain, and destination address before creating an order.
+- [ ] `SALE` and `REFUND` PayOrders are created from server-side code only.
+- [ ] Each PayOrder stores your internal order, invoice, account, or customer ID in `metadata`.
+- [ ] Your backend stores the CoinVoyage PayOrder ID before showing the payment modal.
+- [ ] Your integration validates amount, currency, destination chain, and destination address before creating a PayOrder.
 
 ## Payment state handling
 
@@ -42,10 +42,10 @@ Your application should handle every terminal state, not just successful payment
 | `FAILED` | Keep the order unpaid and send the case to support or automated recovery. |
 | `PARTIAL_PAYMENT` | Pause fulfillment and route the case to a manual or automated resolution flow. |
 
-- [ ] Fulfillment code is idempotent by CoinVoyage order ID.
+- [ ] Fulfillment code is idempotent by PayOrder ID.
 - [ ] Duplicate webhook deliveries do not create duplicate shipments, credits, or inventory updates.
 - [ ] Partial-payment and underpayment cases are visible to support.
-- [ ] Users can recover from expired payments by creating a new order.
+- [ ] Users can recover from expired payments by creating a new PayOrder.
 
 ## Webhooks
 
@@ -54,7 +54,7 @@ Your application should handle every terminal state, not just successful payment
 - [ ] The raw request body is verified with `CoinVoyage-Webhook-Signature` before parsing or processing.
 - [ ] The webhook secret is stored in a server-side secret store.
 - [ ] The endpoint returns a `2xx` response quickly and moves heavy work to a queue or background job.
-- [ ] Event processing is idempotent by event type, delivery timestamp, and CoinVoyage order ID.
+- [ ] Event processing is idempotent by event ID and PayOrder ID.
 - [ ] Unknown event types are logged and acknowledged instead of breaking delivery.
 - [ ] Webhook failures trigger alerts.
 
@@ -67,7 +67,7 @@ Your application should handle every terminal state, not just successful payment
 - [ ] Payment creation, quote generation, webhook receipt, fulfillment, and refund actions are logged with correlation IDs.
 - [ ] Dashboards track created, started, confirming, executing, completed, expired, refunded, failed, and partial-payment counts.
 - [ ] Alerts exist for webhook verification failures, elevated API errors, delayed settlement, and repeated provider failures.
-- [ ] A scheduled reconciliation job compares internal orders against CoinVoyage order status.
+- [ ] A scheduled reconciliation job compares internal orders against CoinVoyage PayOrder status.
 - [ ] Reconciliation can safely repair missed webhook updates.
 - [ ] Finance can export or inspect transaction records needed for accounting.
 
@@ -75,10 +75,10 @@ Your application should handle every terminal state, not just successful payment
 
 <Steps>
   <Step title="Run one complete production payment">
-    Use a small amount and verify that the order reaches `COMPLETED`, the destination wallet receives funds, and your application fulfills exactly once.
+    Use a small amount and verify that the PayOrder reaches `COMPLETED`, the destination wallet receives funds, and your application fulfills exactly once.
   </Step>
   <Step title="Run one refund">
-    Refund the test payment, confirm the refund transaction, and verify that your internal records link the refund to the original order.
+    Refund the test payment, confirm the refund transaction, and verify that your internal records link the refund to the original PayOrder.
   </Step>
   <Step title="Verify webhook recovery">
     Temporarily disable non-critical webhook processing in a controlled test, then confirm your reconciliation job can repair missed state updates.

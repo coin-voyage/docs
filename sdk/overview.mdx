@@ -7,7 +7,7 @@ layout:
     visible: false
 ---
 
-The `@coin-voyage/paykit` package is the recommended way to integrate CoinVoyage payments into your web application. It provides React context providers that manage wallet connections and pay order state, a ready-made button component with a built-in payment modal, and a server-side API client that abstracts every authenticated endpoint. You can use as much or as little of the SDK as your integration requires — reach for the UI components for the fastest path to production, or drop down to the `ApiClient` when you need full control over the payment flow.
+The `@coin-voyage/paykit` package is the recommended way to integrate CoinVoyage payments into your web application. It provides React context providers that manage wallet connections and order state, a ready-made button component with a built-in payment modal, and a server-side API client that abstracts every authenticated endpoint. You can use as much or as little of the SDK as your integration requires — reach for the UI components for the fastest path to production, or drop down to the `ApiClient` when you need full control over the payment flow.
 
 ## Installation
 
@@ -39,7 +39,7 @@ The SDK exports several building blocks. Here is what each one does and when you
 
 ### PayKitProvider
 
-`PayKitProvider` is a React context provider that wraps your application and tracks the state of the pay order flow. It requires your API key and optionally accepts theme, environment, and callback configuration. Any component tree inside `PayKitProvider` can render `PayButton` components and call `usePayStatus`.
+`PayKitProvider` is a React context provider that wraps your application and tracks the state of the order flow. It requires your API key and optionally accepts environment, visual mode, custom theme, and wallet callback configuration. Any component tree inside `PayKitProvider` can render `PayButton` components and call `usePayStatus`.
 
 [Read the PayKitProvider reference →](/sdk/paykitprovider)
 
@@ -51,13 +51,13 @@ The SDK exports several building blocks. Here is what each one does and when you
 
 ### PayButton
 
-`PayButton` is a pre-styled button that opens a payment modal when clicked. You configure it with the destination chain, token, amount, and address (or a server-generated `payId`), and it handles the entire payment UX including wallet selection, transaction signing, and status tracking. A `PayButton.Custom` variant gives you a render prop pattern to use your own button element while keeping the modal logic.
+`PayButton` is a pre-styled button that opens a payment modal when clicked. You configure it with the destination chain, token, amount, and address (or a server-generated `orderId`), and it handles the entire payment UX including wallet selection, transaction signing, and status tracking. A `PayButton.Custom` variant gives you a render prop pattern to use your own button element while keeping the modal logic.
 
 [Read the PayButton reference →](/sdk/paybutton)
 
 ### ApiClient
 
-`ApiClient` is a server-side helper imported from `@coin-voyage/paykit/server`. It wraps CoinVoyage REST endpoints for creating pay orders, listing orders, fetching quotes, swaps, managing KYC links, bank accounts, withdrawals, webhooks, and more behind a typed interface that returns consistent `APIResponse<T>` objects. Use it in your API routes or server actions to create pay orders securely before passing the resulting `payId` to the client.
+`ApiClient` is a server-side helper imported from `@coin-voyage/paykit/server`. It wraps CoinVoyage REST endpoints for creating orders, listing orders, fetching quotes, executing swaps, managing off-ramp verification, bank accounts, off-ramp intents, webhooks, and more behind a typed interface that returns consistent `APIResponse<T>` objects. Use it in your API routes or server actions to create orders securely before passing the resulting `orderId` to the client.
 
 [Read the ApiClient reference →](/sdk/apiclient)
 
@@ -69,7 +69,7 @@ The SDK exports several building blocks. Here is what each one does and when you
 
 ### usePayStatus
 
-`usePayStatus` is a React hook that subscribes to real-time status updates for a pay order from within any component inside `PayKitProvider`. Use it when you need to react to payment lifecycle changes — for example, to update UI state or trigger server-side fulfillment logic — independently of the `PayButton` callbacks.
+`usePayStatus` is a React hook that subscribes to real-time status updates for an order from within any component inside `PayKitProvider`. Use it when you need to react to payment lifecycle changes — for example, to update UI state or trigger server-side fulfillment logic — independently of the `PayButton` callbacks.
 
 <Note>
   `usePayStatus` requires both `WalletProvider` and `PayKitProvider` to be present in the component tree.
@@ -77,7 +77,7 @@ The SDK exports several building blocks. Here is what each one does and when you
 
 ### useOrderStatusWS
 
-`useOrderStatusWS` is a React hook that subscribes to backend PayOrder WebSocket events with reconnect handling. Use it for custom payment status panels or dashboard-style views that need live order events outside the default PayButton UI.
+`useOrderStatusWS` is a React hook that subscribes to backend order WebSocket events with reconnect handling. Use it for custom payment status panels or dashboard-style views that need live order events outside the default PayButton UI.
 
 [Read the useOrderStatusWS reference →](/sdk/useorderstatusws)
 

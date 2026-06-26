@@ -112,9 +112,7 @@ This guide walks you through installing `@coin-voyage/paykit`, wiring up the req
           toAmount={10}
           toToken={undefined}
           style={{ width: "100%", borderRadius: "0.375rem" }}
-          onAwaitingPayment={() => console.log("Awaiting payment")}
-          onConfirmingPayment={() => console.log("Payment confirming")}
-          onExecutingPayment={() => console.log("Payment executing")}
+          onPaymentStarted={() => console.log("Payment started")}
           onPaymentCompleted={() => console.log("Payment completed")}
         />
       );
@@ -128,16 +126,16 @@ This guide walks you through installing `@coin-voyage/paykit`, wiring up the req
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="SDK reference" icon="book" href="/sdk/overview">
+  <Card title="SDK reference" icon="book" href="/v2/sdk/overview">
     Explore all provider options, PayButton props, and the ApiClient.
   </Card>
-  <Card title="How it works" icon="circle-nodes" href="/concepts/how-it-works">
-    Understand the full payment lifecycle from order creation to settlement.
+  <Card title="How it works" icon="circle-nodes" href="/v2/concepts/how-it-works">
+    Understand the full payment lifecycle from PayOrder creation to settlement.
   </Card>
-  <Card title="Webhooks" icon="webhook" href="/webhooks/overview">
+  <Card title="Webhooks" icon="webhook" href="/v2/webhooks/overview">
     Receive real-time notifications when payments complete or fail.
   </Card>
-  <Card title="Dashboard" icon="chart-line" href="/dashboard/overview">
+  <Card title="Dashboard" icon="chart-line" href="/v2/dashboard/overview">
     Monitor transactions, configure settlement, and manage your API keys.
   </Card>
 </CardGroup>

@@ -1,0 +1,1053 @@
+---
+title: "ApiClient — server-side CoinVoyage REST API client"
+sidebarTitle: "ApiClient"
+description: "Use ApiClient from @coin-voyage/paykit/server to create pay orders, list orders, fetch quotes, manage KYC, bank accounts, withdrawals, webhooks, and fees."
+layout:
+  description:
+    visible: false
+---
+
+`ApiClient` is the server-side interface to the CoinVoyage API. Import it from `@coin-voyage/paykit/server` and use it in your API routes, server actions, or backend services to create pay orders, retrieve quotes, manage KYC links, bank accounts, withdrawals, webhooks, and more. Every method returns an `APIResponse<T>` wrapper that provides consistent, type-safe error handling without throwing exceptions.
+
+## Initialization
+
+```typescript
+import { ApiClient } from "@coin-voyage/paykit/server";
+
+const apiClient = new ApiClient({
+  apiKey: process.env.COIN_VOYAGE_API_KEY!,
+  environment: "production",
+  sessionId: "optional-session-id",
+  version: "1.0.0",
+});
+```
+
+<ParamField path="apiKey" type="string" required>
+  Your organization's API key from the [CoinVoyage dashboard](https://dashboard.coinvoyage.io/developers).
+</ParamField>
+
+<ParamField path="environment" type="string" default="production">
+  Environment to connect to: `"production"` or `"development"`.
+</ParamField>
+
+<ParamField path="sessionId" type="string">
+  Optional session identifier attached to every request for tracking purposes.
+</ParamField>
+
+<ParamField path="version" type="string">
+  Optional client version string sent as the `X-Client-Version` request header.
+</ParamField>
+
+---
+
+## APIResponse\<T\>
+
+Every `ApiClient` method returns a `Promise<APIResponse<T>>`. The response is always an object with either a `data` field (on success) or an `error` field (on failure) — never both.
+
+```tsx
+interface APIResponse<T> {
+  data?: T
+  error?: {
+    path: string
+    statusCode: number
+    status: string
+    message: string
+  }
+}
+```
+
+### Handling responses
+
+```tsx
+const { data, error } = await apiClient.someMethod();
+
+if (error) {
+  console.error("Operation failed:", error.message);
+  return;
+}
+
+// TypeScript narrows `data` to T here
+console.log("Success:", data);
+```
+
+<ResponseField name="data" type="T">
+  The typed response payload. Present when the request succeeds.
+</ResponseField>
+
+<ResponseField name="error" type="object">
+  Error details. Present when the request fails.
+
+  <Expandable title="error fields">
+    <ResponseField name="error.path" type="string">
+      The API path that returned the error.
+    </ResponseField>
+    <ResponseField name="error.statusCode" type="number">
+      HTTP status code of the error response.
+    </ResponseField>
+    <ResponseField name="error.status" type="string">
+      Short status label (e.g., `"Bad Request"`).
+    </ResponseField>
+    <ResponseField name="error.message" type="string">
+      Human-readable description of what went wrong.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+---
+
+## Methods
+
+### createDepositPayOrder
+
+Creates a pay order with mode `DEPOSIT` for a direct on-chain deposit to a specified address.
+
+```tsx
+import { ApiClient, ChainId } from "@coin-voyage/paykit/server";
+
+const { data, error } = await apiClient.createDepositPayOrder({
+  intent: {
+    asset: {
+      chain_id: ChainId.SUI,
+      address: null, // null = native token (SUI)
+    },
+    amount: {
+      token_amount: 10, // 10 SUI
+    },
+    receiving_address: "0xYourReceivingAddressHere",
+  },
+  metadata: {
+    items: [{ name: "Deposit to SUI wallet" }],
+  },
+});
+```
+
+<Warning>
+  Provide either `token_amount` **or** `fiat` in `intent.amount`, never both. The amount must be greater than zero. Invalid input is caught by built-in Zod validation and returns an error without making a network request.
+</Warning>
+
+**Parameters:** `params` (PayOrderParams), `opts?` (Opts)
+
+**Returns:** `Promise<APIResponse<PayOrder>>`
+
+---
+
+### createSalePayOrder
+
+Creates a pay order with mode `SALE` for a merchant sale. Requires your API secret for authorization.
+
+If you omit `intent.asset`, CoinVoyage settles the payment to the settlement currency configured in your dashboard. If you provide `intent.asset`, the pay order settles to that specific asset and chain.
+
+<Info>
+  The authorization signature is generated internally. You only need to pass the raw `apiSecret` string.
+</Info>
+
+<Tabs>
+  <Tab title="Dashboard settlement currency">
+    ```tsx
+    const apiSecret = process.env.COIN_VOYAGE_API_SECRET!;
+
+    const { data, error } = await apiClient.createSalePayOrder(
+      {
+        intent: {
+          amount: {
+            fiat: {
+              amount: 200,
+              unit: "USD",
+            },
+          },
+        },
+        metadata: {
+          items: [
+            {
+              name: "t-shirt",
+              description: "A nice t-shirt",
+              image: "https://example.com/tshirt.jpg",
+              quantity: 1,
+              unit_price: 200,
+              currency: "USD",
+            },
+          ],
+        },
+      },
+      apiSecret
+    );
+    ```
+  </Tab>
+  <Tab title="Specific settlement asset">
+    ```tsx
+    const apiSecret = process.env.COIN_VOYAGE_API_SECRET!;
+
+    const { data, error } = await apiClient.createSalePayOrder(
+      {
+        intent: {
+          amount: {
+            fiat: {
+              amount: 570.52,
+              unit: "USD",
+            },
+          },
+          asset: {
+            chain_id: 30000000000001,
+            address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+          },
+        },
+      },
+      apiSecret
+    );
+    ```
+  </Tab>
+</Tabs>
+
+| `intent.asset` | Settlement behavior |
+|---|---|
+| Omitted | Settles to your dashboard settlement currency (must be configured) |
+| Provided | Settles to the specified asset and chain for this pay order |
+
+**Parameters:** `params` (PayOrderParams), `apiSecret` (string), `opts?` (Opts)
+
+**Returns:** `Promise<APIResponse<PayOrder>>`
+
+---
+
+### createRefundPayOrder
+
+Creates a pay order with mode `REFUND` against an existing pay order. Supports full and partial refunds.
+
+```tsx
+const apiSecret = process.env.COIN_VOYAGE_API_SECRET!;
+
+const { data: refundPayOrder, error } = await apiClient.createRefundPayOrder(
+  "original-payorder-id",
+  {
+    intent: {
+      asset: {
+        chain_id: 1,
+        address: null,
+      },
+      receiving_address: "0x5678...efgh",
+      amount: {
+        fiat: {
+          amount: 100,
+          unit: "USD",
+        },
+      },
+    },
+    metadata: {
+      items: [
+        {
+          name: "refund",
+          description: "Refund for t-shirt purchase",
+          unit_price: 100,
+          currency: "USD",
+        },
+      ],
+    },
+  },
+  apiSecret
+);
+```
+
+**Parameters:** `payOrderId` (string), `params` (PayOrderParams), `apiSecret` (string), `opts?` (Opts)
+
+**Returns:** `Promise<APIResponse<PayOrder>>`
+
+---
+
+### getPayOrder
+
+Fetches a pay order by its ID.
+
+```tsx
+const { data: payOrder, error } = await apiClient.getPayOrder(
+  "pay-order-id-123"
+);
+```
+
+**Parameters:** `payOrderId` (string), `opts?` (Opts)
+
+**Returns:** `Promise<APIResponse<PayOrder>>`
+
+---
+
+### listPayOrders
+
+Lists PayOrders for your organization with pagination. This is a signed server-side method and requires your API secret.
+
+```tsx
+const apiSecret = process.env.COIN_VOYAGE_API_SECRET!;
+
+const { data, error } = await apiClient.listPayOrders(
+  {
+    limit: 50,
+    offset: 0,
+  },
+  apiSecret
+);
+
+if (!error) {
+  console.log(data.data, data.pagination);
+}
+```
+
+**Parameters:** `params?` (ListPayOrdersParams), `apiSecret` (string), `opts?` (Opts)
+
+**Returns:** `Promise<APIResponse<PayOrdersWithPagination>>`
+
+---
+
+### currencySearch
+
+Searches supported currencies for token pickers and back-office tools.
+
+```tsx
+const { data, error } = await apiClient.currencySearch({
+  q: "usdc",
+  chain_ids: [ChainId.SUI, ChainId.SOL],
+  limit: 10,
+});
+```
+
+**Parameters:** `params` (CurrencySearchParams), `opts?` (Opts)
+
+**Returns:** `Promise<APIResponse<CurrencySearchResponse>>`
+
+---
+
+### portfolio
+
+Retrieves wallet token balances and USD values for a wallet address.
+
+```tsx
+const { data, error } = await apiClient.portfolio({
+  wallet_address: "0x1234...abcd",
+  chain_type: ChainType.EVM,
+  chain_ids: [1, 10, 137],
+  min_balance_usd: 1,
+});
+```
+
+**Parameters:** `params` (WalletPortfolioRequest), `opts?` (Opts)
+
+**Returns:** `Promise<APIResponse<WalletPortfolioResponse>>`
+
+---
+
+### payOrderQuote
+
+Generates a quote for a pay order given a user's wallet and chain information. Returns available payment tokens with balances.
+
+```tsx
+const { data: quote, error } = await apiClient.payOrderQuote("pay-order-id", {
+  wallet_address: "0x1234...abcd",
+  chain_type: ChainType.EVM,
+  chain_ids: [1, 10, 137],
+});
+```
+
+**Parameters:** `payOrderId` (string), `params` (PayOrderQuoteParams), `opts?` (Opts)
+
+**Returns:** `Promise<APIResponse<RouteQuote[]>>`
+
+---
+
+### payOrderPaymentDetails
+
+Retrieves the information needed to complete a payment — destination address, amount, and per-step payment instructions.
+
+```tsx
+const { data: paymentDetails, error } = await apiClient.payOrderPaymentDetails({
+  payorder_id: "12345",
+  source_currency: {
+    chain_id: ChainId.ETH,
+    address: "0x1234567890abcdef1234567890abcdef12345678",
+  },
+  refund_address: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+});
+```
+
+**Parameters:**
+
+<ParamField path="params.payorder_id" type="string" required>
+  The unique identifier of the pay order.
+</ParamField>
+
+<ParamField path="params.payment_rail" type="string" default="CRYPTO">
+  Payment rail to use. Defaults to `CRYPTO`.
+</ParamField>
+
+<ParamField path="params.source_currency" type="object">
+  Source currency to use for the payment details request, with `chain_id` and `address`.
+</ParamField>
+
+<ParamField path="params.quote_id" type="string">
+  Quote identifier from a previously selected route quote.
+</ParamField>
+
+<ParamField path="params.refund_address" type="string">
+  Address to which funds are returned if the payment fails.
+</ParamField>
+
+**Returns:** `Promise<APIResponse<PaymentDetails>>`
+
+---
+
+### getPayOrderPaymentMethods
+
+Fetches the available payment methods (rails, tokens, availability) for a pay order.
+
+```tsx
+const { data: paymentMethods, error } =
+  await apiClient.getPayOrderPaymentMethods("pay-order-id-123");
+```
+
+**Parameters:** `payOrderId` (string), `opts?` (Opts)
+
+**Returns:** `Promise<APIResponse<PaymentMethodsResponse>>`
+
+---
+
+### KYC methods
+
+Use these methods from server code to create verification links and check identity-verification status for your organization.
+
+<AccordionGroup>
+  <Accordion title="createKYCLink">
+    Creates a KYC or KYB link for the authenticated organization. Requires your API secret.
+
+    ```tsx
+    const { data, error } = await apiClient.createKYCLink(
+      {
+        email: "ops@example.com",
+        type: "business",
+        full_name: "Example Inc",
+        endorsements: ["base", "sepa"],
+        redirect_uri: "https://example.com/settings/payouts",
+      },
+      apiSecret
+    );
+    ```
+
+    **Parameters:** `params` (KYCLinkRequest), `apiSecret` (string), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<KYCLinkResponse>>`
+  </Accordion>
+
+  <Accordion title="getKYCStatus">
+    Retrieves the current KYC and terms-of-service status. Requires your API secret.
+
+    ```tsx
+    const { data, error } = await apiClient.getKYCStatus(apiSecret);
+    ```
+
+    **Parameters:** `apiSecret` (string), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<KYCLinkResponse>>`
+  </Accordion>
+</AccordionGroup>
+
+---
+
+### Bank account methods
+
+Use these signed server-side methods for fiat payout destination management.
+
+<AccordionGroup>
+  <Accordion title="listBankAccounts">
+    Lists bank accounts linked to the authenticated organization.
+
+    ```tsx
+    const { data, error } = await apiClient.listBankAccounts(apiSecret);
+    ```
+
+    **Parameters:** `apiSecret` (string), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<BankAccountsResponse>>`
+  </Accordion>
+
+  <Accordion title="getBankAccount">
+    Retrieves one linked bank account.
+
+    ```tsx
+    const { data, error } = await apiClient.getBankAccount(
+      "bank_account_id",
+      apiSecret
+    );
+    ```
+
+    **Parameters:** `bankAccountId` (string), `apiSecret` (string), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<BankAccountDetails>>`
+  </Accordion>
+
+  <Accordion title="addBankAccount">
+    Adds a new linked bank account. The request shape depends on the account type and payout currency.
+
+    ```tsx
+    const { data, error } = await apiClient.addBankAccount(
+      {
+        account_owner_type: "business",
+        account_owner_name: "Example Inc",
+        business_name: "Example Inc",
+        bank_name: "Example Bank",
+        account_name: "Operating account",
+        address: {
+          street_line_1: "123 Market St",
+          city: "San Francisco",
+          state: "CA",
+          postal_code: "94105",
+          country: "US",
+        },
+        currency: "usd",
+        account_type: "us",
+        account: {
+          account_number: "000123456789",
+          routing_number: "110000000",
+          checking_or_savings: "checking",
+        },
+      },
+      apiSecret
+    );
+    ```
+
+    **Parameters:** `params` (AddBankAccountRequest), `apiSecret` (string), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<BankAccountDetails>>`
+  </Accordion>
+</AccordionGroup>
+
+---
+
+### Withdrawal methods
+
+Use these signed server-side methods to list and create off-ramp withdrawals.
+
+<AccordionGroup>
+  <Accordion title="listWithdrawals">
+    Lists organization withdrawals. Requires your API secret.
+
+    ```tsx
+    const { data, error } = await apiClient.listWithdrawals(apiSecret);
+    ```
+
+    **Parameters:** `apiSecret` (string), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<WithdrawalsResponse>>`
+  </Accordion>
+
+  <Accordion title="createWithdrawal">
+    Creates an off-ramp withdrawal and returns wallet execution data when a source-chain transaction is required.
+
+    ```tsx
+    const { data: bankAccount, error: bankAccountError } =
+      await apiClient.getBankAccount("bank_account_id", apiSecret);
+
+    if (bankAccountError || !bankAccount) {
+      throw new Error(bankAccountError?.message ?? "Bank account not found");
+    }
+
+    const { data, error } = await apiClient.createWithdrawal(
+      {
+        data: {
+          src: {
+            id: "currency_id",
+            name: "USD Coin",
+            ticker: "USDC",
+            decimals: 6,
+            chain_id: ChainId.BASE,
+            address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+            currency_amount: {
+              token: {
+                raw_amount: "100000000",
+                ui_amount: 100,
+              },
+            },
+          },
+          dst: {
+            bank_account_details: bankAccount,
+            currency_amount: {
+              unit: "usd",
+            },
+          },
+          payment_rail: "ach",
+        },
+        sender_address: "0xSenderWallet",
+      },
+      apiSecret
+    );
+    ```
+
+    **Parameters:** `params` (CreateWithdrawalRequest), `apiSecret` (string), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<WithdrawalResponse>>`
+  </Accordion>
+</AccordionGroup>
+
+---
+
+### generateAuthorizationSignature
+
+Generates an HMAC-SHA256 authorization signature for signed server-side API requests. Most `ApiClient` methods that require signing generate this value internally when you pass `apiSecret`.
+
+```tsx
+const apiSecret = process.env.COIN_VOYAGE_API_SECRET!;
+const signature = apiClient.generateAuthorizationSignature(
+  apiSecret,
+  "POST",
+  "/pay-orders"
+);
+```
+
+The result is formatted as:
+
+```text
+APIKey=<apiKey>,signature=<signature>,timestamp=<timestamp>
+```
+
+<Warning>
+  This method uses your API secret. Call it only in server-side code. Never expose your API secret in client-side bundles.
+</Warning>
+
+**Parameters:** `apiSecret` (string), `method` (string), `path` (string)
+
+**Returns:** `string`
+
+---
+
+### subscribeOrderStatus
+
+Opens a WebSocket connection for real-time pay order status events. Order-scoped subscriptions authenticate with your API key. Organization-wide subscriptions require a server-generated authorization signature for `GET /ws`.
+
+```tsx
+const socket = apiClient.subscribeOrderStatus();
+
+socket.onOpen(() => {
+  socket.subscribe(orderId);
+});
+
+socket.onMessage((msg) => {
+  if (msg.type === "event") {
+    console.log(msg.data);
+  }
+});
+```
+
+For server-side dashboards and reconciliation workers, pass an authorization signature to subscribe to all organization PayOrder events:
+
+```tsx
+const authorizationSignature = apiClient.generateAuthorizationSignature(
+  apiSecret,
+  "GET",
+  "/ws"
+);
+
+const socket = apiClient.subscribeOrderStatus({ authorizationSignature });
+
+socket.onOpen(() => {
+  socket.subscribeOrg();
+});
+```
+
+**Returns:** `OrderStatusSocket`
+
+The `OrderStatusSocket` exposes the following methods:
+
+<ResponseField name="subscribe(orderId)" type="function">
+  Subscribe to status events for a specific pay order.
+</ResponseField>
+
+<ResponseField name="subscribeOrg()" type="function">
+  Subscribe to all pay order events for your organization. Available only when `subscribeOrderStatus()` is called with an authorization signature.
+</ResponseField>
+
+<ResponseField name="unsubscribe(orderId)" type="function">
+  Unsubscribe from a specific pay order.
+</ResponseField>
+
+<ResponseField name="unsubscribeOrg()" type="function">
+  Unsubscribe from organization-wide events. Available only when `subscribeOrderStatus()` is called with an authorization signature.
+</ResponseField>
+
+<ResponseField name="onMessage(callback)" type="function">
+  Attach a listener for parsed server messages.
+</ResponseField>
+
+<ResponseField name="onOpen(callback)" type="function">
+  Attach a listener for the WebSocket open event.
+</ResponseField>
+
+<ResponseField name="onClose(callback)" type="function">
+  Attach a listener for the WebSocket close event.
+</ResponseField>
+
+<ResponseField name="onError(callback)" type="function">
+  Attach a listener for WebSocket errors.
+</ResponseField>
+
+<ResponseField name="close()" type="function">
+  Close the WebSocket connection.
+</ResponseField>
+
+---
+
+### Webhook methods
+
+<AccordionGroup>
+  <Accordion title="listWebhooks">
+    Lists all webhooks configured for your organization.
+
+    ```tsx
+    const { data: webhooks, error } = await apiClient.listWebhooks(apiSecret);
+    ```
+
+    **Parameters:** `apiSecret` (string), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<WebhookResponse[]>>`
+  </Accordion>
+
+  <Accordion title="createWebhook">
+    Creates a new webhook subscription for your organization.
+
+    ```tsx
+    const { data: webhook, error } = await apiClient.createWebhook(
+      params,
+      apiSecret
+    );
+    ```
+
+    **Parameters:** `params` (CreateWebhookRequest), `apiSecret` (string), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<WebhookResponse>>`
+  </Accordion>
+
+  <Accordion title="updateWebhook">
+    Updates an existing webhook subscription.
+
+    ```tsx
+    const { data: webhook, error } = await apiClient.updateWebhook(
+      "webhook-id",
+      params,
+      apiSecret
+    );
+    ```
+
+    **Parameters:** `webhookId` (string), `params` (UpdateWebhookRequest), `apiSecret` (string), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<WebhookResponse>>`
+  </Accordion>
+
+  <Accordion title="deleteWebhook">
+    Deletes a webhook subscription.
+
+    ```tsx
+    const { error } = await apiClient.deleteWebhook("webhook-id", apiSecret);
+    ```
+
+    **Parameters:** `webhookId` (string), `apiSecret` (string), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<void>>`
+  </Accordion>
+</AccordionGroup>
+
+---
+
+### Fee methods
+
+<AccordionGroup>
+  <Accordion title="getFeeBalances">
+    Retrieves claimable fee balances for your organization.
+
+    ```tsx
+    const { data: balances, error } = await apiClient.getFeeBalances(apiSecret);
+    ```
+
+    **Parameters:** `apiSecret` (string), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<GetFeeBalancesResponse>>`
+  </Accordion>
+
+  <Accordion title="claimFees">
+    Claims accrued fees for your organization.
+
+    ```tsx
+    const { data: claimResult, error } = await apiClient.claimFees(
+      claimFeesParams,
+      apiSecret
+    );
+    ```
+
+    **Parameters:** `params` (ClaimFeesRequest), `apiSecret` (string), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<ClaimFeesResponse>>`
+  </Accordion>
+</AccordionGroup>
+
+---
+
+### Swap methods
+
+<AccordionGroup>
+  <Accordion title="swapQuote">
+    Gets a quote for swapping between two currencies.
+
+    ```tsx
+    const { data: quote, error } = await apiClient.swapQuote(params);
+    ```
+
+    **Parameters:** `params` (SwapQuoteRequest), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<SwapQuoteResponse>>`
+  </Accordion>
+
+  <Accordion title="swapData">
+    Gets the transaction data needed to execute a swap.
+
+    ```tsx
+    const { data: swapTx, error } = await apiClient.swapData(params);
+    ```
+
+    **Parameters:** `params` (SwapDataRequest), `opts?` (Opts)
+
+    **Returns:** `Promise<APIResponse<SwapDataResponse>>`
+  </Accordion>
+</AccordionGroup>
+
+### createPayOrder (low-level)
+
+A lower-level helper that creates a `DEPOSIT` or `SALE` pay order with an explicit `mode`. In most integrations you should use the mode-specific helpers above (`createDepositPayOrder`, `createSalePayOrder`, `createRefundPayOrder`). Use `createPayOrder` only when you need direct control over the mode and authorization signature.
+
+```typescript
+const signature = apiClient.generateAuthorizationSignature(
+  apiSecret,
+  "POST",
+  "/pay-orders"
+);
+
+const { data, error } = await apiClient.createPayOrder(
+  params,
+  PayOrderMode.SALE,
+  signature
+);
+```
+
+**Parameters:** `params` (PayOrderParams), `mode` (CreatePayOrderMode), `signature?` (string), `opts?` (Opts)
+
+**Returns:** `Promise<APIResponse<PayOrder>>`
+
+<Note>
+  `ApiClient` does not expose a `processPayOrder()` method. PayOrder processing begins automatically once funds are detected on-chain.
+</Note>
+
+---
+
+## TypeScript types
+
+The SDK exports the following TypeScript types for use in your application.
+
+### PayOrder
+
+The main pay order object returned by API methods.
+
+```typescript
+type PayOrder = {
+  id: string
+  mode: PayOrderMode
+  status: PayOrderStatus
+  metadata?: PayOrderMetadata
+  settings?: PayOrderSettings
+  fulfillment: FulfillmentData
+  payment?: PaymentData
+}
+```
+
+### PayOrderMode
+
+```typescript
+enum PayOrderMode {
+  SALE = "SALE",
+  DEPOSIT = "DEPOSIT",
+  REFUND = "REFUND",
+}
+```
+
+| Value | Description |
+|---|---|
+| `SALE` | Merchant sale. Settles to the dashboard settlement currency unless `intent.asset` is provided. |
+| `DEPOSIT` | Direct deposit to a specified address on a target chain. |
+| `REFUND` | Full or partial refund of a previous pay order. |
+
+### PayOrderStatus
+
+```typescript
+enum PayOrderStatus {
+  PENDING = "PENDING",
+  FAILED = "FAILED",
+  AWAITING_PAYMENT = "AWAITING_PAYMENT",
+  AWAITING_CONFIRMATION = "AWAITING_CONFIRMATION",
+  OPTIMISTIC_CONFIRMED = "OPTIMISTIC_CONFIRMED",
+  EXECUTING_ORDER = "EXECUTING_ORDER",
+  COMPLETED = "COMPLETED",
+  EXPIRED = "EXPIRED",
+  REFUNDED = "REFUNDED",
+  PARTIAL_PAYMENT = "PARTIAL_PAYMENT",
+}
+```
+
+| Status | Description |
+|---|---|
+| `PENDING` | Created but not yet ready for payment. |
+| `AWAITING_PAYMENT` | Ready and waiting for the user to send payment. |
+| `AWAITING_CONFIRMATION` | Payment transaction detected; waiting for blockchain confirmation. |
+| `OPTIMISTIC_CONFIRMED` | Optimistically confirmed; execution can begin. |
+| `EXECUTING_ORDER` | Payment is being routed to the destination. |
+| `COMPLETED` | Completed successfully. |
+| `FAILED` | Failed during processing. |
+| `EXPIRED` | Expired before payment was received. |
+| `REFUNDED` | Refunded to the configured refund address. |
+| `PARTIAL_PAYMENT` | Received an insufficient amount; reached a terminal partial-payment state. |
+
+### PayOrderMetadata
+
+```typescript
+type PayOrderMetadata = {
+  items?: Array<{
+    name: string
+    description?: string
+    image?: string
+    quantity?: number
+    unit_price?: number
+    currency?: string
+  }>
+  refund?: {
+    name?: string
+    reason?: string
+    additional_info?: string
+    refund_amount?: number
+    currency?: string
+  }
+  // Up to 20 custom string fields
+  [key: string]: any
+}
+```
+
+You can attach up to 20 additional custom fields to the metadata object. Each custom field value must be a string with a maximum of 500 characters.
+
+### PayOrderParams
+
+```typescript
+type PayOrderParams = {
+  intent: PayOrderIntent
+  metadata?: PayOrderMetadata
+}
+```
+
+### PayOrderIntent
+
+```typescript
+type PayOrderIntent = {
+  asset?: CurrencyBase
+  amount: IntentAmount
+  receiving_address?: string
+}
+```
+
+### IntentAmount
+
+Provide either `token_amount` or `fiat` — not both.
+
+```typescript
+type IntentAmount = {
+  token_amount?: number
+  fiat?: {
+    amount: number
+    unit: FiatCurrency
+  }
+}
+```
+
+### FulfillmentData
+
+```typescript
+type FulfillmentData = {
+  asset?: Currency
+  fiat?: FiatCurrency
+  amount: CurrencyAmount
+  rate_usd?: number
+  receiving_address?: string
+  custom_fee_bps?: number
+}
+```
+
+### PaymentData
+
+```typescript
+type PaymentData = {
+  src: QuoteWithCurrency
+  dst: CurrencyWithAmount
+
+  // Legacy fields — prefer steps
+  deposit_address: string
+  receiving_address: string
+  refund_address: string
+
+  source_tx_hash?: string
+  destination_tx_hash?: string
+  refund_tx_hash?: string
+  fee_tx_hash?: string
+
+  steps: PaymentStep[]
+
+  expires_at: Date
+}
+```
+
+<Warning>
+  `deposit_address`, `receiving_address`, and `refund_address` are legacy compatibility fields. Use the `steps` array for rail-specific payment instructions and provider data instead.
+</Warning>
+
+### CurrencyAmount
+
+```typescript
+interface CurrencyAmount {
+  ui_amount_display: string
+  raw_amount: string
+  value_usd: number
+}
+```
+
+<ResponseField name="ui_amount_display" type="string">
+  Formatted display string suitable for rendering in UI.
+</ResponseField>
+
+<ResponseField name="raw_amount" type="string">
+  Raw amount as a string to prevent BigInt precision loss.
+</ResponseField>
+
+<ResponseField name="value_usd" type="number">
+  USD equivalent value of the amount.
+</ResponseField>
+
+### WebhookEventType
+
+```typescript
+enum WebhookEventType {
+  ORDER_CREATED = "ORDER_CREATED",
+  ORDER_AWAITING_PAYMENT = "ORDER_AWAITING_PAYMENT",
+  ORDER_CONFIRMING = "ORDER_CONFIRMING",
+  ORDER_EXECUTING = "ORDER_EXECUTING",
+  ORDER_COMPLETED = "ORDER_COMPLETED",
+  ORDER_ERROR = "ORDER_ERROR",
+  ORDER_REFUNDED = "ORDER_REFUNDED",
+  ORDER_EXPIRED = "ORDER_EXPIRED",
+}
+```
+
+| Event | Payload `type` | Description |
+|---|---|---|
+| `ORDER_CREATED` | `payorder_created` | A new pay order was created. |
+| `ORDER_AWAITING_PAYMENT` | `payorder_started` | The pay order is ready for payment. |
+| `ORDER_CONFIRMING` | `payorder_confirming` | Payment detected and confirming on-chain. |
+| `ORDER_EXECUTING` | `payorder_executing` | Payment execution has begun. |
+| `ORDER_COMPLETED` | `payorder_completed` | The pay order completed successfully. |
+| `ORDER_ERROR` | `payorder_error` | An error occurred during processing. |
+| `ORDER_REFUNDED` | `payorder_refunded` | A refund was processed. |
+| `ORDER_EXPIRED` | `payorder_expired` | The pay order expired before payment was received. |

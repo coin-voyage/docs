@@ -1,0 +1,117 @@
+---
+title: "Set up webhooks for real-time payment notifications"
+sidebarTitle: "Overview"
+description: "Register a CoinVoyage webhook endpoint, verify HMAC-SHA256 delivery signatures, and handle PayOrder lifecycle events in your server."
+layout:
+  description:
+    visible: false
+---
+
+Webhooks let you receive real-time notifications in your application whenever a PayOrder changes status. Rather than polling the CoinVoyage API for updates, you register an HTTPS endpoint and CoinVoyage delivers a `POST` request with the event details each time something happens — payment received, confirmed on-chain, completed, refunded, and more.
+
+## Set up a webhook
+
+Register and manage your webhook endpoints in the CoinVoyage Dashboard under the **Developers** section.
+
+<Steps>
+  <Step title="Navigate to Developers → Webhooks">
+    Open the [CoinVoyage Dashboard](https://dashboard.coinvoyage.io/developers) and select **Developers** in the sidebar, then click **Webhooks**.
+  </Step>
+  <Step title="Click Add Webhook">
+    Click the **Add Webhook** button to open the registration form.
+  </Step>
+  <Step title="Enter your endpoint URL">
+    Provide the URL of your publicly accessible webhook handler.
+
+    <Warning>
+      Your endpoint must use HTTPS in production. HTTP endpoints are not accepted.
+    </Warning>
+  </Step>
+  <Step title="Select the events to subscribe to">
+    Choose which PayOrder lifecycle events should trigger delivery to your endpoint. Subscription event identifiers use uppercase `ORDER_*` format (for example, `ORDER_COMPLETED`).
+
+    <Note>
+      The `type` field in the delivered JSON payload uses lowercase `payorder_*` values — for example, subscribing to `ORDER_COMPLETED` results in payloads with `"type": "payorder_completed"`. See [Webhook Events](/v2/webhooks/events) for the full mapping.
+    </Note>
+  </Step>
+  <Step title="Save and store your Webhook Secret">
+    Save the webhook. CoinVoyage generates a **Webhook Secret** — copy it immediately and store it securely (for example, as an environment variable). You need this secret to verify the signature on every incoming request.
+
+    <Warning>
+      Store the Webhook Secret in an environment variable, never in source code or version control.
+    </Warning>
+  </Step>
+</Steps>
+
+<Info>
+  Your endpoint must be publicly accessible and respond with a `2xx` status code within **30 seconds**. Responses outside this window are treated as delivery failures.
+</Info>
+
+## Verify webhook signatures
+
+Every webhook request includes a `CoinVoyage-Webhook-Signature` header containing an HMAC-SHA256 signature of the raw request body, encoded in Base64. Always verify this signature **before** parsing or acting on the payload.
+
+The example below shows a complete Next.js Route Handler that verifies the signature and dispatches on the event type:
+
+```typescript app/api/webhook/route.ts
+"use server";
+
+import { createHmac } from "crypto";
+
+const webhookSecret = process.env.COIN_VOYAGE_WEBHOOK_SECRET!;
+
+export const POST = async (req: Request) => {
+  const rawBody = await req.text();
+  const signature = req.headers.get("CoinVoyage-Webhook-Signature");
+
+  const hmac = createHmac("sha256", webhookSecret)
+    .update(rawBody)
+    .digest("base64");
+
+  if (!signature || signature !== hmac) {
+    return new Response("Unauthorized", {
+      status: 401,
+    });
+  }
+
+  const event = JSON.parse(rawBody) as {
+    type: string;
+    payorder_id: string;
+    status: string;
+  };
+
+  switch (event.type) {
+    case "payorder_completed":
+      console.log("PayOrder completed", event.payorder_id);
+      break;
+    case "payorder_refunded":
+      console.log("PayOrder refunded", event.payorder_id);
+      break;
+    case "payorder_expired":
+      console.log("PayOrder expired", event.payorder_id);
+      break;
+    default:
+      console.log("Unhandled webhook", event.type, event.payorder_id);
+  }
+
+  return new Response("Webhook Received", {
+    status: 200,
+  });
+};
+```
+
+<Note>
+  Read the raw request body with `req.text()` **before** calling `JSON.parse`. The HMAC is computed over the raw bytes, so parsing first will not affect correctness here, but reading the body twice is not possible in the Web Fetch API — always read it once as text, verify, then parse.
+</Note>
+
+## Security best practices
+
+<Tip>
+  Following these practices protects your endpoint against spoofed or replayed requests.
+</Tip>
+
+- **Verify the signature before parsing.** Compute the HMAC-SHA256 of the raw request body and compare it to the `CoinVoyage-Webhook-Signature` header before you inspect any payload fields.
+- **Use HTTPS in production.** Plain HTTP exposes the request body and signature to interception. CoinVoyage only delivers to HTTPS endpoints in production environments.
+- **Store your Webhook Secret securely.** Keep it in an environment variable (for example, `COIN_VOYAGE_WEBHOOK_SECRET`). Never commit it to source code or expose it in client-side bundles.
+- **Respond quickly.** Return a `2xx` response as soon as the signature is verified. Offload any heavy processing to a background job so you don't risk hitting the 30-second timeout.
+- **Implement proper error handling.** Return a non-`2xx` status only when delivery should be retried. Return `200` even for unrecognized event types you choose to ignore.

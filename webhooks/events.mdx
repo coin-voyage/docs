@@ -1,289 +1,298 @@
 ---
 title: "CoinVoyage webhook event types and payload reference"
 sidebarTitle: "Events"
-description: "Every PayOrder webhook event with its subscription identifier, payload type value, and full JSON example delivered to your endpoint."
+description: "Every CoinVoyage order webhook event with its subscription identifier and v3 payload structure."
 layout:
   description:
     visible: false
 ---
 
-CoinVoyage emits a webhook event at each stage of the PayOrder lifecycle. For every event you subscribe to, CoinVoyage delivers a `POST` request to your endpoint containing a JSON payload that describes what changed. This page covers every event type, the payload structures you can expect, and a full example for each.
-
-<Note>
-  There is a naming difference between the identifiers you use when subscribing to events and the `type` field in the delivered payload. Subscription identifiers use uppercase `ORDER_*` format. The `type` field in the JSON payload uses lowercase `payorder_*` format. For example, subscribing to `ORDER_COMPLETED` results in payloads where `"type": "payorder_completed"`.
-</Note>
+CoinVoyage emits webhook events at each stage of the order lifecycle. For every event you subscribe to, CoinVoyage delivers a `POST` request containing an event envelope and the current order snapshot.
 
 ## Event types
 
-| Subscription identifier | Payload `type` | Description |
-|---|---|---|
-| `ORDER_CREATED` | `payorder_created` | A new PayOrder was created. |
-| `ORDER_AWAITING_PAYMENT` | `payorder_started` | The PayOrder is ready and awaiting payment from the user. |
-| `ORDER_CONFIRMING` | `payorder_confirming` | Payment has been received and is being confirmed on-chain. |
-| `ORDER_EXECUTING` | `payorder_executing` | CoinVoyage is executing the destination transfer or contract call. |
-| `ORDER_COMPLETED` | `payorder_completed` | The PayOrder completed successfully. |
-| `ORDER_ERROR` | `payorder_error` | An error occurred during PayOrder processing. |
-| `ORDER_REFUNDED` | `payorder_refunded` | Funds were refunded to the user. |
-| `ORDER_EXPIRED` | `payorder_expired` | The PayOrder expired before payment was received. |
+Subscription identifiers and delivered payload values are the same uppercase `ORDER_*` strings.
 
-## Base event payload structure
+| Event | Description |
+|---|---|
+| `ORDER_CREATED` | A new order was created. |
+| `ORDER_AWAITING_PAYMENT` | The order is ready and awaiting payment from the user. |
+| `ORDER_CONFIRMING` | Payment has been detected and is being confirmed on-chain. |
+| `ORDER_EXECUTING` | CoinVoyage is executing the destination transfer or contract call. |
+| `ORDER_COMPLETED` | The order completed successfully. |
+| `ORDER_ERROR` | An error occurred during processing. |
+| `ORDER_REFUNDED` | Funds were refunded to the user. |
+| `ORDER_EXPIRED` | The order expired before payment was received. |
+| `ORDER_PARTIAL_PAYMENT` | The user sent less than the required amount; the order is terminal and needs resolution. |
 
-Every webhook delivery shares a common base structure. Additional top-level fields are present depending on the specific event type.
+## Base payload
+
+Every webhook delivery uses this envelope:
 
 ```json
 {
-  "id": "event_123456",
-  "type": "payorder_completed",
-  "status": "COMPLETED",
-  "payorder_id": "po_abcdef123456",
-  "metadata": { },
-  "payment_data": { }
+  "event": "ORDER_COMPLETED",
+  "delivered_at": "2026-06-23T12:34:56Z",
+  "order": {
+    "id": "cabc1234567890abcdef12",
+    "created_at": "2026-06-23T12:30:00Z",
+    "updated_at": "2026-06-23T12:34:55Z",
+    "organization_id": "org_123",
+    "mode": "SALE",
+    "status": "COMPLETED",
+    "fulfillment": {
+      "amount": {
+        "ui": "49.99",
+        "raw": "49990000",
+        "value_usd": 49.99
+      },
+      "fiat_unit": "USD"
+    },
+    "payment": {
+      "payment_rail": "CRYPTO",
+      "recipient": "0xMerchantWallet",
+      "source_tx_hash": "0xabc123",
+      "destination_tx_hash": "0xdef456",
+      "steps": [],
+      "expires_at": "2026-06-23T13:00:00Z"
+    },
+    "metadata": {
+      "order_id": "order_123"
+    },
+    "hosted_url": "https://pay.coinvoyage.io/pay/cabc1234567890abcdef12"
+  }
 }
 ```
 
 | Field | Description |
 |---|---|
-| `id` | Unique identifier for this event delivery. |
-| `type` | Lowercase `payorder_*` string identifying the event. |
-| `status` | The current PayOrder status as an uppercase string. |
-| `payorder_id` | The ID of the PayOrder this event relates to. |
-| `metadata` | Optional key-value metadata attached to the PayOrder at creation. |
-| `payment_data` | Payment details object. Present on `payorder_started`, `payorder_confirming`, `payorder_executing`, and `payorder_completed` events. |
+| `event` | Uppercase `ORDER_*` identifier for the lifecycle event. |
+| `delivered_at` | Event publish time. The value is stable across webhook retries and WebSocket pushes for the same event. |
+| `order` | Current order snapshot in the v3 `OrderResponse` shape. |
+| `order.id` | CoinVoyage order ID. Store this for reconciliation and idempotency. |
+| `order.status` | Current lifecycle status. |
+| `order.metadata` | Optional metadata attached when the order was created. Use this to map back to your internal records. |
+| `order.payment` | Payment details. Present after payment instructions have been created. |
 
-## PaymentData structure
+## Payment object
 
-The `payment_data` object is included in `payorder_started`, `payorder_confirming`, `payorder_executing`, and `payorder_completed` events. It contains source and destination amounts, addresses, transaction hashes, and execution details.
+When present, `order.payment` contains the funding input, resolved output, rail-specific instructions, transaction hashes, and expiry.
 
 ```json
 {
-  "src": {
-    "total": { },
-    "base": { },
-    "fees": { },
-    "gas": { }
+  "payment_rail": "CRYPTO",
+  "input": {
+    "currency": {
+      "chain_id": 1,
+      "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "symbol": "USDC",
+      "decimals": 6
+    },
+    "amount": {
+      "ui": "49.99",
+      "raw": "49990000",
+      "value_usd": 49.99
+    }
   },
-  "dst": {
-    "currency": { },
-    "currency_amount": { }
+  "output": {
+    "currency": {
+      "chain_id": 30000000000002,
+      "address": null,
+      "symbol": "SUI",
+      "decimals": 9
+    },
+    "amount": {
+      "ui": "22.4",
+      "raw": "22400000000",
+      "value_usd": 49.99
+    }
   },
-  "deposit_address": "0x...",
-  "receiving_address": "0x...",
-  "refund_address": "0x...",
-  "source_tx_hash": "0x...",
-  "destination_tx_hash": "0x...",
-  "refund_tx_hash": "0x...",
-  "execution": [
+  "recipient": "0xMerchantWallet",
+  "refund": {
+    "address": "0xRefundAddress",
+    "tx_hash": null,
+    "reason": null
+  },
+  "source_tx_hash": "0xabc123",
+  "destination_tx_hash": "0xdef456",
+  "fee_tx_hash": null,
+  "steps": [
     {
-      "provider": "...",
-      "status": "...",
+      "rail": "CRYPTO",
+      "kind": "deposit",
+      "deposit_address": "0xDepositAddress",
+      "data": {
+        "deposit_address": "0xDepositAddress",
+        "currency": {
+          "chain_id": 1,
+          "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+        },
+        "amount": "49990000"
+      }
     }
   ],
-  "expires_at": "2025-01-15T11:00:00Z"
+  "expires_at": "2026-06-23T13:00:00Z"
 }
 ```
-
-| Field | Description |
-|---|---|
-| `src` | Source-side amounts broken down into total, base, fees, and gas. |
-| `dst` | Destination currency and the amount to be received. |
-| `deposit_address` | The address the user should send payment to. |
-| `receiving_address` | The address that will receive the settled funds. |
-| `refund_address` | The address funds are returned to if a refund occurs. |
-| `source_tx_hash` | Transaction hash of the incoming payment on the source chain. |
-| `destination_tx_hash` | Transaction hash of the outgoing transfer on the destination chain. |
-| `refund_tx_hash` | Transaction hash of the refund transaction, if applicable. |
-| `execution` | Array of execution steps, each with a provider and status. |
-| `expires_at` | ISO 8601 timestamp after which the PayOrder expires. |
 
 ## Payload examples
 
+The examples below highlight event-specific fields. Production deliveries include the full `order` snapshot described above.
+
 <AccordionGroup>
-  <Accordion title="payorder_created">
-    Triggered when a new PayOrder is created. The `payment_data` field is not yet available at this stage.
-
+  <Accordion title="ORDER_CREATED">
     ```json
     {
-      "type": "payorder_created",
-      "status": "PENDING",
-      "payorder_id": "po_abcdef123456",
-      "metadata": { }
-    }
-    ```
-  </Accordion>
-
-  <Accordion title="payorder_started">
-    Triggered when the PayOrder is ready and waiting for the user to send payment. The `payment_data` field is now populated, including the `deposit_address` and `expires_at`.
-
-    ```json
-    {
-      "type": "payorder_started",
-      "status": "AWAITING_PAYMENT",
-      "payorder_id": "po_abcdef123456",
-      "metadata": { },
-      "payment_data": {
-        "src": {
-          "total": { },
-          "base": { },
-          "fees": { },
-          "gas": { }
-        },
-        "dst": {
-          "currency": { },
-          "currency_amount": { }
-        },
-        "deposit_address": "0x...",
-        "receiving_address": "0x...",
-        "refund_address": "0x...",
-        "source_tx_hash": null,
-        "destination_tx_hash": null,
-        "refund_tx_hash": null,
-        "execution": [],
-        "expires_at": "2025-01-15T11:00:00Z"
+      "event": "ORDER_CREATED",
+      "delivered_at": "2026-06-23T12:30:00Z",
+      "order": {
+        "id": "cabc1234567890abcdef12",
+        "mode": "SALE",
+        "status": "PENDING",
+        "metadata": {
+          "order_id": "order_123"
+        }
       }
     }
     ```
   </Accordion>
 
-  <Accordion title="payorder_confirming">
-    Triggered when payment has been detected on-chain and is awaiting the required number of confirmations.
-
+  <Accordion title="ORDER_AWAITING_PAYMENT">
     ```json
     {
-      "type": "payorder_confirming",
-      "status": "AWAITING_CONFIRMATION",
-      "payorder_id": "po_abcdef123456",
-      "metadata": { },
-      "payment_data": {
-        "src": {
-          "total": { },
-          "base": { },
-          "fees": { },
-          "gas": { }
-        },
-        "dst": {
-          "currency": { },
-          "currency_amount": { }
-        },
-        "deposit_address": "0x...",
-        "receiving_address": "0x...",
-        "refund_address": "0x...",
-        "source_tx_hash": "0xabc123...",
-        "destination_tx_hash": null,
-        "refund_tx_hash": null,
-        "execution": [],
-        "expires_at": "2025-01-15T11:00:00Z"
+      "event": "ORDER_AWAITING_PAYMENT",
+      "delivered_at": "2026-06-23T12:31:00Z",
+      "order": {
+        "id": "cabc1234567890abcdef12",
+        "mode": "SALE",
+        "status": "AWAITING_PAYMENT",
+        "payment": {
+          "payment_rail": "CRYPTO",
+          "recipient": "0xMerchantWallet",
+          "steps": [],
+          "expires_at": "2026-06-23T13:00:00Z"
+        }
       }
     }
     ```
   </Accordion>
 
-  <Accordion title="payorder_executing">
-    Triggered when CoinVoyage starts executing the destination transfer or contract call after the source payment is confirmed.
-
+  <Accordion title="ORDER_CONFIRMING">
     ```json
     {
-      "type": "payorder_executing",
-      "status": "EXECUTING_ORDER",
-      "payorder_id": "po_abcdef123456",
-      "metadata": { },
-      "payment_data": {
-        "src": {
-          "total": { },
-          "base": { },
-          "fees": { },
-          "gas": { }
-        },
-        "dst": {
-          "currency": { },
-          "currency_amount": { }
-        },
-        "deposit_address": "0x...",
-        "receiving_address": "0x...",
-        "refund_address": "0x...",
-        "source_tx_hash": "0xabc123...",
-        "destination_tx_hash": null,
-        "refund_tx_hash": null,
-        "execution": [
-          { "provider": "...", "status": "pending" }
-        ],
-        "expires_at": "2025-01-15T11:00:00Z"
+      "event": "ORDER_CONFIRMING",
+      "delivered_at": "2026-06-23T12:32:00Z",
+      "order": {
+        "id": "cabc1234567890abcdef12",
+        "mode": "SALE",
+        "status": "AWAITING_CONFIRMATION",
+        "payment": {
+          "source_tx_hash": "0xabc123",
+          "destination_tx_hash": null
+        }
       }
     }
     ```
   </Accordion>
 
-  <Accordion title="payorder_completed">
-    Triggered when the PayOrder has completed successfully and settlement has been delivered to the receiving address.
-
+  <Accordion title="ORDER_EXECUTING">
     ```json
     {
-      "type": "payorder_completed",
-      "status": "COMPLETED",
-      "payorder_id": "po_abcdef123456",
-      "metadata": { },
-      "payment_data": {
-        "src": {
-          "total": { },
-          "base": { },
-          "fees": { },
-          "gas": { }
-        },
-        "dst": {
-          "currency": { },
-          "currency_amount": { }
-        },
-        "deposit_address": "0x...",
-        "receiving_address": "0x...",
-        "refund_address": "0x...",
-        "source_tx_hash": "0xabc123...",
-        "destination_tx_hash": "0xdef456...",
-        "refund_tx_hash": null,
-        "execution": [
-          { "provider": "...", "status": "completed" }
-        ],
-        "expires_at": "2025-01-15T11:00:00Z"
+      "event": "ORDER_EXECUTING",
+      "delivered_at": "2026-06-23T12:33:00Z",
+      "order": {
+        "id": "cabc1234567890abcdef12",
+        "mode": "SALE",
+        "status": "EXECUTING_ORDER",
+        "payment": {
+          "source_tx_hash": "0xabc123",
+          "destination_tx_hash": null
+        }
       }
     }
     ```
   </Accordion>
 
-  <Accordion title="payorder_error">
-    Triggered when an error occurs during PayOrder processing. The `message` field contains a description of the error. `payment_data` is not included.
-
+  <Accordion title="ORDER_COMPLETED">
     ```json
     {
-      "type": "payorder_error",
-      "status": "FAILED",
-      "payorder_id": "po_abcdef123456",
-      "metadata": { },
-      "message": "Error description"
+      "event": "ORDER_COMPLETED",
+      "delivered_at": "2026-06-23T12:34:00Z",
+      "order": {
+        "id": "cabc1234567890abcdef12",
+        "mode": "SALE",
+        "status": "COMPLETED",
+        "payment": {
+          "source_tx_hash": "0xabc123",
+          "destination_tx_hash": "0xdef456"
+        }
+      }
     }
     ```
   </Accordion>
 
-  <Accordion title="payorder_refunded">
-    Triggered when funds have been refunded to the user. The `refund_tx_hash` and `refund_address` fields identify the refund transaction and destination.
-
+  <Accordion title="ORDER_ERROR">
     ```json
     {
-      "type": "payorder_refunded",
-      "status": "REFUNDED",
-      "payorder_id": "po_abcdef123456",
-      "metadata": { },
-      "refund_tx_hash": "0xghi789...",
-      "refund_address": "0x1234567890abcdef..."
+      "event": "ORDER_ERROR",
+      "delivered_at": "2026-06-23T12:34:00Z",
+      "order": {
+        "id": "cabc1234567890abcdef12",
+        "mode": "SALE",
+        "status": "FAILED"
+      }
     }
     ```
   </Accordion>
 
-  <Accordion title="payorder_expired">
-    Triggered when the PayOrder expires before payment was received. No `metadata` or `payment_data` is included in the minimal expiry payload.
-
+  <Accordion title="ORDER_REFUNDED">
     ```json
     {
-      "type": "payorder_expired",
-      "status": "EXPIRED",
-      "payorder_id": "po_abcdef123456"
+      "event": "ORDER_REFUNDED",
+      "delivered_at": "2026-06-23T12:34:00Z",
+      "order": {
+        "id": "cabc1234567890abcdef12",
+        "mode": "SALE",
+        "status": "REFUNDED",
+        "payment": {
+          "refund": {
+            "address": "0xRefundAddress",
+            "tx_hash": "0xrefund123",
+            "reason": "execution failed"
+          }
+        }
+      }
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="ORDER_EXPIRED">
+    ```json
+    {
+      "event": "ORDER_EXPIRED",
+      "delivered_at": "2026-06-23T13:00:00Z",
+      "order": {
+        "id": "cabc1234567890abcdef12",
+        "mode": "SALE",
+        "status": "EXPIRED"
+      }
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="ORDER_PARTIAL_PAYMENT">
+    ```json
+    {
+      "event": "ORDER_PARTIAL_PAYMENT",
+      "delivered_at": "2026-06-23T12:34:00Z",
+      "order": {
+        "id": "cabc1234567890abcdef12",
+        "mode": "SALE",
+        "status": "PARTIAL_PAYMENT",
+        "payment": {
+          "source_tx_hash": "0xabc123"
+        }
+      }
     }
     ```
   </Accordion>

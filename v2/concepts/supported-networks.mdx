@@ -7,7 +7,7 @@ layout:
     visible: false
 ---
 
-CoinVoyage accepts payments from and settles to a growing set of blockchain networks. Each network is identified by a chain ID that you use when creating orders or requesting quotes. The table below lists every currently supported chain and its ID. If you need support for a network not listed here, contact the team at [help@coinvoyage.io](mailto:help@coinvoyage.io).
+CoinVoyage accepts payments from and settles to a growing set of blockchain networks. Each network is identified by a chain ID that you use when creating PayOrders or requesting quotes. The table below lists every currently supported chain, its ID, and whether a testnet is available. If you need support for a network not listed here, contact the team at [help@coinvoyage.io](mailto:help@coinvoyage.io).
 
 ## Supported networks
 
@@ -25,7 +25,7 @@ CoinVoyage accepts payments from and settles to a growing set of blockchain netw
 
 ## Using chain IDs in your integration
 
-When you create an order or request payment details, you reference a network by its chain ID. The SDK exports a `ChainId` enum so you don't have to remember raw numbers:
+When you create a PayOrder or request payment details, you reference a network by its chain ID. The SDK exports a `ChainId` enum so you don't have to remember raw numbers:
 
 ```typescript
 import { ChainId } from "@coin-voyage/paykit/server";
@@ -34,13 +34,15 @@ import { ChainId } from "@coin-voyage/paykit/server";
 // ChainId.ETH  === 1
 // ChainId.SOL  === 30000000000001
 
-const { data } = await apiClient.createDepositOrder({
-  amount: "10",
-  currency: {
-    chain_id: ChainId.SUI,
-    address: null, // null = native token
+const { data } = await apiClient.createDepositPayOrder({
+  intent: {
+    asset: {
+      chain_id: ChainId.SUI,
+      address: null, // null = native token
+    },
+    amount: { token_amount: 10 },
+    receiving_address: "0xYourAddress",
   },
-  recipient: "0xYourAddress",
 });
 ```
 

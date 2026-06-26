@@ -1,0 +1,367 @@
+---
+title: "Migrate from v2 to v3"
+sidebarTitle: "v2 to v3 migration"
+description: "Upgrade a CoinVoyage v2 integration to the v3 beta API and PayKit 3.0.0-beta.5 SDK surface."
+layout:
+  description:
+    visible: false
+---
+
+CoinVoyage v3 is a breaking API and SDK update. The main change is the move from **PayOrder** terminology and helper names to **Order** terminology across the REST API, PayKit, webhooks, and WebSocket events.
+
+<Info>
+  v3 is currently tagged **Beta** in the docs version selector. Keep your v2 integration running until you have tested order creation, payment completion, webhooks, refunds, swaps, and any off-ramp workflows in your target environment.
+</Info>
+
+## What changes
+
+| Area | v2 | v3 |
+|---|---|---|
+| API base URL | `https://api.coinvoyage.io/v2` | `https://api.coinvoyage.io/v3` |
+| OpenAPI source | `/v2/openapi.json` | `/v3/openapi.json` |
+| Primary resource name | PayOrder | Order |
+| Server-created PayButton prop | `payId` | `orderId` |
+| PayButton lifecycle start callback | `onPaymentStarted` | `onAwaitingPayment`, `onConfirmingPayment`, `onExecutingPayment` |
+| Standalone swap execution | `swapData()` | `swapExecute()` |
+| Webhook payload event field | `type` with lowercase `payorder_*` values | `event` with uppercase `ORDER_*` values |
+| Webhook payload resource ID | `payorder_id` | `order.id` |
+| Fiat payout API wording | KYC and withdrawals | Off-ramp verification and off-ramp intents |
+
+## Migration checklist
+
+1. Upgrade PayKit to `@coin-voyage/paykit@3.0.0-beta.5`.
+2. Change direct API calls from `/v2` to `/v3`.
+3. Replace `ApiClient` PayOrder helper names with the v3 Order helper names.
+4. Update `PayButton` and `PayButton.Custom` from `payId` to `orderId`.
+5. Replace `onPaymentStarted` with the more specific payment lifecycle callbacks.
+6. Update webhook handlers to read `{ event, delivered_at, order }`.
+7. Rename KYC and withdrawal API calls to the off-ramp verification and off-ramp intent methods.
+8. Update standalone swap execution from `swapData()` to `swapExecute()`.
+9. Run a full test payment and verify that webhook fulfillment remains idempotent.
+
+## Upgrade PayKit
+
+```bash
+pnpm add @coin-voyage/paykit@3.0.0-beta.5
+```
+
+Use the package manager your project already uses.
+
+## Update ApiClient initialization
+
+`ApiClient` is now called as a factory function from `@coin-voyage/paykit/server`.
+
+```typescript
+import { ApiClient } from "@coin-voyage/paykit/server";
+
+const apiClient = ApiClient({
+  apiKey: process.env.COIN_VOYAGE_API_KEY!,
+  environment: "production",
+});
+```
+
+When you manually sign HTTP requests, sign the path without the `/v3` prefix:
+
+```typescript
+const authorization = apiClient.generateAuthorizationSignature(
+  process.env.COIN_VOYAGE_API_SECRET!,
+  "POST",
+  "/orders"
+);
+```
+
+## Rename order methods
+
+Replace v2 PayOrder helper names with v3 Order helper names.
+
+| v2 method | v3 method |
+|---|---|
+| `createDepositPayOrder(params)` | `createDepositOrder(params)` |
+| `createSalePayOrder(params, apiSecret)` | `createSaleOrder(params, apiSecret)` |
+| `createRefundPayOrder(orderId, params, apiSecret)` | `createRefundOrder(orderId, params, apiSecret)` |
+| `getPayOrder(payOrderId)` | `getOrder(orderId)` |
+| `listPayOrders(params, apiSecret)` | `listOrders(params, apiSecret)` |
+| `payOrderQuote(orderId, params)` | `orderQuotes(orderId, params)` |
+| `payOrderPaymentDetails(params)` | `createPayment(orderId, params)` |
+| `getPayOrderPaymentMethods(orderId)` | `getOrderPaymentMethods(orderId)` |
+
+### Deposit order before and after
+
+<CodeGroup>
+```typescript v2
+const { data, error } = await apiClient.createDepositPayOrder({
+  intent: {
+    asset: {
+      chain_id: ChainId.SUI,
+      address: null,
+    },
+    amount: {
+      token_amount: 10,
+    },
+    receiving_address: "0xDestinationWallet",
+  },
+});
+```
+
+```typescript v3
+const { data, error } = await apiClient.createDepositOrder({
+  amount: "10",
+  currency: {
+    chain_id: ChainId.SUI,
+    address: null,
+  },
+  recipient: "0xDestinationWallet",
+});
+```
+</CodeGroup>
+
+### Sale order before and after
+
+<CodeGroup>
+```typescript v2
+const { data, error } = await apiClient.createSalePayOrder(
+  {
+    intent: {
+      amount: {
+        fiat: {
+          amount: 49.99,
+          unit: "USD",
+        },
+      },
+    },
+    metadata: {
+      order_id: "order_123",
+    },
+  },
+  process.env.COIN_VOYAGE_API_SECRET!
+);
+```
+
+```typescript v3
+const { data, error } = await apiClient.createSaleOrder(
+  {
+    amount: "49.99",
+    fiat_unit: "USD",
+    metadata: {
+      order_id: "order_123",
+    },
+  },
+  process.env.COIN_VOYAGE_API_SECRET!
+);
+```
+</CodeGroup>
+
+## Update PayButton
+
+Use `orderId` for server-created orders. Client-side deposit buttons still use `toChain`, `toToken`, `toAmount`, and `toAddress`.
+
+<CodeGroup>
+```tsx v2
+<PayButton.Custom
+  payId={payId}
+  onPaymentStarted={(event) => {
+    console.log("Payment started", event);
+  }}
+  onPaymentCompleted={(event) => {
+    console.log("Payment completed", event);
+  }}
+>
+  {({ show }) => <button onClick={show}>Pay</button>}
+</PayButton.Custom>
+```
+
+```tsx v3
+<PayButton.Custom
+  orderId={orderId}
+  onAwaitingPayment={(event) => {
+    console.log("Awaiting payment", event);
+  }}
+  onConfirmingPayment={(event) => {
+    console.log("Payment confirming", event);
+  }}
+  onExecutingPayment={(event) => {
+    console.log("Payment executing", event);
+  }}
+  onPaymentCompleted={(event) => {
+    console.log("Payment completed", event);
+  }}
+>
+  {({ show }) => <button onClick={show}>Pay</button>}
+</PayButton.Custom>
+```
+</CodeGroup>
+
+The split callbacks give you clearer UI states:
+
+| v3 callback | When it fires |
+|---|---|
+| `onAwaitingPayment` | Payment details are available and the user can fund the order. |
+| `onConfirmingPayment` | The source transaction is detected and waiting for confirmation. |
+| `onExecutingPayment` | CoinVoyage is executing the destination transfer or contract call. |
+| `onPaymentCompleted` | The order completed successfully. |
+| `onPaymentBounced` | The destination call reverted and funds were refunded. |
+
+## Update provider configuration
+
+`PayKitProvider` no longer documents the v2 `theme` preset prop or `options.embedGoogleFonts`. Use `mode` and `customTheme` instead.
+
+<CodeGroup>
+```tsx v2
+<PayKitProvider
+  apiKey={process.env.NEXT_PUBLIC_COIN_VOYAGE_API_KEY!}
+  theme="midnight"
+  options={{
+    language: "en",
+    embedGoogleFonts: true,
+  }}
+>
+  {children}
+</PayKitProvider>
+```
+
+```tsx v3
+<PayKitProvider
+  apiKey={process.env.NEXT_PUBLIC_COIN_VOYAGE_API_KEY!}
+  mode="dark"
+  customTheme={{
+    "--ck-primary-button-background": "#d6296f",
+    "--ck-primary-button-color": "#ffffff",
+  }}
+  options={{
+    language: "en-US",
+  }}
+>
+  {children}
+</PayKitProvider>
+```
+</CodeGroup>
+
+For Sui wallet configuration, rename `config.sui.rpcUrl` to `config.sui.grpcUrl`:
+
+```tsx
+<WalletProvider
+  config={{
+    sui: {
+      grpcUrl: "https://fullnode.mainnet.sui.io:443",
+    },
+  }}
+>
+  {children}
+</WalletProvider>
+```
+
+## Update swaps
+
+Standalone swaps still use `swapQuote()` for the quote step. Use `swapExecute()` for execution data.
+
+<CodeGroup>
+```typescript v2
+const { data, error } = await apiClient.swapData(params);
+```
+
+```typescript v3
+const { data, error } = await apiClient.swapExecute({
+  trade_type: "EXACT_INPUT",
+  amount: "100",
+  source: {
+    currency: {
+      chain_id: ChainId.BASE,
+      address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    },
+    sender_address: "0xSenderWallet",
+    slippage_bps: 50,
+  },
+  destination: {
+    currency: {
+      chain_id: ChainId.SUI,
+      address: null,
+    },
+    recipient: "0xDestinationAddress",
+  },
+});
+```
+</CodeGroup>
+
+## Update off-ramp flows
+
+v3 names the fiat payout workflow as off-ramp verification, bank accounts, and off-ramp intents.
+
+| v2 method | v3 method |
+|---|---|
+| `createKYCLink(params, apiSecret)` | `createOffRampVerification(params, apiSecret)` |
+| `getKYCStatus(apiSecret)` | `getOffRampVerificationStatus(apiSecret)` |
+| `listWithdrawals(apiSecret)` | `listOffRampIntents(apiSecret)` |
+| `createWithdrawal(params, apiSecret)` | `createOffRampIntent(params, apiSecret)` |
+
+Bank-account helpers remain part of the off-ramp workflow: `listBankAccounts(apiSecret)`, `getBankAccount(bankAccountId, apiSecret)`, and `addBankAccount(params, apiSecret)`.
+
+## Update webhooks and WebSockets
+
+v3 webhook and `/v3/ws` deliveries use the same event envelope:
+
+```json
+{
+  "event": "ORDER_COMPLETED",
+  "delivered_at": "2026-06-23T12:34:56Z",
+  "order": {
+    "id": "cabc1234567890abcdef12",
+    "mode": "SALE",
+    "status": "COMPLETED",
+    "metadata": {
+      "order_id": "order_123"
+    }
+  }
+}
+```
+
+Update handlers that previously read lowercase `type` values such as `payorder_completed`.
+
+<CodeGroup>
+```typescript v2
+switch (payload.type) {
+  case "payorder_completed":
+    await fulfill(payload.payorder_id);
+    break;
+}
+```
+
+```typescript v3
+switch (payload.event) {
+  case "ORDER_COMPLETED":
+    await fulfill(payload.order.id);
+    break;
+}
+```
+</CodeGroup>
+
+Use these v3 event identifiers when subscribing to or dispatching lifecycle events:
+
+- `ORDER_CREATED`
+- `ORDER_AWAITING_PAYMENT`
+- `ORDER_CONFIRMING`
+- `ORDER_EXECUTING`
+- `ORDER_COMPLETED`
+- `ORDER_ERROR`
+- `ORDER_REFUNDED`
+- `ORDER_EXPIRED`
+- `ORDER_PARTIAL_PAYMENT`
+
+## Test before switching production traffic
+
+Before you route production users to v3:
+
+- Create a `DEPOSIT` order and verify the destination wallet receives funds.
+- Create a server-side `SALE` order and render it with `orderId`.
+- Verify `ORDER_COMPLETED`, failed, expired, refunded, and partial-payment webhook handling.
+- Run a refund through `createRefundOrder()`.
+- Run `swapQuote()` and `swapExecute()` if your product exposes standalone swaps.
+- Run the off-ramp verification and off-ramp intent flow if you use fiat payouts.
+- Confirm your webhook handler is idempotent by `event`, `delivered_at`, `order.id`, and your internal ID in `order.metadata`.
+
+## Reference pages
+
+- [v3 API overview](/api/overview)
+- [v3 ApiClient reference](/sdk/apiclient)
+- [v3 PayButton reference](/sdk/paybutton)
+- [v3 Webhook events](/webhooks/events)
+- [v2 frozen docs](/v2/introduction)

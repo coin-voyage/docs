@@ -1,13 +1,13 @@
 ---
 title: "PayKitProvider — set up your global payment context"
 sidebarTitle: "PayKitProvider"
-description: "Configure PayKitProvider with your API key, environment, visual mode, wallet callbacks, and global PayKitOptions to control the payment modal."
+description: "Configure PayKitProvider with your API key, theme, environment, wallet callbacks, and global PayKitOptions to control the payment modal."
 layout:
   description:
     visible: false
 ---
 
-`PayKitProvider` is the top-level React context provider for the CoinVoyage PayKit SDK. Wrapping your application with it enables the `PayButton` component and the `usePayStatus` hook anywhere in the component tree. It connects to the CoinVoyage API using your `apiKey`, tracks order state, and exposes global configuration that applies to every payment flow on the page.
+`PayKitProvider` is the top-level React context provider for the CoinVoyage PayKit SDK. Wrapping your application with it enables the `PayButton` component and the `usePayStatus` hook anywhere in the component tree. It connects to the CoinVoyage API using your `apiKey`, tracks pay order state, and exposes global configuration that applies to every payment flow on the page.
 
 ## Setup
 
@@ -45,7 +45,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 ```
 
 <Tip>
-  Set `debugMode={true}` while you are integrating to log detailed information about order lifecycle events to the browser console. Remove it before going to production.
+  Set `debugMode={true}` while you are integrating to log detailed information about pay order lifecycle events to the browser console. Remove it before going to production.
 </Tip>
 
 ## Configuration options
@@ -58,16 +58,28 @@ export function Providers({ children }: { children: React.ReactNode }) {
   Environment to connect to. Accepted values:
 
   - `"production"` — connects to live chains and production APIs.
-  - `"development"` — connects to the acceptance API.
-  - `"local"` — connects to a locally running API at `http://localhost:8000/v3`.
+  - `"development"` — exposes additional testnet chains for integration testing.
 </ParamField>
 
 <ParamField path="mode" type="string" default="auto">
   Color scheme for the payment modal. Accepted values: `"light"`, `"dark"`, or `"auto"`. When set to `"auto"`, the modal follows the user's OS preference.
 </ParamField>
 
+<ParamField path="theme" type="string">
+  Select a predefined visual style for the payment modal. Available themes:
+
+  - `auto`
+  - `web95`
+  - `retro`
+  - `soft`
+  - `midnight`
+  - `minimal`
+  - `rounded`
+  - `nouns`
+</ParamField>
+
 <ParamField path="customTheme" type="object">
-  Override specific modal styles to match your branding. Accepts a `CustomTheme` object keyed by supported CSS custom properties.
+  Override specific modal styles to match your branding. Accepts a theme object with CSS-style values. Takes precedence over the `theme` preset. Note that `embedGoogleFonts` in `options` does not apply to custom themes.
 </ParamField>
 
 <ParamField path="debugMode" type="boolean" default="false">
@@ -97,7 +109,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 ## PayKitOptions
 
-The `options` prop accepts a `PayKitOptions` object that controls language, UI visibility, wallet-connect presentation, polyfills, confirmation behavior, and experimental features. Every field is optional.
+The `options` prop accepts a `PayKitOptions` object that controls language, UI visibility, fonts, and experimental features. Every field is optional.
 
 ```typescript
 type PayKitOptions = {
@@ -107,6 +119,7 @@ type PayKitOptions = {
   hideNoWalletCTA?: boolean
   hideRecentBadge?: boolean
   walletConnectCTA?: "link" | "modal" | "both"
+  embedGoogleFonts?: boolean
   disclaimer?: ReactNode | string
   bufferPolyfill?: boolean
   overlayBlur?: number
@@ -117,8 +130,8 @@ type PayKitOptions = {
 }
 ```
 
-<ParamField path="options.language" type="Languages" default="en-US">
-  Sets the display language for the payment modal.
+<ParamField path="options.language" type="Languages">
+  Sets the display language for the payment modal. Use a value from the exported `Languages` enum.
 </ParamField>
 
 <ParamField path="options.hideTooltips" type="boolean">
@@ -137,12 +150,16 @@ type PayKitOptions = {
   When `true`, hides the "Recent" badge shown next to recently used wallets.
 </ParamField>
 
-<ParamField path="options.walletConnectCTA" type="string" default="link">
+<ParamField path="options.walletConnectCTA" type="string" default="both">
   Controls how WalletConnect is presented. Accepted values:
 
   - `"link"` — show only a deep link
   - `"modal"` — show only the QR code modal
   - `"both"` — show both options
+</ParamField>
+
+<ParamField path="options.embedGoogleFonts" type="boolean">
+  When `true`, automatically embeds the Google Font associated with the selected built-in `theme`. Has no effect when using a `customTheme`.
 </ParamField>
 
 <ParamField path="options.disclaimer" type="ReactNode | string">
@@ -158,7 +175,7 @@ type PayKitOptions = {
 </ParamField>
 
 <ParamField path="options.optimisticConfirmation" type="boolean" default="true">
-  When `true`, the order is considered confirmed as soon as the user's transaction validates on-chain, before the destination transfer completes. This is not permitted for deposit orders, where confirmation requires destination finality.
+  When `true`, the order is considered confirmed as soon as the user's transaction validates on-chain, before the destination transfer completes. This is not permitted for deposit pay orders, where confirmation requires destination finality.
 </ParamField>
 
 <ParamField path="options.experimentalFeatures.cardPayments" type="boolean" default="false">
@@ -172,14 +189,12 @@ type PayKitOptions = {
   apiKey={process.env.NEXT_PUBLIC_COIN_VOYAGE_API_KEY!}
   environment="production"
   mode="dark"
-  customTheme={{
-    "--ck-primary-button-background": "#d6296f",
-    "--ck-primary-button-color": "#ffffff",
-  }}
+  theme="midnight"
   options={{
-    language: "en-US",
+    language: "en",
     hideNoWalletCTA: true,
     walletConnectCTA: "modal",
+    embedGoogleFonts: true,
     overlayBlur: 4,
     optimisticConfirmation: true,
     disclaimer: "Payments are processed by CoinVoyage. All sales are final.",

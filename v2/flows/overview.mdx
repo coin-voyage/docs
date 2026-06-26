@@ -1,26 +1,26 @@
 ---
 title: "CoinVoyage integration flows"
 sidebarTitle: "Overview"
-description: "Choose the right CoinVoyage flow for wallet deposits, merchant checkout, swaps, optional fiat off-ramp payouts, dashboard invoices, and x402 payments."
+description: "Choose the right CoinVoyage flow for wallet deposits, merchant checkout, swaps, optional fiat withdrawals, dashboard invoices, and x402 payments."
 layout:
   description:
     visible: false
 ---
 
-Most CoinVoyage payment integrations use the same order lifecycle. Adjacent operational flows cover swaps, off-ramp verification, bank accounts, off-ramp intents, and x402 agent payments. Use this page to choose the flow that matches your product before you jump into endpoint-level reference.
+Most CoinVoyage payment integrations use the same PayOrder lifecycle. Adjacent operational flows cover swaps, KYC, bank accounts, withdrawals, and x402 agent payments. Use this page to choose the flow that matches your product before you jump into endpoint-level reference.
 
 <Info>
-  Bank-account payouts are optional. You can receive funds in an externally owned account (EOA) or any configured destination wallet and move those funds wherever you want from that wallet. Use the off-ramp verification, bank-account, and off-ramp intent APIs only when you want CoinVoyage to coordinate a fiat payout to a linked bank account.
+  Bank-account withdrawals are optional. You can receive funds in an externally owned account (EOA) or any configured destination wallet and move those funds wherever you want from that wallet. Use the KYC, bank-account, and withdrawal APIs only when you want CoinVoyage to coordinate a fiat payout to a linked bank account.
 </Info>
 
 ## Flow map
 
 | Goal | Flow | Credential boundary |
 |---|---|---|
-| Let a user fund a wallet or app balance | `DEPOSIT` order | Public API key |
-| Accept checkout payments for your business | `SALE` order | Authorization signature created on the server. |
+| Let a user fund a wallet or app balance | `DEPOSIT` PayOrder | Public API key |
+| Accept checkout payments for your business | `SALE` PayOrder | Authorization Signature created on the server. |
 | Exchange one supported on-chain asset for another | Swap | Public API key |
-| Move settlement funds to a bank account | Optional off-ramp intent | Authorization signature created on the server. |
+| Move settlement funds to a bank account | Optional fiat withdrawal | Authorization Signature created on the server. |
 | Send payment links without code | Dashboard invoices | Dashboard operator workflow. |
 | Pay for protected resources from an agent or server | x402 payments (Preview) | Agent/server signs the payment with its own wallet key. |
 
@@ -32,7 +32,7 @@ Use this pattern when a user wants to fund a wallet or account on a destination 
   <Card title="Best for" icon="wallet">
     Wallet funding, app balances, gaming accounts, trading accounts, and user-controlled deposits.
   </Card>
-  <Card title="Order mode" icon="arrow-down-to-line">
+  <Card title="PayOrder mode" icon="arrow-down-to-line">
     `DEPOSIT`
   </Card>
 </CardGroup>
@@ -43,14 +43,14 @@ Use this pattern when a user wants to fund a wallet or account on a destination 
   <Step title="Collect the destination">
     Ask the user which supported chain and destination address they want to receive funds on.
   </Step>
-  <Step title="Create a Deposit order">
-    Create a `DEPOSIT` order with the destination chain, destination token, amount, and recipient address.
+  <Step title="Create a Deposit PayOrder">
+    Create a `DEPOSIT` PayOrder with the destination chain, destination token, amount, and receiving address.
   </Step>
   <Step title="Open the payment modal">
-    Render `PayButton` or pass the generated `orderId` to your own checkout UI.
+    Render `PayButton` or pass the generated `payId` to your own checkout UI.
   </Step>
   <Step title="Track completion">
-    Listen for `ORDER_COMPLETED`, `ORDER_EXPIRED`, `ORDER_REFUNDED`, and `ORDER_ERROR` events.
+    Listen for `payorder_completed`, `payorder_expired`, `payorder_refunded`, and `payorder_error` events.
   </Step>
 </Steps>
 
@@ -67,11 +67,11 @@ Use this pattern when a user wants to fund a wallet or account on a destination 
 ### Implementation notes
 
 - `DEPOSIT` can use the public API key because the user-provided destination defines where funds go.
-- Store your internal account or session ID in order metadata if the deposit credits an app balance.
+- Store your internal account or session ID in PayOrder metadata if the deposit credits an app balance.
 - Use webhooks for final crediting. Browser callbacks are useful for UI updates, but they should not be your only fulfillment signal.
-- This flow does not require off-ramp verification, a linked bank account, or a fiat payout unless you later add a fiat off-ramp experience.
+- This flow does not require KYC, a linked bank account, or a withdrawal unless you later add a fiat off-ramp experience.
 
-Read next: [Quickstart](/quickstart), [PayButton](/sdk/paybutton), and [Orders](/concepts/pay-orders).
+Read next: [Quickstart](/v2/quickstart), [PayButton](/v2/sdk/paybutton), and [PayOrders](/v2/concepts/pay-orders).
 
 ## Example 2: Accept merchant checkout payments
 
@@ -81,7 +81,7 @@ Use this pattern when your application sells products, bookings, subscriptions, 
   <Card title="Best for" icon="shopping-cart">
     Ecommerce checkout, SaaS billing, travel bookings, digital goods, and service payments.
   </Card>
-  <Card title="Order mode" icon="receipt">
+  <Card title="PayOrder mode" icon="receipt">
     `SALE`
   </Card>
 </CardGroup>
@@ -92,22 +92,28 @@ Use this pattern when your application sells products, bookings, subscriptions, 
   <Step title="Create an internal order">
     Create the order in your backend first and store the amount, currency, customer, and line items.
   </Step>
-  <Step title="Create a Sale order on the server">
-    Use `ApiClient.createSaleOrder()` with your API secret. Include your internal order ID in metadata.
+  <Step title="Create a Sale PayOrder on the server">
+    Use `ApiClient.createSalePayOrder()` with your API secret. Include your internal order ID in metadata.
   </Step>
-  <Step title="Pass only the order ID to the client">
-    The client renders the payment modal with the server-generated `orderId`. Do not expose the API secret.
+  <Step title="Pass only the PayOrder ID to the client">
+    The client renders the payment modal with the server-generated `payId`. Do not expose the API secret.
   </Step>
   <Step title="Fulfill from webhooks">
-    Fulfill the order after your backend receives and verifies `ORDER_COMPLETED`.
+    Fulfill the order after your backend receives and verifies `payorder_completed`.
   </Step>
 </Steps>
 
 ```typescript
-const { data, error } = await apiClient.createSaleOrder(
+const { data, error } = await apiClient.createSalePayOrder(
   {
-    amount: "149",
-    fiat_unit: "USD",
+    intent: {
+      amount: {
+        fiat: {
+          amount: 149,
+          unit: "USD",
+        },
+      },
+    },
     metadata: {
       order_id: "order_123",
       customer_id: "customer_456",
@@ -120,22 +126,22 @@ const { data, error } = await apiClient.createSaleOrder(
 ### Implementation notes
 
 - `SALE` must be created server-side because it authorizes settlement to your merchant configuration.
-- Make fulfillment idempotent by internal order ID and CoinVoyage order ID.
+- Make fulfillment idempotent by internal order ID and CoinVoyage PayOrder ID.
 - Handle `EXPIRED`, `FAILED`, `REFUNDED`, and `PARTIAL_PAYMENT` states so unpaid orders do not remain ambiguous.
-- Fiat off-ramp payout is a separate, optional follow-up flow. If you settle to your EOA or another configured wallet, you can move funds directly on-chain without using bank-account payouts.
+- Fiat withdrawal is a separate, optional follow-up flow. If you settle to your EOA or another configured wallet, you can move funds directly on-chain without using bank-account withdrawals.
 
-Read next: [ApiClient](/sdk/apiclient), [API overview](/api/overview), [Webhooks](/webhooks/overview), and [Production checklist](/guides/production-checklist).
+Read next: [ApiClient](/v2/sdk/apiclient), [API overview](/v2/api/overview), [Webhooks](/v2/webhooks/overview), and [Production checklist](/v2/guides/production-checklist).
 
 ## Example 3: Swap between supported assets
 
-Use this pattern when you want a wallet to exchange one supported on-chain asset for another. For checkout and deposit flows, CoinVoyage can route swaps as part of payment execution; use the standalone swap APIs when the swap itself is the user action.
+Use this pattern when you want a wallet to exchange one supported on-chain asset for another without creating a PayOrder. For checkout and deposit flows, CoinVoyage can route swaps as part of payment execution; use the standalone swap APIs when the swap itself is the user action.
 
 <CardGroup cols={2}>
   <Card title="Best for" icon="repeat">
     Wallet rebalancing, pre-funding a payment asset, treasury operations, and custom swap UI.
   </Card>
   <Card title="API methods" icon="arrow-right-left">
-    `swapQuote()`, `swapExecute()`
+    `swapQuote()`, `swapData()`
   </Card>
 </CardGroup>
 
@@ -149,7 +155,7 @@ Use this pattern when you want a wallet to exchange one supported on-chain asset
     Call `ApiClient.swapQuote()` with the source and destination details so the user can review the expected output and route.
   </Step>
   <Step title="Get execution data">
-    Call `ApiClient.swapExecute()` to create the payment instructions required to fund and execute the swap.
+    Call `ApiClient.swapData()` for the selected quote or route to retrieve the transaction data required for execution.
   </Step>
   <Step title="Sign and submit">
     Have the source wallet sign and submit the returned transaction data, then track the resulting on-chain transaction in your own UI or ledger.
@@ -158,23 +164,23 @@ Use this pattern when you want a wallet to exchange one supported on-chain asset
 
 ### Implementation notes
 
-- Standalone swaps create an internal `SWAP` order and return payment instructions for funding the swap.
+- Standalone swaps do not create a PayOrder or emit PayOrder lifecycle webhooks.
 - Treat quotes as time-sensitive. Refresh the quote if the user waits, changes wallets, or changes the source amount.
 - Show slippage, fees, source asset, destination asset, and destination chain before the user signs.
-- Keep swap execution separate from fiat off-ramp payouts. A swap changes on-chain assets; an off-ramp intent moves eligible settlement funds to a linked bank account.
+- Keep swap execution separate from fiat withdrawals. A swap changes on-chain assets; a withdrawal moves eligible settlement funds to a linked bank account.
 
-Read next: [ApiClient](/sdk/apiclient), [Supported networks](/concepts/supported-networks), and [Pricing](/resources/pricing).
+Read next: [ApiClient](/v2/sdk/apiclient), [Supported networks](/v2/concepts/supported-networks), and [Pricing](/v2/resources/pricing).
 
 ## Example 4: Off-ramp settlement funds to a bank account
 
-Use this pattern only when you want CoinVoyage to help move an on-chain settlement balance to fiat through a linked bank account. The off-ramp verification, bank-account, and off-ramp intent APIs belong here because they prepare and execute the optional off-ramp path.
+Use this pattern only when you want CoinVoyage to help move an on-chain settlement balance to fiat through a linked bank account. The KYC, bank-account, and withdrawal APIs belong here because they prepare and execute the optional off-ramp path.
 
 <CardGroup cols={2}>
   <Card title="Best for" icon="landmark">
     Treasury operations, creator payouts, merchant fiat settlement, and finance-team withdrawals.
   </Card>
   <Card title="API areas" icon="key">
-    Verification, bank accounts, off-ramp intents
+    KYC, bank accounts, withdrawals
   </Card>
 </CardGroup>
 
@@ -182,27 +188,27 @@ Use this pattern only when you want CoinVoyage to help move an on-chain settleme
 
 <Steps>
   <Step title="Complete KYC or KYB">
-    Create a hosted verification link with `ApiClient.createOffRampVerification()` and check the organization's verification status with `ApiClient.getOffRampVerificationStatus()`.
+    Create a hosted verification link with `ApiClient.createKYCLink()` and check the organization's verification status with `ApiClient.getKYCStatus()`.
   </Step>
   <Step title="Add a bank account">
     Add the payout destination with `ApiClient.addBankAccount()`, then use `listBankAccounts()` or `getBankAccount()` when an operator selects where funds should go.
   </Step>
-  <Step title="Create an off-ramp intent">
-    Call `ApiClient.createOffRampIntent()` from your server with the source currency, amount, linked bank account ID, withdrawal currency, payment rail, and sender wallet address.
+  <Step title="Create a withdrawal">
+    Call `ApiClient.createWithdrawal()` from your server with the source currency, linked bank account details, payment rail, and sender wallet address.
   </Step>
   <Step title="Execute and reconcile">
-    If the response includes wallet execution data, have the source wallet sign the required on-chain transaction. Track off-ramp status with `listOffRampIntents()` and your internal ledger.
+    If the response includes wallet execution data, have the source wallet sign the required on-chain transaction. Track withdrawal status with `listWithdrawals()` and your internal ledger.
   </Step>
 </Steps>
 
 ### Implementation notes
 
-- Off-ramp verification, bank account, and off-ramp intent methods are signed server-side operations. Never expose the API secret to the browser.
+- KYC, bank account, and withdrawal methods are signed server-side operations. Never expose the API secret to the browser.
 - Bank account details must match the verified individual or business profile for the organization.
-- Keep payment settlement and fiat payout as separate ledger events. A completed order means funds reached the destination wallet; a completed off-ramp intent means a later fiat payout finished.
-- Use [Supported regions](/concepts/supported-regions) to choose the correct fiat rail and recipient fields before adding bank-account forms.
+- Keep payment settlement and fiat withdrawal as separate ledger events. A completed PayOrder means funds reached the destination wallet; a completed withdrawal means a later fiat payout finished.
+- Use [Supported regions](/v2/concepts/supported-regions) to choose the correct fiat rail and recipient fields before adding bank-account forms.
 
-Read next: [ApiClient](/sdk/apiclient), [API overview](/api/overview), [Supported regions](/concepts/supported-regions), and [Withdrawals](/dashboard/withdrawals).
+Read next: [ApiClient](/v2/sdk/apiclient), [API overview](/v2/api/overview), [Supported regions](/v2/concepts/supported-regions), and [Withdrawals](/v2/dashboard/withdrawals).
 
 ## Example 5: Send no-code payment invoices
 
@@ -240,7 +246,7 @@ Use this pattern when an operator wants to request payment without building a cu
 - Use clear line items and due dates so finance and support can reconcile payments later.
 - If invoices need to update an internal system, subscribe to webhook events and store invoice identifiers in metadata.
 
-Read next: [Invoices](/dashboard/invoices), [Transactions](/dashboard/transactions), and [Pricing](/resources/pricing).
+Read next: [Invoices](/v2/dashboard/invoices), [Transactions](/v2/dashboard/transactions), and [Pricing](/v2/resources/pricing).
 
 ## Example 6: Pay protected resources with x402 (Preview)
 
@@ -264,4 +270,4 @@ Use this pattern when an agent, server, or automation flow needs to fetch a prot
   </Step>
 </Steps>
 
-Read next: [PayKit Headless](/sdk/paykit-headless).
+Read next: [PayKit Headless](/v2/sdk/paykit-headless).
