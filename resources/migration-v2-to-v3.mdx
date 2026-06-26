@@ -1,48 +1,187 @@
 ---
 title: "Migrate from v2 to v3"
 sidebarTitle: "v2 to v3 migration"
-description: "Upgrade a CoinVoyage v2 integration to the v3 beta API and PayKit 3.0.0-beta.5 SDK surface."
+description: "Upgrade a CoinVoyage v2 integration to the v3 API and PayKit 3.0.0 SDK surface."
 layout:
   description:
     visible: false
 ---
+export const agentMigrationPrompt = [
+  "# CoinVoyage v2 to v3 migration for coding agents",
+  "",
+  "You are migrating this project from CoinVoyage API v2 to v3.",
+  "",
+  "Use the CoinVoyage docs at https://docs.coinvoyage.io, especially https://docs.coinvoyage.io/resources/migration-v2-to-v3, as the source of truth. First inspect the codebase. Then update only CoinVoyage integration code. Preserve business logic, UI behavior, secrets handling, styling, and unrelated APIs.",
+  "",
+  "## Required steps",
+  "",
+  "1. Update CoinVoyage dependencies to v3 first, including @coin-voyage/paykit@3.0.0.",
+  "2. Find all CoinVoyage SDK imports, ApiClient setup, direct /v2 URLs, PayOrder types, payId props, swapData calls, webhook parsers, WebSocket event handlers, and payment/order calls.",
+  "3. Replace v2 ApiClient initialization with ApiClient({ apiKey, environment }) from @coin-voyage/paykit/server.",
+  "4. Replace PayOrder terminology and helper names with v3 Order terminology.",
+  "5. Replace PayButton payId usage with orderId for server-created orders.",
+  "6. Replace onPaymentStarted with the v3 lifecycle callbacks used by this project.",
+  "7. Replace standalone swapData execution calls with swapExecute.",
+  "8. Update direct HTTP calls from /v2 route families to the matching /v3 route families.",
+  "9. Update webhook and WebSocket parsers to read the v3 envelope: { event, delivered_at, order }.",
+  "10. Run the project's typecheck, lint, and tests. If a command is unavailable, report that clearly.",
+  "11. Report changed files, remaining TODOs, and any ambiguous mappings.",
+  "",
+  "Do not guess missing business rules. If a field mapping is unclear, leave a TODO with the exact file and explain the ambiguity.",
+  "",
+  "## Search targets",
+  "",
+  "- @coin-voyage/paykit",
+  "- ApiClient",
+  "- PayOrder",
+  "- PayOrderMode",
+  "- PayOrderStatus",
+  "- PayOrderParams",
+  "- PayOrderIntent",
+  "- createPayOrder",
+  "- createDepositPayOrder",
+  "- createSalePayOrder",
+  "- createRefundPayOrder",
+  "- getPayOrder",
+  "- listPayOrders",
+  "- payOrderQuote",
+  "- payOrderPaymentDetails",
+  "- getPayOrderPaymentMethods",
+  "- payId",
+  "- onPaymentStarted",
+  "- swapData",
+  "- payorder_",
+  "- payorder_id",
+  "- /v2/",
+  "- /pay-orders",
+  "- /quotes",
+  "- /kyc",
+  "- /withdrawals",
+  "",
+  "## Required replacements",
+  "",
+  "| Find | Replace with |",
+  "|---|---|",
+  "| PayOrder domain objects that directly represent CoinVoyage responses | Order |",
+  "| payId passed to PayKit UI for a server-created payment | orderId |",
+  "| createDepositPayOrder | createDepositOrder |",
+  "| createSalePayOrder | createSaleOrder |",
+  "| createRefundPayOrder | createRefundOrder |",
+  "| getPayOrder | getOrder |",
+  "| listPayOrders | listOrders |",
+  "| payOrderQuote | orderQuotes |",
+  "| payOrderPaymentDetails | createPayment |",
+  "| getPayOrderPaymentMethods | getOrderPaymentMethods |",
+  "| swapData | swapExecute |",
+  "| webhook type with payorder_* values | webhook event with ORDER_* values |",
+  "| webhook payorder_id | order.id |",
+  "",
+  "## Do not change",
+  "",
+  "- Do not rename unrelated app domain models just because they contain the word order.",
+  "- Do not remove fulfillment, reconciliation, retry, or idempotency logic around completed payments.",
+  "- Do not move API secrets into browser code. Keep signed and secret-backed calls server-side.",
+  "- Do not hardcode production URLs if the SDK environment option already covers the target environment.",
+  "- Do not delete v2 fallback code unless the project owner explicitly asks for a hard cutover.",
+  "",
+  "## Acceptance checks",
+  "",
+  "- No direct CoinVoyage /v2 calls remain unless they are intentionally kept behind a named fallback path.",
+  "- Server code uses ApiClient({ apiKey, environment }) from @coin-voyage/paykit/server.",
+  "- PayKit UI receives orderId for server-created orders.",
+  "- Webhook handlers verify signatures before parsing and read { event, delivered_at, order }.",
+  "- Fulfillment remains idempotent by the CoinVoyage order ID and the project's internal order or invoice ID.",
+  "- Typecheck, lint, and relevant tests pass.",
+].join("\n");
+
+export const AgentMigrationCopy = () => {
+  const [copied, setCopied] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  const copy = async () => {
+    setFailed(false);
+
+    try {
+      await navigator.clipboard.writeText(agentMigrationPrompt);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+      return;
+    } catch (error) {
+      try {
+        const textarea = document.createElement("textarea");
+        textarea.value = agentMigrationPrompt;
+        textarea.setAttribute("readonly", "");
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 2000);
+      } catch (fallbackError) {
+        setFailed(true);
+      }
+    }
+  };
+
+  return (
+    <div className="not-prose my-6 rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/40">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col">
+          <p className="m-0 text-sm font-semibold text-zinc-950 dark:text-white">
+            Migrating with an AI agent?
+          </p>
+          <p className="m-0 mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+            Copy a focused prompt that points to docs.coinvoyage.io, upgrades dependencies to v3 first, and lists the required code changes.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={copy}
+          className="inline-flex shrink-0 items-center justify-center rounded-md bg-zinc-950 px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200"
+        >
+          Copy for LLM
+        </button>
+      </div>
+      {copied && <p className="m-0 mt-3 text-sm text-green-600 dark:text-green-400">Copied.</p>}
+      {failed && <p className="m-0 mt-3 text-sm text-red-600 dark:text-red-400">Copy failed. Use the page-level Copy for LLM action instead.</p>}
+    </div>
+  );
+};
 
 CoinVoyage v3 is a breaking API and SDK update. The main change is the move from **PayOrder** terminology and helper names to **Order** terminology across the REST API, PayKit, webhooks, and WebSocket events.
 
 <Info>
-  v3 is currently tagged **Beta** in the docs version selector. Keep your v2 integration running until you have tested order creation, payment completion, webhooks, refunds, swaps, and any off-ramp workflows in your target environment.
+  v3 upgrade is breaking. Keep your v2 integration running until you have tested order creation, payment completion, webhooks, refunds, swaps, and any off-ramp workflows in your target environment.
 </Info>
+
+<AgentMigrationCopy />
 
 ## What changes
 
 | Area | v2 | v3 |
 |---|---|---|
 | API base URL | `https://api.coinvoyage.io/v2` | `https://api.coinvoyage.io/v3` |
-| OpenAPI source | `/v2/openapi.json` | `/v3/openapi.json` |
 | Primary resource name | PayOrder | Order |
 | Server-created PayButton prop | `payId` | `orderId` |
 | PayButton lifecycle start callback | `onPaymentStarted` | `onAwaitingPayment`, `onConfirmingPayment`, `onExecutingPayment` |
-| Standalone swap execution | `swapData()` | `swapExecute()` |
 | Webhook payload event field | `type` with lowercase `payorder_*` values | `event` with uppercase `ORDER_*` values |
 | Webhook payload resource ID | `payorder_id` | `order.id` |
-| Fiat payout API wording | KYC and withdrawals | Off-ramp verification and off-ramp intents |
 
 ## Migration checklist
 
-1. Upgrade PayKit to `@coin-voyage/paykit@3.0.0-beta.5`.
-2. Change direct API calls from `/v2` to `/v3`.
-3. Replace `ApiClient` PayOrder helper names with the v3 Order helper names.
-4. Update `PayButton` and `PayButton.Custom` from `payId` to `orderId`.
-5. Replace `onPaymentStarted` with the more specific payment lifecycle callbacks.
-6. Update webhook handlers to read `{ event, delivered_at, order }`.
-7. Rename KYC and withdrawal API calls to the off-ramp verification and off-ramp intent methods.
-8. Update standalone swap execution from `swapData()` to `swapExecute()`.
-9. Run a full test payment and verify that webhook fulfillment remains idempotent.
+1. Upgrade CoinVoyage dependencies to v3, including `@coin-voyage/paykit@3.0.0`.
+2. Update `ApiClient` PayOrder helper names with the v3 Order helper names.
+3. Update `PayButton` and `PayButton.Custom` from `payId` to `orderId`.
+4. Replace `onPaymentStarted` with the more specific payment lifecycle callbacks.
+5. Update webhook handlers to read `{ event, delivered_at, order }`.
+6. Run a full test payment and verify that webhook fulfillment remains idempotent.
 
 ## Upgrade PayKit
 
 ```bash
-pnpm add @coin-voyage/paykit@3.0.0-beta.5
+pnpm add @coin-voyage/paykit@3.0.0
 ```
 
 Use the package manager your project already uses.
