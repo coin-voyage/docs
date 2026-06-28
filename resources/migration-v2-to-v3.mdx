@@ -15,7 +15,7 @@ export const agentMigrationPrompt = [
   "",
   "## Required steps",
   "",
-  "1. Update CoinVoyage dependencies to v3 first, including @coin-voyage/paykit@3.0.0.",
+  "1. Update CoinVoyage dependencies to v3 first, including @coin-voyage/paykit@^3.",
   "2. Find all CoinVoyage SDK imports, ApiClient setup, direct /v2 URLs, PayOrder types, payId props, swapData calls, webhook parsers, WebSocket event handlers, and payment/order calls.",
   "3. Replace v2 ApiClient initialization with ApiClient({ apiKey, environment }) from @coin-voyage/paykit/server.",
   "4. Replace PayOrder terminology and helper names with v3 Order terminology.",
@@ -171,7 +171,7 @@ CoinVoyage v3 is a breaking API and SDK update. The main change is the move from
 
 ## Migration checklist
 
-1. Upgrade CoinVoyage dependencies to v3, including `@coin-voyage/paykit@3.0.0`.
+1. Upgrade CoinVoyage dependencies to v3, including `@coin-voyage/paykit@^3`.
 2. Update `ApiClient` PayOrder helper names with the v3 Order helper names.
 3. Update `PayButton` and `PayButton.Custom` from `payId` to `orderId`.
 4. Replace `onPaymentStarted` with the more specific payment lifecycle callbacks.
@@ -181,7 +181,7 @@ CoinVoyage v3 is a breaking API and SDK update. The main change is the move from
 ## Upgrade PayKit
 
 ```bash
-pnpm add @coin-voyage/paykit@3.0.0
+pnpm add @coin-voyage/paykit@^3
 ```
 
 Use the package manager your project already uses.
