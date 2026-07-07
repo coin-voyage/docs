@@ -15,6 +15,18 @@ Integration-facing changes to the CoinVoyage SDK, API, and platform behavior are
 
 ---
 
+## 3.2.0 - 2026-07-07
+
+**Added**
+
+- **PayButton direct payment routing**: `PayButton` and `PayButton.Custom` now accept `paymentMethod`, so integrations can open the modal directly to `PaymentMethod.WALLET`, `PaymentMethod.DEPOSIT_ADDRESS`, or `PaymentMethod.CARD` instead of first showing method selection.
+
+**Changed**
+
+- **On-ramp API errors**: On-ramp API responses now return user-friendly `error.message` values for common Link, identity, payment-method, session, and checkout failures.
+
+---
+
 ## 3.1.0 - 2026-06-27
 
 **Changed**

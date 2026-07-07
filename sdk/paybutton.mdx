@@ -13,6 +13,7 @@ layout:
 
 ```tsx
 import { PayButton } from "@coin-voyage/paykit";
+import { PaymentMethod } from "@coin-voyage/types";
 import { ChainId } from "@coin-voyage/paykit/server";
 
 <PayButton
@@ -35,6 +36,7 @@ import { ChainId } from "@coin-voyage/paykit/server";
     console.log("Modal Closed");
   }}
   closeOnSuccess={true}
+  paymentMethod={PaymentMethod.WALLET}
 
   onPaymentCreationError={(event) => {
     console.log(event.errorMessage);
@@ -118,6 +120,10 @@ import { ChainId } from "@coin-voyage/paykit/server";
   When `true`, the payment modal opens automatically on mount without requiring a click.
 </ParamField>
 
+<ParamField path="paymentMethod" type="PaymentMethod">
+  Opens the modal directly on a specific payment path instead of first showing method selection. Accepted values are `PaymentMethod.WALLET`, `PaymentMethod.DEPOSIT_ADDRESS`, and `PaymentMethod.CARD`.
+</ParamField>
+
 ### Modal lifecycle
 
 <ParamField path="closeOnSuccess" type="boolean" default="false">
@@ -164,11 +170,30 @@ import { ChainId } from "@coin-voyage/paykit/server";
 
 ---
 
+## Open a specific payment method
+
+Use `paymentMethod` when your UI already knows which payment path the user selected.
+
+```tsx
+import { PayButton } from "@coin-voyage/paykit";
+import { PaymentMethod } from "@coin-voyage/types";
+
+<PayButton
+  orderId={orderId}
+  paymentMethod={PaymentMethod.CARD}
+  closeOnSuccess
+/>
+```
+
+`PaymentMethod.CARD` still requires `options.experimentalFeatures.cardPayments` and organization approval. If card payments are not available for the order, PayKit falls back to method selection instead of opening the card flow.
+
+---
+
 ## PayButton.Custom
 
 `PayButton.Custom` is for situations where you need complete control over the button's appearance — for example, when integrating with an existing design system or triggering the modal from multiple UI elements. It accepts a render prop as `children` that receives `show` and `hide` functions to control modal visibility.
 
-`PayButton.Custom` accepts the same payment props and lifecycle callbacks as `PayButton` but replaces the styling props (`style`, `mode`, `customTheme`, `disabled`) with the `children` render prop.
+`PayButton.Custom` accepts the same payment props, modal options, and lifecycle callbacks as `PayButton` but replaces the styling props (`style`, `mode`, `customTheme`, `disabled`) with the `children` render prop.
 
 ### Usage
 
