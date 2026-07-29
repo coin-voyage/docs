@@ -185,7 +185,7 @@ import { PaymentMethod } from "@coin-voyage/types";
 />
 ```
 
-`PaymentMethod.CARD` still requires `options.experimentalFeatures.cardPayments` and organization approval. If card payments are not available for the order, PayKit falls back to method selection instead of opening the card flow.
+`PaymentMethod.CARD` supports eligible USD- and EUR-denominated orders. It still requires `options.experimentalFeatures.cardPayments` and organization approval. If card payments are not available for the order, PayKit falls back to method selection instead of opening the card flow.
 
 ---
 

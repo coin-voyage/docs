@@ -15,6 +15,31 @@ Integration-facing changes to the CoinVoyage SDK, API, and platform behavior are
 
 ---
 
+## 3.3.0 - 2026-07-29
+
+<Warning>
+  This release changes the `portfolio()` request and response shapes. Replace the
+  singular `wallet` field with a `wallets` array and handle per-wallet results and
+  errors. See the [ApiClient migration example](/sdk/apiclient#portfolio).
+</Warning>
+
+**Added**
+
+- **Robinhood Chain**: Added payment and settlement support for Robinhood Chain (`4663`).
+- **Across provider**: Added Across as a cross-chain routing provider.
+- **Uniswap V2 and V4**: Expanded Uniswap routing beyond V3 to include V2 and V4 liquidity.
+- **EUR card payments**: Card Payments can now fund eligible orders in EUR as well as USD.
+
+**Changed**
+
+- **Multi-wallet portfolio requests**: `ApiClient.portfolio()` and `POST /wallet/portfolio` now accept `wallets`, an array of 1–10 wallets. Responses contain a `portfolio` array of successful scans and an `errors` array for wallets that could not be scanned.
+
+**Removed**
+
+- **ChangeNow provider**: ChangeNow is no longer used for routing.
+
+---
+
 ## 3.2.0 - 2026-07-07
 
 **Added**

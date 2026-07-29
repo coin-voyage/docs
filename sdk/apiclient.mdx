@@ -38,7 +38,7 @@ const apiClient = ApiClient({
 | `development` | `https://acc-api.coinvoyage.io/v3` |
 | `local` | `http://localhost:8000/v3` |
 
-## APIResponse<T>
+## `APIResponse<T>`
 
 Every `ApiClient` method returns a `Promise<APIResponse<T>>`:
 
@@ -274,20 +274,51 @@ const { data, error } = await apiClient.currencySearch({
 
 ### portfolio
 
-Retrieves wallet token balances and USD values.
+Retrieves token balances and USD values for 1–10 wallets. Each successful scan
+appears in `data.portfolio`; a wallet-specific failure appears in `data.errors`
+without discarding successful results for the other wallets.
 
 ```typescript
 const { data, error } = await apiClient.portfolio({
-  wallet: {
-    address: "0xPayerWallet",
-    chain_type: ChainType.EVM,
-    chain_ids: [ChainId.ETH, ChainId.BASE],
-  },
+  wallets: [
+    {
+      address: "0xFirstPayerWallet",
+      chain_type: ChainType.EVM,
+      chain_ids: [ChainId.ETH, ChainId.BASE],
+    },
+    {
+      address: "0xSecondPayerWallet",
+      chain_type: ChainType.EVM,
+      chain_ids: [4663], // Robinhood Chain
+    },
+  ],
   filter: {
     min_balance_usd: 1,
   },
+  force_refresh: false,
 });
+
+if (error) {
+  throw new Error(error.message);
+}
+
+for (const result of data?.portfolio ?? []) {
+  console.log(result.wallet.address, result.currencies);
+}
+
+for (const walletError of data?.errors ?? []) {
+  console.warn(walletError.wallet.address, walletError.code);
+}
 ```
+
+`wallets` is required and accepts between 1 and 10 entries. Set
+`force_refresh: true` when you need a fresh scan instead of a cached result.
+
+<Warning>
+  **Migrating from 3.2:** replace `wallet: { ... }` with
+  `wallets: [{ ... }]`. The response is now grouped into `portfolio` and
+  `errors` arrays, even when you request one wallet.
+</Warning>
 
 ## Swap methods
 
@@ -340,7 +371,9 @@ const { data, error } = await apiClient.swapExecute({
 
 ## On-ramp methods
 
-Use these API-key methods for Stripe embedded on-ramp flows.
+Use these API-key methods for Stripe embedded on-ramp flows. Card Payments
+support `"usd"` and `"eur"` as `source_currency` values for eligible
+organizations and orders.
 
 | Method | Purpose |
 |---|---|
@@ -351,6 +384,20 @@ Use these API-key methods for Stripe embedded on-ramp flows.
 | `createOnrampSession(params)` | Creates a headless Stripe on-ramp session from an intent. |
 | `checkoutStripeOnrampSession(sessionId)` | Returns the embedded checkout client secret. |
 | `refreshStripeOnrampSessionQuote(sessionId)` | Refreshes the quote attached to a session. |
+
+For a standalone EUR-funded Card Payment, set `source_currency` to `"eur"`:
+
+```typescript
+const { data, error } = await apiClient.createOnrampIntent({
+  source_amount: "100.00",
+  source_currency: "eur",
+  destination_currency: {
+    chain_id: ChainId.ETH,
+    address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+  },
+  wallet_address: "0xRecipientWallet",
+});
+```
 
 ## Off-ramp methods
 

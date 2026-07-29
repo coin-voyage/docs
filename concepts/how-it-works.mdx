@@ -97,7 +97,7 @@ sequenceDiagram
     CoinVoyage builds quotes by:
 
     1. **Scanning wallet balances** to identify tokens the user can pay with
-    2. **Querying providers** for live rates — AMMs (Uniswap, Jupiter, Cetus), CCTP for cross-chain USDC, ChangeNow for cross-chain exchanges, and direct same-chain transfers
+    2. **Querying providers** for live rates — AMMs (Uniswap V2, V3, and V4; Jupiter; Cetus), Across and CCTP for cross-chain routes, and direct same-chain transfers
     3. **Optimizing routes** by chaining providers together when that yields a better rate
     4. **Ranking quotes** by best effective output (highest received amount, lowest fees)
 
