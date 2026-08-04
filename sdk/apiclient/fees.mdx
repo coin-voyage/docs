@@ -1,0 +1,21 @@
+---
+title: "ApiClient fee methods"
+sidebarTitle: "Fees"
+description: "Retrieve and claim CoinVoyage organization fee balances with signed ApiClient methods."
+layout:
+  description:
+    visible: false
+---
+
+Fee operations require your API secret and must run on the server.
+
+| Method | Purpose |
+|---|---|
+| `getFeeBalances(apiSecret)` | Retrieves claimable fee balances for your organization. |
+| `claimFees(params, apiSecret)` | Claims accrued fees to a recipient currency and address. |
+
+```typescript
+const { data, error } = await apiClient.getFeeBalances(
+  process.env.COIN_VOYAGE_API_SECRET!
+);
+```

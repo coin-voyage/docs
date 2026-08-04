@@ -1,0 +1,59 @@
+---
+title: "ApiClient wallet and currency search methods"
+sidebarTitle: "Wallet and search"
+description: "Search CoinVoyage currencies and retrieve balances for up to ten wallets with ApiClient."
+layout:
+  description:
+    visible: false
+---
+
+## currencySearch
+
+Searches supported currencies for token pickers and back-office tools.
+
+```typescript
+const { data, error } = await apiClient.currencySearch({
+  q: "usdc",
+  chain_ids: [ChainId.SUI, ChainId.SOL],
+  limit: 10,
+});
+```
+
+## portfolio
+
+Retrieves token balances and USD values for 1–10 wallets. Successful scans appear in `data.portfolio`; wallet-specific failures appear in `data.errors` without discarding other results.
+
+```typescript
+const { data, error } = await apiClient.portfolio({
+  wallets: [
+    {
+      address: "0xFirstPayerWallet",
+      chain_type: ChainType.EVM,
+      chain_ids: [ChainId.ETH, ChainId.BASE],
+    },
+    {
+      address: "0xSecondPayerWallet",
+      chain_type: ChainType.EVM,
+      chain_ids: [4663], // Robinhood Chain
+    },
+  ],
+  filter: { min_balance_usd: 1 },
+  force_refresh: false,
+});
+
+if (error) throw new Error(error.message);
+
+for (const result of data?.portfolio ?? []) {
+  console.log(result.wallet.address, result.currencies);
+}
+
+for (const walletError of data?.errors ?? []) {
+  console.warn(walletError.wallet.address, walletError.code);
+}
+```
+
+`wallets` is required and accepts between 1 and 10 entries. Set `force_refresh: true` when you need a fresh scan instead of a cached result.
+
+<Warning>
+  Migrating from 3.2: replace `wallet: { ... }` with `wallets: [{ ... }]`. The response is grouped into `portfolio` and `errors` arrays, even for one wallet.
+</Warning>

@@ -1,0 +1,30 @@
+---
+title: "ApiClient off-ramp methods"
+sidebarTitle: "Off-ramp"
+description: "Manage CoinVoyage off-ramp verification, linked bank accounts, and fiat payout intents with signed ApiClient methods."
+layout:
+  description:
+    visible: false
+---
+
+Use these signed server-side methods when CoinVoyage should coordinate fiat payout to a linked bank account.
+
+| Method | Purpose |
+|---|---|
+| `createOffRampVerification(params, apiSecret)` | Creates a hosted verification link for KYC or KYB. |
+| `getOffRampVerificationStatus(apiSecret)` | Retrieves verification and terms-of-service status. |
+| `listBankAccounts(apiSecret)` | Lists linked bank accounts. |
+| `getBankAccount(bankAccountId, apiSecret)` | Retrieves one linked bank account. |
+| `addBankAccount(params, apiSecret)` | Adds a bank account for the verified organization. |
+| `listOffRampIntents(apiSecret)` | Lists off-ramp intents. |
+| `createOffRampIntent(params, apiSecret)` | Creates an off-ramp intent and returns execution details. |
+
+```typescript
+const { data, error } = await apiClient.listBankAccounts(
+  process.env.COIN_VOYAGE_API_SECRET!
+);
+```
+
+<Info>
+  Off-ramp APIs are optional. They do not replace orders and are not required for on-chain settlement to your own wallet.
+</Info>

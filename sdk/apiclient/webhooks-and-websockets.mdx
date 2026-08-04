@@ -1,0 +1,57 @@
+---
+title: "ApiClient webhooks and WebSocket subscriptions"
+sidebarTitle: "Webhooks and WebSockets"
+description: "Manage CoinVoyage webhook subscriptions and listen for real-time order events with ApiClient."
+layout:
+  description:
+    visible: false
+---
+
+## Webhook methods
+
+All webhook-management methods are signed server-side operations.
+
+| Method | Purpose |
+|---|---|
+| `listWebhooks(apiSecret)` | Lists webhook subscriptions. |
+| `createWebhook(params, apiSecret)` | Creates a webhook subscription. |
+| `updateWebhook(webhookId, params, apiSecret)` | Updates a webhook subscription. |
+| `deleteWebhook(webhookId, apiSecret)` | Deletes a webhook subscription. |
+
+## Order-scoped WebSocket subscriptions
+
+`subscribeOrderStatus()` opens a WebSocket connection for real-time order events. Order-scoped subscriptions authenticate with your API key.
+
+```typescript
+const socket = apiClient.subscribeOrderStatus();
+
+socket.onOpen(() => {
+  socket.subscribe("order_123");
+});
+
+socket.onMessage((msg) => {
+  if (msg.type === "event") {
+    console.log(msg.data.event, msg.data.order.status);
+  }
+});
+```
+
+## Organization-wide subscriptions
+
+Organization-wide subscriptions require an authorization signature for `GET /ws`.
+
+```typescript
+const authorizationSignature = apiClient.generateAuthorizationSignature(
+  process.env.COIN_VOYAGE_API_SECRET!,
+  "GET",
+  "/ws"
+);
+
+const socket = apiClient.subscribeOrderStatus({ authorizationSignature });
+
+socket.onOpen(() => {
+  socket.subscribeOrg();
+});
+```
+
+See the [webhook event reference](/webhooks/events) for event identifiers and payloads.

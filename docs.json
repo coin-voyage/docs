@@ -73,13 +73,36 @@
                 ]
               },
               {
+                "group": "Invoices",
+                "pages": [
+                  "invoices/overview",
+                  "invoices/api"
+                ]
+              },
+              {
                 "group": "SDK",
                 "pages": [
                   "sdk/overview",
                   "sdk/paykitprovider",
                   "sdk/walletprovider",
                   "sdk/paybutton",
-                  "sdk/apiclient",
+                  {
+                    "group": "ApiClient",
+                    "root": "sdk/apiclient",
+                    "expanded": false,
+                    "pages": [
+                      "sdk/apiclient/authentication",
+                      "sdk/apiclient/orders",
+                      "sdk/apiclient/wallets-and-search",
+                      "sdk/apiclient/swaps",
+                      "sdk/apiclient/on-ramp",
+                      "sdk/apiclient/off-ramp",
+                      "sdk/apiclient/invoices",
+                      "sdk/apiclient/fees",
+                      "sdk/apiclient/webhooks-and-websockets",
+                      "sdk/apiclient/types"
+                    ]
+                  },
                   "sdk/useorderstatusws",
                   "sdk/paykit-headless"
                 ]

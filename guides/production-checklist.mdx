@@ -32,7 +32,7 @@ Use this checklist before switching a CoinVoyage integration to production. It i
 
 ## Payment state handling
 
-Your application should handle every terminal state, not just successful payments.
+Your application should handle every outcome and recovery state, not just successful payments.
 
 | State | Required handling |
 |---|---|
@@ -40,11 +40,12 @@ Your application should handle every terminal state, not just successful payment
 | `EXPIRED` | Mark the checkout attempt expired and let the user start a new payment. |
 | `REFUNDED` | Record the refund transaction and notify the user or operator. |
 | `FAILED` | Keep the order unpaid and send the case to support or automated recovery. |
-| `PARTIAL_PAYMENT` | Pause fulfillment and route the case to a manual or automated resolution flow. |
+| `PARTIAL_PAYMENT` | Pause fulfillment. For Pay to Address, show `payment.funding.remaining_amount` and allow additional deposits; for other methods, route the case to a resolution flow. |
 
 - [ ] Fulfillment code is idempotent by CoinVoyage order ID.
 - [ ] Duplicate webhook deliveries do not create duplicate shipments, credits, or inventory updates.
 - [ ] Partial-payment and underpayment cases are visible to support.
+- [ ] Pay to Address partial payments remain unfulfilled until additional deposits move the order to `COMPLETED`.
 - [ ] Users can recover from expired payments by creating a new order.
 
 ## Webhooks

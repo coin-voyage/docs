@@ -1,0 +1,174 @@
+---
+title: "ApiClient invoice methods"
+sidebarTitle: "Invoices"
+description: "Create, publish, list, retrieve, archive, and delete CoinVoyage invoices and drafts with signed ApiClient methods."
+layout:
+  description:
+    visible: false
+---
+
+Invoice methods are available in `@coin-voyage/paykit@3.4.0` and later. Every method requires your API secret and must run on the server.
+
+<Warning>
+  Publishing an invoice creates a linked `SALE` order and emails the recipient a PDF with a hosted payment link. Treat `createInvoice()` as an external side effect, not a preview operation.
+</Warning>
+
+## createInvoice
+
+Creates and publishes an invoice. Include `id` to publish an existing draft, together with the complete invoice fields required by `CreateInvoiceParams`.
+
+```typescript
+const { data: invoice, error } = await apiClient.createInvoice(
+  {
+    invoice: {
+      no: "INV-001",
+      date: "2026-08-03",
+      due_date: "2026-08-17",
+    },
+    from: {
+      name: "Acme Inc.",
+      email: "billing@acme.com",
+    },
+    recipient: {
+      name: "Jane Doe",
+      email: "jane@example.com",
+    },
+    items: [
+      {
+        name: "Consulting",
+        unitPrice: "100.00",
+        quantity: "2",
+        tax: "10",
+      },
+    ],
+  },
+  process.env.COIN_VOYAGE_API_SECRET!
+);
+
+console.log(invoice?.payment_url, invoice?.order_id);
+```
+
+**Parameters:** `params` (`CreateInvoiceParams`), `apiSecret`, `opts?`  
+**Returns:** `Promise<APIResponse<InvoiceResponse>>`
+
+## saveInvoiceDraft
+
+Creates a partial draft or updates an unpublished draft when `id` is supplied. Draft fields are validated when the invoice is published.
+
+```typescript
+const { data: draft, error } = await apiClient.saveInvoiceDraft(
+  {
+    invoice: { no: "INV-002" },
+    recipient: { email: "customer@example.com" },
+  },
+  process.env.COIN_VOYAGE_API_SECRET!
+);
+
+const { data: updatedDraft } = await apiClient.saveInvoiceDraft(
+  {
+    id: draft!.id,
+    items: [{ name: "Design work", unitPrice: "750.00", quantity: "1" }],
+  },
+  process.env.COIN_VOYAGE_API_SECRET!
+);
+```
+
+**Returns:** `Promise<APIResponse<InvoiceResponse>>`
+
+## listInvoices
+
+Lists invoices and drafts newest first. Search matches invoice IDs, invoice numbers, recipient names or email addresses, and linked order IDs.
+
+```typescript
+const { data, error } = await apiClient.listInvoices(
+  { limit: 20, offset: 0, search: "INV-001" },
+  process.env.COIN_VOYAGE_API_SECRET!
+);
+
+console.log(data?.data, data?.pagination.total_count);
+```
+
+**Returns:** `Promise<APIResponse<InvoicesWithPagination>>`
+
+## getInvoice
+
+```typescript
+const { data, error } = await apiClient.getInvoice(
+  "invoice_123",
+  process.env.COIN_VOYAGE_API_SECRET!
+);
+```
+
+**Returns:** `Promise<APIResponse<InvoiceResponse>>`
+
+## archiveInvoice
+
+Archives an invoice. Archiving retains the invoice and records `archived_at`.
+
+```typescript
+const { data, error } = await apiClient.archiveInvoice(
+  "invoice_123",
+  process.env.COIN_VOYAGE_API_SECRET!
+);
+```
+
+**Returns:** `Promise<APIResponse<InvoiceResponse>>`
+
+## deleteInvoice
+
+Deletes an unpublished draft. Published invoices cannot be deleted.
+
+```typescript
+const { error } = await apiClient.deleteInvoice(
+  "draft_invoice_123",
+  process.env.COIN_VOYAGE_API_SECRET!
+);
+```
+
+**Returns:** `Promise<APIResponse<void>>`
+
+## Invoice types
+
+```typescript
+type CreateInvoiceParams = {
+  id?: string
+  invoice: InvoiceMeta
+  from: InvoiceOrganizationDetails
+  recipient: InvoiceRecipientDetails
+  items: InvoiceItem[]
+}
+
+type SaveInvoiceDraftParams = {
+  id?: string
+  invoice?: Partial<InvoiceMeta>
+  from?: Partial<InvoiceOrganizationDetails>
+  recipient?: Partial<InvoiceRecipientDetails>
+  items?: InvoiceItem[]
+}
+
+type InvoiceItem = {
+  id?: string
+  name: string
+  unitPrice: string
+  quantity: string
+  tax?: string
+  image?: string
+}
+
+type InvoiceResponse = {
+  id: string
+  organization_id: string
+  data: InvoiceData
+  order_id?: string
+  orders: Order[]
+  payment_url: string
+  published_at: string | null
+  archived_at?: string | null
+  created_at: string
+  updated_at: string
+}
+```
+
+`unitPrice`, `quantity`, and `tax` are decimal strings. `tax` is a percentage from 0 through 100.
+
+See [Invoices overview](/invoices/overview) for the lifecycle and [Invoices API](/invoices/api) for the raw REST endpoints.

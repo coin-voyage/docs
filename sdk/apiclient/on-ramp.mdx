@@ -1,0 +1,38 @@
+---
+title: "ApiClient on-ramp methods"
+sidebarTitle: "On-ramp"
+description: "Use CoinVoyage ApiClient methods for Stripe Link authentication and embedded card-funded crypto on-ramp sessions."
+layout:
+  description:
+    visible: false
+---
+
+Use these API-key methods for Stripe embedded on-ramp flows. Card payments support `"usd"` and `"eur"` as `source_currency` values for eligible organizations and orders.
+
+| Method | Purpose |
+|---|---|
+| `createLinkAuthIntent(params)` | Creates a Stripe Link auth intent from an email or hashed email. |
+| `createLinkAuthToken(params)` | Exchanges an auth intent for a Link auth token client secret. |
+| `createOnrampIntent(params)` | Creates a reusable on-ramp intent, optionally backed by an order. |
+| `getStripeCryptoCustomerStatus(params)` | Checks Stripe crypto KYC and identity-verification status. |
+| `createOnrampSession(params)` | Creates a headless Stripe on-ramp session from an intent. |
+| `checkoutStripeOnrampSession(sessionId)` | Returns the embedded checkout client secret. |
+| `refreshStripeOnrampSessionQuote(sessionId)` | Refreshes the quote attached to a session. |
+
+## EUR-funded example
+
+```typescript
+const { data, error } = await apiClient.createOnrampIntent({
+  source_amount: "100.00",
+  source_currency: "eur",
+  destination_currency: {
+    chain_id: ChainId.ETH,
+    address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+  },
+  wallet_address: "0xRecipientWallet",
+});
+```
+
+<Info>
+  On-ramp access is gated. Your organization must be approved before showing card payments to users.
+</Info>

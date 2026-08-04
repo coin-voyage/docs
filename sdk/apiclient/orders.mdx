@@ -1,0 +1,172 @@
+---
+title: "ApiClient order methods"
+sidebarTitle: "Orders"
+description: "Create CoinVoyage deposit, sale, and refund orders; list and retrieve orders; quote payments; and generate payment instructions."
+layout:
+  description:
+    visible: false
+---
+
+Order methods cover the complete server-side payment lifecycle. See [Core types](/sdk/apiclient/types) for the request and response shapes used below.
+
+## createDepositOrder
+
+Creates a `DEPOSIT` order for a direct on-chain deposit to a recipient address.
+
+```typescript
+import { ApiClient, ChainId } from "@coin-voyage/paykit/server";
+
+const apiClient = ApiClient({ apiKey: process.env.COIN_VOYAGE_API_KEY! });
+
+const { data, error } = await apiClient.createDepositOrder({
+  amount: "10",
+  currency: { chain_id: ChainId.SUI, address: null },
+  recipient: "0xYourReceivingAddressHere",
+  metadata: { items: [{ name: "Wallet top-up" }] },
+});
+```
+
+**Parameters:** `params` (`OrderParams`), `opts?`  
+**Returns:** `Promise<APIResponse<Order>>`
+
+## createSaleOrder
+
+Creates a `SALE` order for a merchant checkout. It requires your API secret and must run on the server.
+
+```typescript
+const { data, error } = await apiClient.createSaleOrder(
+  {
+    amount: "49.99",
+    fiat_unit: "USD",
+    metadata: { order_id: "order_123", customer_id: "customer_456" },
+  },
+  process.env.COIN_VOYAGE_API_SECRET!
+);
+```
+
+If `currency` and `recipient` are omitted, CoinVoyage settles to your dashboard settlement configuration.
+
+**Parameters:** `params` (`OrderParams`), `apiSecret` (`string`), `opts?`  
+**Returns:** `Promise<APIResponse<Order>>`
+
+## createRefundOrder
+
+Creates a `REFUND` order against an existing completed order.
+
+```typescript
+const { data, error } = await apiClient.createRefundOrder(
+  "original-order-id",
+  {
+    amount: "25.00",
+    fiat_unit: "USD",
+    currency: { chain_id: ChainId.ETH, address: null },
+    recipient: "0xRefundAddress",
+    metadata: {
+      refund: { reason: "Partial refund", refund_amount: 25, currency: "USD" },
+    },
+  },
+  process.env.COIN_VOYAGE_API_SECRET!
+);
+```
+
+**Parameters:** `orderId`, `params` (`RefundRequest`), `apiSecret`, `opts?`  
+**Returns:** `Promise<APIResponse<Order>>`
+
+## getOrder
+
+```typescript
+const { data, error } = await apiClient.getOrder("order_123");
+```
+
+**Returns:** `Promise<APIResponse<Order>>`
+
+## listOrders
+
+Lists orders for your organization. This is a signed server-side method.
+
+```typescript
+const { data, error } = await apiClient.listOrders(
+  { limit: 50, offset: 0 },
+  process.env.COIN_VOYAGE_API_SECRET!
+);
+```
+
+**Returns:** `Promise<APIResponse<OrdersWithPagination>>`
+
+## getOrderPaymentMethods
+
+```typescript
+const { data, error } = await apiClient.getOrderPaymentMethods("order_123");
+```
+
+**Returns:** `Promise<APIResponse<PaymentMethodsResponse>>`
+
+## orderQuotes
+
+Generates ranked quote options for paying an order from a wallet or explicit source list.
+
+```typescript
+const { data, error } = await apiClient.orderQuotes("order_123", {
+  filter: {
+    wallet: {
+      address: "0xPayerWallet",
+      chain_type: ChainType.EVM,
+      chain_ids: [ChainId.ETH, ChainId.BASE],
+    },
+    min_balance_usd: 1,
+    limit: 10,
+  },
+});
+```
+
+**Returns:** `Promise<APIResponse<OrderQuotesResponse>>`
+
+## createPayment
+
+Creates payment instructions for an order. Destination and amount come from the order; the request supplies the funding source.
+
+```typescript
+const { data, error } = await apiClient.createPayment("order_123", {
+  source: {
+    payment_rail: "CRYPTO",
+    currency: {
+      chain_id: ChainId.ETH,
+      address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    },
+    slippage_bps: 50,
+  },
+  refund_address: "0xRefundAddress",
+});
+```
+
+**Returns:** `Promise<APIResponse<PaymentResponse>>`
+
+## x402Complete
+
+Completes an x402 payment. If `paymentSignature` is omitted, the API returns a `402` response with a `PAYMENT-REQUIRED` header.
+
+```typescript
+const { data, error } = await apiClient.x402Complete(
+  "order_123",
+  paymentSignature
+);
+```
+
+**Returns:** `Promise<APIResponse<void>>`
+
+## Recover a Pay to Address partial payment
+
+When a Pay to Address payment reaches `PARTIAL_PAYMENT`, keep the order unfulfilled and inspect `order.payment.funding.remaining_amount`. The payer can send one or more additional deposits through the same Pay to Address flow. CoinVoyage records every deposit in `funding.transactions` and completes the order after the required amount has been received.
+
+```typescript
+const { data: order } = await apiClient.getOrder("order_123");
+
+if (order?.status === "PARTIAL_PAYMENT") {
+  const remaining = order.payment?.funding?.remaining_amount.ui;
+  console.log(`Still due: ${remaining}`);
+}
+```
+
+<Warning>
+  Additional-deposit recovery is available only for Pay to Address. Do not assume wallet, card, or other payment methods can resume from `PARTIAL_PAYMENT`.
+</Warning>

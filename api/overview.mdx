@@ -1,13 +1,13 @@
 ---
 title: "CoinVoyage API overview"
 sidebarTitle: "Overview"
-description: "Learn how to call the CoinVoyage v3 API directly, including environments, authentication, orders, swaps, off-ramp flows, request conventions, errors, pagination, and webhook-driven processing."
+description: "Learn how to call the CoinVoyage v3 API directly, including authentication, orders, invoices, swaps, off-ramp flows, errors, pagination, and webhook-driven processing."
 layout:
   description:
     visible: false
 ---
 
-Use the CoinVoyage API when you need direct control over order creation, quote selection, payment instructions, standalone swaps, webhook management, refunds, fee claims, off-ramp verification, bank accounts, or backend reconciliation. Most React integrations should start with the [PayKit SDK](/sdk/overview), then use the API directly for server-side workflows that should never run in the browser.
+Use the CoinVoyage API when you need direct control over order creation, invoices, quote selection, payment instructions, standalone swaps, webhook management, refunds, fee claims, off-ramp verification, bank accounts, or backend reconciliation. Most React integrations should start with the [PayKit SDK](/sdk/overview), then use the API directly for server-side workflows that should never run in the browser.
 
 <Info>
   Endpoint-level schemas, request bodies, and response examples are available in the generated [API Reference](/api-reference). This page explains the conventions that apply across the API.
@@ -64,7 +64,7 @@ const authorization = apiClient.generateAuthorizationSignature(
 ```
 
 <Warning>
-  Generate authorization signatures on your server only. A leaked API secret can create sales, refunds, off-ramp intents, webhooks, and fee claims for your organization.
+  Generate authorization signatures on your server only. A leaked API secret can create sales, refunds, invoices, off-ramp intents, webhooks, and fee claims for your organization.
 </Warning>
 
 ## Public API key flows
@@ -84,7 +84,7 @@ const { data, error } = await apiClient.createDepositOrder({
 
 ## Signed server-side flows
 
-`SALE` orders, refunds, order listing, off-ramp verification, bank account management, off-ramp intents, webhook management, and fee operations require your API secret.
+`SALE` orders, refunds, order listing, invoices, off-ramp verification, bank account management, off-ramp intents, webhook management, and fee operations require your API secret.
 
 ```typescript
 const { data, error } = await apiClient.createSaleOrder(
@@ -98,6 +98,8 @@ const { data, error } = await apiClient.createSaleOrder(
   process.env.COIN_VOYAGE_API_SECRET!
 );
 ```
+
+See [Invoices API](/invoices/api) for signed invoice creation, draft, list, retrieval, archive, and delete operations.
 
 ## Where off-ramp APIs fit
 
@@ -222,7 +224,7 @@ Production integrations should use webhooks for payment state changes:
 2. Store the CoinVoyage order ID against your internal order or account.
 3. Show the payment modal to the user.
 4. Verify webhook signatures before parsing the event.
-5. Update internal state from terminal events such as `ORDER_COMPLETED`, `ORDER_REFUNDED`, `ORDER_EXPIRED`, `ORDER_ERROR`, or `ORDER_PARTIAL_PAYMENT`.
+5. Update internal state from outcome and recovery events such as `ORDER_COMPLETED`, `ORDER_REFUNDED`, `ORDER_EXPIRED`, `ORDER_ERROR`, or `ORDER_PARTIAL_PAYMENT`.
 6. Run a scheduled reconciliation job that compares your internal state with the CoinVoyage API.
 
 See [Webhooks overview](/webhooks/overview) and [Webhook events](/webhooks/events) for delivery setup and payload examples.

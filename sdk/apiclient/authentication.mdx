@@ -1,0 +1,46 @@
+---
+title: "ApiClient authentication and authorization signatures"
+sidebarTitle: "Authentication"
+description: "Authenticate CoinVoyage ApiClient calls and generate HMAC-SHA256 signatures for privileged v3 API operations."
+layout:
+  description:
+    visible: false
+---
+
+`ApiClient` sends your API key with every request. Privileged organization operations additionally require an HMAC-SHA256 signature generated from your API secret.
+
+<Warning>
+  Generate authorization signatures only on your server. A leaked API secret can create sales, refunds, invoices, off-ramp intents, webhooks, and fee claims for your organization.
+</Warning>
+
+## Public API-key operations
+
+API-key operations include creating `DEPOSIT` orders, retrieving individual orders, generating quotes and payment instructions, searching currencies, scanning wallets, and using standalone swaps or eligible on-ramp flows.
+
+## Signed operations
+
+Signed server-side operations include `SALE` orders, refunds, organization-wide listing, off-ramp management, invoices, fees, webhooks, and organization-wide WebSocket subscriptions.
+
+## Generate a signature
+
+`generateAuthorizationSignature()` creates the HMAC-SHA256 `Authorization` header value used by signed v3 requests. Pass the v3 path without the `/v3` prefix.
+
+```typescript
+const authorization = apiClient.generateAuthorizationSignature(
+  process.env.COIN_VOYAGE_API_SECRET!,
+  "POST",
+  "/orders"
+);
+```
+
+The result is formatted as:
+
+```text
+APIKey=<apiKey>,signature=<signature>,timestamp=<timestamp>
+```
+
+Sign the exact method and path used by the request. Examples include `/orders`, `/orders/{order_id}/refund`, `/invoices`, `/invoices/{invoice_id}/archive`, and `/ws`.
+
+<Info>
+  `ApiClient` methods that accept `apiSecret` generate and attach the appropriate signature automatically. Call `generateAuthorizationSignature()` directly only when building a raw request or an organization-wide WebSocket connection.
+</Info>

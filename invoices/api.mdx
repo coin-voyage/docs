@@ -1,0 +1,139 @@
+---
+title: "Invoices API"
+sidebarTitle: "API"
+description: "Create, publish, list, retrieve, archive, and delete CoinVoyage invoices through the signed v3 REST API."
+layout:
+  description:
+    visible: false
+---
+
+The v3 Invoices API supports complete invoice automation. All invoice endpoints require an HMAC-SHA256 authorization signature and must be called from your server.
+
+<Info>
+  TypeScript integrations can use the signed methods in the [ApiClient invoice reference](/sdk/apiclient/invoices). Endpoint schemas are also available in the generated [API reference](/api-reference).
+</Info>
+
+## Endpoints
+
+| Method | Path | Purpose |
+|---|---|---|
+| `POST` | `/invoices` | Create and publish an invoice, or publish an existing draft. |
+| `POST` | `/invoices/drafts` | Create a draft or update an unpublished draft. |
+| `GET` | `/invoices` | List invoices and drafts with pagination and search. |
+| `GET` | `/invoices/{invoice_id}` | Retrieve one invoice. |
+| `POST` | `/invoices/{invoice_id}/archive` | Archive an invoice. |
+| `DELETE` | `/invoices/{invoice_id}` | Delete an unpublished draft. |
+
+## Authentication
+
+Generate the `Authorization` value from the API secret, HTTP method, exact path without the `/v3` prefix, and current timestamp. The `ApiClient` generates this automatically when you pass `apiSecret`.
+
+```typescript
+const authorization = apiClient.generateAuthorizationSignature(
+  process.env.COIN_VOYAGE_API_SECRET!,
+  "POST",
+  "/invoices"
+);
+```
+
+## Create and publish
+
+`POST /invoices` validates the complete invoice, creates a linked `SALE` order, and emails the recipient a PDF and hosted payment link.
+
+```json
+{
+  "invoice": {
+    "no": "INV-001",
+    "date": "2026-08-03",
+    "due_date": "2026-08-17"
+  },
+  "from": {
+    "name": "Acme Inc.",
+    "email": "billing@acme.com"
+  },
+  "recipient": {
+    "name": "Jane Doe",
+    "email": "jane@example.com"
+  },
+  "items": [
+    {
+      "name": "Consulting",
+      "unitPrice": "100.00",
+      "quantity": "2",
+      "tax": "10"
+    }
+  ]
+}
+```
+
+To publish an existing draft, include its `id` and provide the complete required blocks shown above.
+
+## Save or update a draft
+
+`POST /invoices/drafts` accepts partial content. Omit `id` to create a draft or include an unpublished draft ID to update it.
+
+```json
+{
+  "id": "invoice_draft_123",
+  "invoice": {
+    "no": "INV-002"
+  },
+  "recipient": {
+    "email": "customer@example.com"
+  }
+}
+```
+
+Draft blocks are stored as supplied and validated only when published.
+
+## List invoices
+
+`GET /invoices` accepts:
+
+| Parameter | Default | Constraints | Description |
+|---|---:|---|---|
+| `limit` | `20` | 1–100 | Maximum results returned. |
+| `offset` | `0` | 0 or greater | Number of results skipped. |
+| `search` | — | Up to 200 characters | Case-insensitive match on invoice ID or number, recipient name or email, or linked order ID. |
+
+The response contains `data: InvoiceResponse[]` and pagination metadata.
+
+## Retrieve, archive, or delete
+
+- `GET /invoices/{invoice_id}` returns the invoice details and linked orders.
+- `POST /invoices/{invoice_id}/archive` retains the invoice and sets `archived_at`.
+- `DELETE /invoices/{invoice_id}` returns `204` for a deleted unpublished draft. Published invoices cannot be deleted.
+
+## Response fields
+
+```typescript
+type InvoiceResponse = {
+  id: string
+  organization_id: string
+  data: {
+    invoice?: Partial<InvoiceMeta>
+    from?: Partial<InvoiceOrganizationDetails>
+    recipient?: Partial<InvoiceRecipientDetails>
+    items?: InvoiceItem[]
+  }
+  order_id?: string
+  orders: Order[]
+  payment_url: string
+  published_at: string | null
+  archived_at?: string | null
+  created_at: string
+  updated_at: string
+}
+```
+
+Use `order_id` and `orders` for payment reconciliation. A published invoice is not necessarily paid; fulfillment depends on the linked order reaching `COMPLETED`.
+
+## Common errors
+
+| Status | Meaning |
+|---|---|
+| `400` | Invalid list pagination or search parameters. |
+| `401` | Missing or invalid authorization signature. |
+| `404` | Invoice or draft not found, or invoice already archived. |
+| `422` | Invalid request body or invoice validation failure. |
+| `500` | Internal processing failure on supported read or lifecycle operations. |

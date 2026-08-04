@@ -15,12 +15,24 @@ Integration-facing changes to the CoinVoyage SDK, API, and platform behavior are
 
 ---
 
+## 3.4.0 - 2026-08-03
+
+**Added**
+
+- **Invoice generation via API**: Create and publish invoices, save drafts, list and retrieve invoices, archive invoices, and delete unpublished drafts through the v3 API and `ApiClient`. Published invoices create a linked `SALE` order and email the recipient a PDF with a hosted payment link. See the [Invoices guide](/invoices/overview).
+
+**Changed**
+
+- **Recoverable Pay to Address partial payments**: Orders in `PARTIAL_PAYMENT` can now accept additional deposits through Pay to Address until the required amount is received and the order can be fulfilled. This recovery behavior is available only for Pay to Address; other payment methods still require a separate resolution flow.
+
+---
+
 ## 3.3.0 - 2026-07-29
 
 <Warning>
   This release changes the `portfolio()` request and response shapes. Replace the
   singular `wallet` field with a `wallets` array and handle per-wallet results and
-  errors. See the [ApiClient migration example](/sdk/apiclient#portfolio).
+  errors. See the [ApiClient migration example](/sdk/apiclient/wallets-and-search#portfolio).
 </Warning>
 
 **Added**

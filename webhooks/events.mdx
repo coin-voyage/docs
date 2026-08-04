@@ -23,7 +23,7 @@ Subscription identifiers and delivered payload values are the same uppercase `OR
 | `ORDER_ERROR` | An error occurred during processing. |
 | `ORDER_REFUNDED` | Funds were refunded to the user. |
 | `ORDER_EXPIRED` | The order expired before payment was received. |
-| `ORDER_PARTIAL_PAYMENT` | The user sent less than the required amount; the order is terminal and needs resolution. |
+| `ORDER_PARTIAL_PAYMENT` | The user sent less than the required amount. Pay to Address can accept additional deposits; other payment methods need resolution. |
 
 ## Base payload
 
@@ -106,6 +106,33 @@ When present, `order.payment` contains the funding input, resolved output, rail-
       "raw": "22400000000",
       "value_usd": 49.99
     }
+  },
+  "funding": {
+    "required_amount": {
+      "ui": "49.99",
+      "raw": "49990000",
+      "value_usd": 49.99
+    },
+    "received_amount": {
+      "ui": "20.00",
+      "raw": "20000000",
+      "value_usd": 20
+    },
+    "remaining_amount": {
+      "ui": "29.99",
+      "raw": "29990000",
+      "value_usd": 29.99
+    },
+    "transactions": [
+      {
+        "tx_hash": "0xabc123",
+        "amount": {
+          "ui": "20.00",
+          "raw": "20000000",
+          "value_usd": 20
+        }
+      }
+    ]
   },
   "recipient": "0xMerchantWallet",
   "refund": {
@@ -281,6 +308,8 @@ The examples below highlight event-specific fields. Production deliveries includ
   </Accordion>
 
   <Accordion title="ORDER_PARTIAL_PAYMENT">
+    For Pay to Address, use `payment.funding.remaining_amount` to tell the payer what is still due. Each additional deposit is appended to `payment.funding.transactions`. Keep fulfillment paused until a later event reports `ORDER_COMPLETED`.
+
     ```json
     {
       "event": "ORDER_PARTIAL_PAYMENT",
@@ -290,10 +319,25 @@ The examples below highlight event-specific fields. Production deliveries includ
         "mode": "SALE",
         "status": "PARTIAL_PAYMENT",
         "payment": {
-          "source_tx_hash": "0xabc123"
+          "source_tx_hash": "0xabc123",
+          "funding": {
+            "required_amount": { "ui": "49.99", "raw": "49990000" },
+            "received_amount": { "ui": "20.00", "raw": "20000000" },
+            "remaining_amount": { "ui": "29.99", "raw": "29990000" },
+            "transactions": [
+              {
+                "tx_hash": "0xabc123",
+                "amount": { "ui": "20.00", "raw": "20000000" }
+              }
+            ]
+          }
         }
       }
     }
     ```
+
+    <Warning>
+      Additional-deposit recovery is available only for Pay to Address. Do not treat this webhook as resumable for other payment methods.
+    </Warning>
   </Accordion>
 </AccordionGroup>

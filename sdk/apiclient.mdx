@@ -1,7 +1,7 @@
 ---
 title: "ApiClient - server-side CoinVoyage REST API client"
-sidebarTitle: "ApiClient"
-description: "Use ApiClient from @coin-voyage/paykit/server to create orders, fetch quotes, create payments, manage off-ramp verification, bank accounts, off-ramp intents, webhooks, and fees."
+sidebarTitle: "Overview"
+description: "Initialize ApiClient from @coin-voyage/paykit/server and navigate its order, wallet, swap, on-ramp, off-ramp, invoice, fee, webhook, and type references."
 layout:
   description:
     visible: false
@@ -10,7 +10,7 @@ layout:
 `ApiClient` is the server-side interface to the CoinVoyage v3 API. Import it from `@coin-voyage/paykit/server` and use it in API routes, server actions, or backend services. Every method returns an `APIResponse<T>` wrapper with either `data` or `error`.
 
 <Warning>
-  Keep your API secret on the server. The SDK can create `DEPOSIT` orders with the public API key, but `SALE`, refunds, list operations, off-ramp operations, webhooks, and fees require a server-generated authorization signature.
+  Keep your API secret on the server. The SDK can create `DEPOSIT` orders with the public API key, but `SALE`, refunds, list operations, off-ramp operations, invoices, webhooks, and fees require a server-generated authorization signature.
 </Warning>
 
 ## Initialization
@@ -65,504 +65,40 @@ if (error) {
   return;
 }
 
-if (!data) {
-  return;
-}
-
-console.log(data.status);
+console.log(data?.status);
 ```
 
-## Order methods
-
-### createDepositOrder
-
-Creates a `DEPOSIT` order for a direct on-chain deposit to a recipient address.
-
-```typescript
-import { ApiClient, ChainId } from "@coin-voyage/paykit/server";
-
-const apiClient = ApiClient({
-  apiKey: process.env.COIN_VOYAGE_API_KEY!,
-});
-
-const { data, error } = await apiClient.createDepositOrder({
-  amount: "10",
-  currency: {
-    chain_id: ChainId.SUI,
-    address: null,
-  },
-  recipient: "0xYourReceivingAddressHere",
-  metadata: {
-    items: [{ name: "Wallet top-up" }],
-  },
-});
-```
-
-**Parameters:** `params` (`OrderParams`), `opts?`
-
-**Returns:** `Promise<APIResponse<Order>>`
-
-### createSaleOrder
-
-Creates a `SALE` order for a merchant checkout. Requires your API secret and must run on the server.
-
-```typescript
-const { data, error } = await apiClient.createSaleOrder(
-  {
-    amount: "49.99",
-    fiat_unit: "USD",
-    metadata: {
-      order_id: "order_123",
-      customer_id: "customer_456",
-    },
-  },
-  process.env.COIN_VOYAGE_API_SECRET!
-);
-```
-
-If `currency` and `recipient` are omitted, CoinVoyage settles to your dashboard settlement configuration. Provide them only when this specific order should settle to a specific asset and destination.
-
-**Parameters:** `params` (`OrderParams`), `apiSecret` (`string`), `opts?`
-
-**Returns:** `Promise<APIResponse<Order>>`
-
-### createRefundOrder
-
-Creates a `REFUND` order against an existing completed order. Requires your API secret.
-
-```typescript
-const { data, error } = await apiClient.createRefundOrder(
-  "original-order-id",
-  {
-    amount: "25.00",
-    fiat_unit: "USD",
-    currency: {
-      chain_id: ChainId.ETH,
-      address: null,
-    },
-    recipient: "0xRefundAddress",
-    metadata: {
-      refund: {
-        reason: "Partial refund",
-        refund_amount: 25,
-        currency: "USD",
-      },
-    },
-  },
-  process.env.COIN_VOYAGE_API_SECRET!
-);
-```
-
-**Parameters:** `orderId` (`string`), `params` (`RefundRequest`), `apiSecret` (`string`), `opts?`
-
-**Returns:** `Promise<APIResponse<Order>>`
-
-### getOrder
-
-Fetches an order by ID.
-
-```typescript
-const { data, error } = await apiClient.getOrder("order_123");
-```
-
-**Parameters:** `orderId` (`string`)
-
-**Returns:** `Promise<APIResponse<Order>>`
-
-### listOrders
-
-Lists orders for your organization. This is a signed server-side method.
-
-```typescript
-const { data, error } = await apiClient.listOrders(
-  {
-    limit: 50,
-    offset: 0,
-  },
-  process.env.COIN_VOYAGE_API_SECRET!
-);
-```
-
-**Parameters:** `params` (`ListOrdersParams`), `apiSecret` (`string`), `opts?`
-
-**Returns:** `Promise<APIResponse<OrdersWithPagination>>`
-
-### getOrderPaymentMethods
-
-Fetches available payment methods for an order.
-
-```typescript
-const { data, error } = await apiClient.getOrderPaymentMethods("order_123");
-```
-
-**Parameters:** `orderId` (`string`), `opts?`
-
-**Returns:** `Promise<APIResponse<PaymentMethodsResponse>>`
-
-### orderQuotes
-
-Generates ranked quote options for paying an order from a wallet or explicit source list.
-
-```typescript
-const { data, error } = await apiClient.orderQuotes("order_123", {
-  filter: {
-    wallet: {
-      address: "0xPayerWallet",
-      chain_type: ChainType.EVM,
-      chain_ids: [ChainId.ETH, ChainId.BASE],
-    },
-    min_balance_usd: 1,
-    limit: 10,
-  },
-});
-```
-
-**Parameters:** `orderId` (`string`), `params` (`OrderQuoteParams`), `opts?`
-
-**Returns:** `Promise<APIResponse<OrderQuotesResponse>>`
-
-### createPayment
-
-Creates payment instructions for an order. Destination and amount come from the order; the request supplies the funding source.
-
-```typescript
-const { data, error } = await apiClient.createPayment("order_123", {
-  source: {
-    payment_rail: "CRYPTO",
-    currency: {
-      chain_id: ChainId.ETH,
-      address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-    },
-    slippage_bps: 50,
-  },
-  refund_address: "0xRefundAddress",
-});
-```
-
-**Parameters:** `orderId` (`string`), `params` (`PaymentRequest`), `opts?`
-
-**Returns:** `Promise<APIResponse<PaymentResponse>>`
-
-### x402Complete
-
-Completes an x402 payment for an order. If `paymentSignature` is omitted, the API returns a `402` response with a `PAYMENT-REQUIRED` header.
-
-```typescript
-const { data, error } = await apiClient.x402Complete(
-  "order_123",
-  paymentSignature
-);
-```
-
-**Parameters:** `orderId` (`string`), `paymentSignature?` (`string`), `opts?`
-
-**Returns:** `Promise<APIResponse<void>>`
-
-## Wallet and search methods
-
-### currencySearch
-
-Searches supported currencies for token pickers and back-office tools.
-
-```typescript
-const { data, error } = await apiClient.currencySearch({
-  q: "usdc",
-  chain_ids: [ChainId.SUI, ChainId.SOL],
-  limit: 10,
-});
-```
-
-### portfolio
-
-Retrieves token balances and USD values for 1–10 wallets. Each successful scan
-appears in `data.portfolio`; a wallet-specific failure appears in `data.errors`
-without discarding successful results for the other wallets.
-
-```typescript
-const { data, error } = await apiClient.portfolio({
-  wallets: [
-    {
-      address: "0xFirstPayerWallet",
-      chain_type: ChainType.EVM,
-      chain_ids: [ChainId.ETH, ChainId.BASE],
-    },
-    {
-      address: "0xSecondPayerWallet",
-      chain_type: ChainType.EVM,
-      chain_ids: [4663], // Robinhood Chain
-    },
-  ],
-  filter: {
-    min_balance_usd: 1,
-  },
-  force_refresh: false,
-});
-
-if (error) {
-  throw new Error(error.message);
-}
-
-for (const result of data?.portfolio ?? []) {
-  console.log(result.wallet.address, result.currencies);
-}
-
-for (const walletError of data?.errors ?? []) {
-  console.warn(walletError.wallet.address, walletError.code);
-}
-```
-
-`wallets` is required and accepts between 1 and 10 entries. Set
-`force_refresh: true` when you need a fresh scan instead of a cached result.
-
-<Warning>
-  **Migrating from 3.2:** replace `wallet: { ... }` with
-  `wallets: [{ ... }]`. The response is now grouped into `portfolio` and
-  `errors` arrays, even when you request one wallet.
-</Warning>
-
-## Swap methods
-
-### swapQuote
-
-Gets a standalone swap quote for a single source/destination pair.
-
-```typescript
-const { data, error } = await apiClient.swapQuote({
-  trade_type: "EXACT_INPUT",
-  amount: "100",
-  source: {
-    chain_id: ChainId.BASE,
-    address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-  },
-  destination: {
-    chain_id: ChainId.SUI,
-    address: null,
-  },
-  recipient: "0xDestinationAddress",
-  slippage_bps: 50,
-});
-```
-
-### swapExecute
-
-Creates payment instructions for a standalone swap.
-
-```typescript
-const { data, error } = await apiClient.swapExecute({
-  trade_type: "EXACT_INPUT",
-  amount: "100",
-  source: {
-    currency: {
-      chain_id: ChainId.BASE,
-      address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-    },
-    sender_address: "0xSenderWallet",
-    slippage_bps: 50,
-  },
-  destination: {
-    currency: {
-      chain_id: ChainId.SUI,
-      address: null,
-    },
-    recipient: "0xDestinationAddress",
-  },
-});
-```
-
-## On-ramp methods
-
-Use these API-key methods for Stripe embedded on-ramp flows. Card Payments
-support `"usd"` and `"eur"` as `source_currency` values for eligible
-organizations and orders.
-
-| Method | Purpose |
-|---|---|
-| `createLinkAuthIntent(params)` | Creates a Stripe Link auth intent from an email or hashed email. |
-| `createLinkAuthToken(params)` | Exchanges an auth intent for a Link auth token client secret. |
-| `createOnrampIntent(params)` | Creates a reusable on-ramp intent, optionally backed by an order. |
-| `getStripeCryptoCustomerStatus(params)` | Checks Stripe crypto KYC and identity-verification status. |
-| `createOnrampSession(params)` | Creates a headless Stripe on-ramp session from an intent. |
-| `checkoutStripeOnrampSession(sessionId)` | Returns the embedded checkout client secret. |
-| `refreshStripeOnrampSessionQuote(sessionId)` | Refreshes the quote attached to a session. |
-
-For a standalone EUR-funded Card Payment, set `source_currency` to `"eur"`:
-
-```typescript
-const { data, error } = await apiClient.createOnrampIntent({
-  source_amount: "100.00",
-  source_currency: "eur",
-  destination_currency: {
-    chain_id: ChainId.ETH,
-    address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  },
-  wallet_address: "0xRecipientWallet",
-});
-```
-
-## Off-ramp methods
-
-Use these signed server-side methods when you want CoinVoyage to coordinate fiat payout to a linked bank account.
-
-| Method | Purpose |
-|---|---|
-| `createOffRampVerification(params, apiSecret)` | Creates a hosted verification link for KYC or KYB. |
-| `getOffRampVerificationStatus(apiSecret)` | Retrieves verification and terms-of-service status. |
-| `listBankAccounts(apiSecret)` | Lists linked bank accounts. |
-| `getBankAccount(bankAccountId, apiSecret)` | Retrieves one linked bank account. |
-| `addBankAccount(params, apiSecret)` | Adds a bank account for the verified organization. |
-| `listOffRampIntents(apiSecret)` | Lists off-ramp intents. |
-| `createOffRampIntent(params, apiSecret)` | Creates an off-ramp intent and returns execution details. |
-
-## Fee methods
-
-| Method | Purpose |
-|---|---|
-| `getFeeBalances(apiSecret)` | Retrieves claimable fee balances for your organization. |
-| `claimFees(params, apiSecret)` | Claims accrued fees to a recipient currency and address. |
-
-## Webhook methods
-
-| Method | Purpose |
-|---|---|
-| `listWebhooks(apiSecret)` | Lists webhook subscriptions. |
-| `createWebhook(params, apiSecret)` | Creates a webhook subscription. |
-| `updateWebhook(webhookId, params, apiSecret)` | Updates a webhook subscription. |
-| `deleteWebhook(webhookId, apiSecret)` | Deletes a webhook subscription. |
-
-## WebSocket subscriptions
-
-`subscribeOrderStatus()` opens a WebSocket connection for real-time order events. Order-scoped subscriptions authenticate with your API key. Organization-wide subscriptions require an authorization signature for `GET /ws`.
-
-```typescript
-const socket = apiClient.subscribeOrderStatus();
-
-socket.onOpen(() => {
-  socket.subscribe("order_123");
-});
-
-socket.onMessage((msg) => {
-  if (msg.type === "event") {
-    console.log(msg.data.event, msg.data.order.status);
-  }
-});
-```
-
-For organization-wide subscriptions:
-
-```typescript
-const authorizationSignature = apiClient.generateAuthorizationSignature(
-  process.env.COIN_VOYAGE_API_SECRET!,
-  "GET",
-  "/ws"
-);
-
-const socket = apiClient.subscribeOrderStatus({ authorizationSignature });
-
-socket.onOpen(() => {
-  socket.subscribeOrg();
-});
-```
-
-## Authorization signatures
-
-`generateAuthorizationSignature()` creates the HMAC-SHA256 `Authorization` header value used by signed v3 requests. Pass the v3 path without the `/v3` prefix, for example `/orders`, `/orders/{order_id}/refund`, or `/ws`.
-
-```typescript
-const authorization = apiClient.generateAuthorizationSignature(
-  process.env.COIN_VOYAGE_API_SECRET!,
-  "POST",
-  "/orders"
-);
-```
-
-The result is formatted as:
-
-```text
-APIKey=<apiKey>,signature=<signature>,timestamp=<timestamp>
-```
-
-<Warning>
-  Generate authorization signatures only on your server. A leaked API secret can create sales, refunds, off-ramp intents, webhooks, and fee claims for your organization.
-</Warning>
-
-## Core types
-
-### OrderParams
-
-```typescript
-type OrderParams = {
-  amount: string
-  fiat_unit?: "USD" | "EUR" | string | null
-  currency?: {
-    chain_id: ChainId
-    address?: string | null
-  } | null
-  recipient?: string | null
-  metadata?: OrderMetadata | null
-}
-```
-
-For token-denominated orders, omit `fiat_unit`. For fiat-denominated orders, set `fiat_unit` to the fiat currency code.
-
-### Order
-
-```typescript
-type Order = {
-  id: string
-  organization_id: string
-  mode: OrderMode
-  status: OrderStatus
-  fulfillment: OrderFulfillment
-  payment?: PaymentData | null
-  metadata?: OrderMetadata
-  hosted_url: string
-  created_at: string
-  updated_at: string
-}
-```
-
-### OrderMode
-
-| Value | Description |
-|---|---|
-| `SALE` | Merchant sale. Settles to dashboard configuration unless `currency` and `recipient` are provided. |
-| `DEPOSIT` | Direct deposit to a specified recipient address. |
-| `REFUND` | Refund order created through `createRefundOrder()`. |
-| `SWAP` | Internal order created by standalone swap execution. |
-| `FEE_CLAIM` | Internal order created by fee claiming. |
-
-### OrderStatus
-
-| Status | Description |
-|---|---|
-| `PENDING` | Created but not yet ready for payment. |
-| `AWAITING_PAYMENT` | Ready and waiting for the user to send payment. |
-| `AWAITING_CONFIRMATION` | Payment transaction detected and waiting for blockchain confirmation. |
-| `OPTIMISTIC_CONFIRMED` | Optimistically confirmed; execution can begin. |
-| `EXECUTING_ORDER` | Payment is being routed to the destination. |
-| `COMPLETED` | Completed successfully. |
-| `EXPIRED` | Expired before payment was received. |
-| `REFUNDED` | Refunded to the configured refund address. |
-| `FAILED` | Failed during processing. |
-| `PARTIAL_PAYMENT` | Received an insufficient amount; terminal partial-payment state. |
-
-### PaymentData
-
-```typescript
-type PaymentData = {
-  payment_rail: "CRYPTO" | "FIAT"
-  input: QuoteInput
-  output: QuoteOutput
-  recipient: string
-  refund?: {
-    address?: string | null
-    tx_hash?: string | null
-    reason?: string | null
-  } | null
-  source_tx_hash?: string | null
-  destination_tx_hash?: string | null
-  fee_tx_hash?: string | null
-  steps: PaymentStep[]
-  expires_at: string
-}
-```
+## Reference
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/sdk/apiclient/authentication">
+    Generate server-side signatures for privileged operations.
+  </Card>
+  <Card title="Orders" icon="receipt" href="/sdk/apiclient/orders">
+    Create orders, retrieve quotes, and generate payment instructions.
+  </Card>
+  <Card title="Wallet and search" icon="wallet" href="/sdk/apiclient/wallets-and-search">
+    Search currencies and retrieve multi-wallet portfolios.
+  </Card>
+  <Card title="Swaps" icon="arrows-rotate" href="/sdk/apiclient/swaps">
+    Quote and execute standalone swaps.
+  </Card>
+  <Card title="On-ramp" icon="credit-card" href="/sdk/apiclient/on-ramp">
+    Integrate Stripe Link and embedded card-funded on-ramp flows.
+  </Card>
+  <Card title="Off-ramp" icon="building-columns" href="/sdk/apiclient/off-ramp">
+    Manage verification, bank accounts, and fiat payout intents.
+  </Card>
+  <Card title="Invoices" icon="file-invoice" href="/sdk/apiclient/invoices">
+    Create, publish, list, retrieve, archive, and delete invoice drafts.
+  </Card>
+  <Card title="Fees" icon="coins" href="/sdk/apiclient/fees">
+    Retrieve and claim organization fee balances.
+  </Card>
+  <Card title="Webhooks and WebSockets" icon="webhook" href="/sdk/apiclient/webhooks-and-websockets">
+    Manage webhook subscriptions and consume real-time order events.
+  </Card>
+  <Card title="Core types" icon="brackets-curly" href="/sdk/apiclient/types">
+    Reference shared order, status, payment, and funding types.
+  </Card>
+</CardGroup>

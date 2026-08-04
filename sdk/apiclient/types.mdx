@@ -1,0 +1,107 @@
+---
+title: "ApiClient core types"
+sidebarTitle: "Core types"
+description: "Reference the core CoinVoyage order, status, payment, and funding types returned by ApiClient."
+layout:
+  description:
+    visible: false
+---
+
+## OrderParams
+
+```typescript
+type OrderParams = {
+  amount: string
+  fiat_unit?: "USD" | "EUR" | string | null
+  currency?: {
+    chain_id: ChainId
+    address?: string | null
+  } | null
+  recipient?: string | null
+  metadata?: OrderMetadata | null
+}
+```
+
+For token-denominated orders, omit `fiat_unit`. For fiat-denominated orders, set it to the fiat currency code.
+
+## Order
+
+```typescript
+type Order = {
+  id: string
+  organization_id: string
+  mode: OrderMode
+  status: OrderStatus
+  fulfillment: OrderFulfillment
+  payment?: PaymentData | null
+  metadata?: OrderMetadata
+  hosted_url: string
+  created_at: string
+  updated_at: string
+}
+```
+
+## OrderMode
+
+| Value | Description |
+|---|---|
+| `SALE` | Merchant sale. Settles to dashboard configuration unless `currency` and `recipient` are provided. |
+| `DEPOSIT` | Direct deposit to a specified recipient address. |
+| `REFUND` | Refund order created through `createRefundOrder()`. |
+| `SWAP` | Internal order created by standalone swap execution. |
+| `FEE_CLAIM` | Internal order created by fee claiming. |
+
+## OrderStatus
+
+| Status | Description |
+|---|---|
+| `PENDING` | Created but not yet ready for payment. |
+| `AWAITING_PAYMENT` | Ready and waiting for the user to send payment. |
+| `AWAITING_CONFIRMATION` | Payment detected and waiting for blockchain confirmation. |
+| `OPTIMISTIC_CONFIRMED` | Optimistically confirmed; execution can begin. |
+| `EXECUTING_ORDER` | Payment is being routed to the destination. |
+| `COMPLETED` | Completed successfully. |
+| `EXPIRED` | Expired before payment was received. |
+| `REFUNDED` | Refunded to the configured refund address. |
+| `FAILED` | Failed during processing. |
+| `PARTIAL_PAYMENT` | Less than the required amount was received. Pay to Address can accept additional deposits; other payment methods require resolution. |
+
+## PaymentData
+
+```typescript
+type PaymentData = {
+  payment_rail: "CRYPTO" | "FIAT"
+  input: QuoteInput
+  output: QuoteOutput
+  funding?: PaymentFunding | null
+  recipient: string
+  refund?: {
+    address?: string | null
+    tx_hash?: string | null
+    reason?: string | null
+  } | null
+  source_tx_hash?: string | null
+  destination_tx_hash?: string | null
+  fee_tx_hash?: string | null
+  steps: PaymentStep[]
+  expires_at: string
+}
+```
+
+## PaymentFunding
+
+`funding` tracks cumulative progress when one or more deposits fund a payment.
+
+```typescript
+type PaymentFunding = {
+  required_amount: CurrencyAmount
+  received_amount: CurrencyAmount
+  remaining_amount: CurrencyAmount
+  transactions: Array<{
+    tx_hash: string
+    amount: CurrencyAmount
+  }>
+}
+```
+
+For a Pay to Address partial payment, use `remaining_amount` to show what is still due and `transactions` to reconcile every deposit.

@@ -1,0 +1,82 @@
+---
+title: "CoinVoyage invoices"
+sidebarTitle: "Overview"
+description: "Create crypto invoices from the dashboard or API, send hosted payment links, track linked orders, and settle customer payments."
+layout:
+  description:
+    visible: false
+---
+
+CoinVoyage invoices turn line items and customer details into a hosted crypto payment request. Publishing an invoice creates a linked `SALE` order, emails the recipient a PDF invoice, and includes a hosted payment link. Settlement follows your organization's configured settlement currencies and wallets.
+
+<CardGroup cols={2}>
+  <Card title="Dashboard invoices" icon="display" href="/dashboard/invoices">
+    Create and send invoices without writing integration code.
+  </Card>
+  <Card title="Invoices API" icon="code" href="/invoices/api">
+    Automate drafts, publishing, retrieval, archiving, and listing.
+  </Card>
+</CardGroup>
+
+## Before you start
+
+- Configure your organization profile. Its sender details appear on the invoice and customer email.
+- Configure at least one [settlement currency and wallet](/dashboard/settlement).
+- For API integrations, keep your API secret on the server.
+
+## Invoice lifecycle
+
+```text
+Draft -> Published -> Customer payment -> Linked order completed
+              \
+               -> Archived
+```
+
+| Stage | What happens |
+|---|---|
+| Draft | Partial invoice content can be saved and updated. No email is sent. |
+| Published | Required fields are validated, a `SALE` order is linked, and the recipient receives the PDF and hosted payment link. |
+| Payment | The customer opens `payment_url` and pays using an available CoinVoyage payment method. |
+| Settlement | The linked order routes funds to your configured settlement destination. |
+| Archived | A published invoice can be archived as a separate lifecycle action. It remains retrievable and is marked with `archived_at`. |
+
+Published invoices cannot be deleted. Delete is available only for unpublished drafts.
+
+## Required publishing fields
+
+| Block | Required fields |
+|---|---|
+| Invoice | Invoice number and invoice date; due date is optional. |
+| Sender | Name and email; phone, logo, and address fields are optional. |
+| Recipient | Name and email; phone and address fields are optional. |
+| Items | Name, decimal-string unit price, and decimal-string quantity; tax and image are optional. |
+
+## Payment and settlement
+
+An invoice response includes:
+
+- `payment_url`, the customer-facing hosted invoice link.
+- `order_id`, the latest linked order ID.
+- `orders`, the linked order snapshots.
+- `published_at` and `archived_at`, the invoice lifecycle timestamps.
+
+Use the linked order status—not invoice timestamps—to decide whether to fulfill goods or services. Fulfill only after the order reaches `COMPLETED`.
+
+## Partial payments
+
+If a customer underpays through **Pay to Address**, the linked order enters `PARTIAL_PAYMENT`. The same flow can accept additional deposits until the required amount is received. Funding progress is available under `order.payment.funding`:
+
+- `required_amount` is the total needed.
+- `received_amount` is the cumulative amount received.
+- `remaining_amount` is the amount still due.
+- `transactions` lists every funding deposit.
+
+Keep the invoice unpaid and fulfillment paused until the linked order reaches `COMPLETED`.
+
+<Warning>
+  Additional deposits after `PARTIAL_PAYMENT` are supported only by Pay to Address. Other payment methods require a separate resolution path.
+</Warning>
+
+## Reconciliation
+
+Store the CoinVoyage invoice ID and linked order ID with your internal invoice record. Process order webhook deliveries idempotently, and use `ORDER_COMPLETED` as the fulfillment signal.

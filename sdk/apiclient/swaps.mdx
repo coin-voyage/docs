@@ -1,0 +1,51 @@
+---
+title: "ApiClient standalone swap methods"
+sidebarTitle: "Swaps"
+description: "Quote and execute standalone cross-chain and same-chain swaps with CoinVoyage ApiClient."
+layout:
+  description:
+    visible: false
+---
+
+Standalone swaps are separate from order payment routing. Use these methods when the swap itself is the user action.
+
+## swapQuote
+
+Gets a standalone swap quote for one source and destination pair.
+
+```typescript
+const { data, error } = await apiClient.swapQuote({
+  trade_type: "EXACT_INPUT",
+  amount: "100",
+  source: {
+    chain_id: ChainId.BASE,
+    address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  },
+  destination: { chain_id: ChainId.SUI, address: null },
+  recipient: "0xDestinationAddress",
+  slippage_bps: 50,
+});
+```
+
+## swapExecute
+
+Creates payment instructions for a standalone swap.
+
+```typescript
+const { data, error } = await apiClient.swapExecute({
+  trade_type: "EXACT_INPUT",
+  amount: "100",
+  source: {
+    currency: {
+      chain_id: ChainId.BASE,
+      address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    },
+    sender_address: "0xSenderWallet",
+    slippage_bps: 50,
+  },
+  destination: {
+    currency: { chain_id: ChainId.SUI, address: null },
+    recipient: "0xDestinationAddress",
+  },
+});
+```

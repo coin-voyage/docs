@@ -134,7 +134,7 @@ Your webhook handler and polling logic should account for each lifecycle state.
 | `EXPIRED` | The payment window elapsed before the user sent funds. |
 | `REFUNDED` | Execution failed or a refund was issued and funds were returned to the refund address. |
 | `FAILED` | The order encountered an unrecoverable error during processing. |
-| `PARTIAL_PAYMENT` | The user sent less than the required amount; the order is terminal and needs manual or automated resolution. |
+| `PARTIAL_PAYMENT` | The user sent less than the required amount. Pay to Address can accept additional deposits until the order is fully funded; other payment methods require resolution. |
 
 <Info>
   Webhook subscription event types and delivered payload values use uppercase `ORDER_*` identifiers, such as `ORDER_COMPLETED`.
@@ -147,6 +147,14 @@ PENDING -> AWAITING_PAYMENT -> AWAITING_CONFIRMATION -> OPTIMISTIC_CONFIRMED -> 
 ```
 
 Failure paths branch to `EXPIRED`, `REFUNDED`, `FAILED`, or `PARTIAL_PAYMENT` depending on where the problem occurs.
+
+### Continue a Pay to Address partial payment
+
+For Pay to Address, `PARTIAL_PAYMENT` is recoverable. Keep fulfillment paused and use `order.payment.funding.remaining_amount` to show the amount still due. Additional deposits are accumulated in `order.payment.funding.transactions`; fulfill only after the order reaches `COMPLETED`.
+
+<Warning>
+  This behavior applies only to Pay to Address. Wallet, card, and other payment methods do not support additional deposits after `PARTIAL_PAYMENT`.
+</Warning>
 
 ## Order metadata
 

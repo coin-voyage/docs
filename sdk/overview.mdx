@@ -65,7 +65,7 @@ On-ramp access is currently gated. Contact the CoinVoyage team before enabling `
 
 ### ApiClient
 
-`ApiClient` is a server-side helper imported from `@coin-voyage/paykit/server`. It wraps CoinVoyage REST endpoints for creating orders, listing orders, fetching quotes, executing swaps, managing off-ramp verification, bank accounts, off-ramp intents, webhooks, and more behind a typed interface that returns consistent `APIResponse<T>` objects. Use it in your API routes or server actions to create orders securely before passing the resulting `orderId` to the client.
+`ApiClient` is a server-side helper imported from `@coin-voyage/paykit/server`. It wraps CoinVoyage REST endpoints for orders, invoices, quotes, swaps, off-ramp verification, bank accounts, off-ramp intents, webhooks, and more behind a typed interface that returns consistent `APIResponse<T>` objects. Use it in API routes or server actions for operations that require server-held credentials.
 
 [Read the ApiClient reference →](/sdk/apiclient)
 
