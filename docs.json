@@ -53,8 +53,7 @@
                 "group": "Get started",
                 "pages": [
                   "introduction",
-                  "quickstart",
-                  "resources/migration-v2-to-v3"
+                  "quickstart"
                 ]
               },
               {
@@ -149,7 +148,6 @@
                 "pages": [
                   "resources/pricing",
                   "resources/rate-limits",
-                  "resources/migration-v2-to-v3",
                   "resources/changelog",
                   "resources/faqs",
                   "resources/support"
@@ -163,100 +161,6 @@
             "openapi": {
               "source": "https://api.coinvoyage.io/v3/openapi.json",
               "directory": "api-reference"
-            }
-          }
-        ]
-      },
-      {
-        "version": "v2",
-        "tabs": [
-          {
-            "tab": "Documentation",
-            "groups": [
-              {
-                "group": "Get started",
-                "pages": [
-                  "v2/introduction",
-                  "v2/quickstart"
-                ]
-              },
-              {
-                "group": "Core concepts",
-                "pages": [
-                  "v2/concepts/how-it-works",
-                  "v2/concepts/pay-orders",
-                  "v2/concepts/supported-networks",
-                  "v2/concepts/supported-regions"
-                ]
-              },
-              {
-                "group": "Flows",
-                "pages": [
-                  "v2/flows/overview"
-                ]
-              },
-              {
-                "group": "SDK",
-                "pages": [
-                  "v2/sdk/overview",
-                  "v2/sdk/paykitprovider",
-                  "v2/sdk/walletprovider",
-                  "v2/sdk/paybutton",
-                  "v2/sdk/apiclient",
-                  "v2/sdk/useorderstatusws",
-                  "v2/sdk/paykit-headless"
-                ]
-              },
-              {
-                "group": "API",
-                "pages": [
-                  "v2/api/overview"
-                ]
-              },
-              {
-                "group": "Webhooks",
-                "pages": [
-                  "v2/webhooks/overview",
-                  "v2/webhooks/events"
-                ]
-              },
-              {
-                "group": "Dashboard",
-                "pages": [
-                  "v2/dashboard/overview",
-                  "v2/dashboard/transactions",
-                  "v2/dashboard/settlement",
-                  "v2/dashboard/withdrawals",
-                  "v2/dashboard/custom-fees",
-                  "v2/dashboard/invoices",
-                  "v2/dashboard/developers"
-                ]
-              },
-              {
-                "group": "Guides",
-                "pages": [
-                  "v2/guides/production-checklist"
-                ]
-              },
-              {
-                "group": "Resources",
-                "pages": [
-                  "v2/resources/pricing",
-                  "v2/resources/rate-limits",
-                  "resources/migration-v2-to-v3",
-                  "v2/resources/changelog",
-                  "v2/resources/faqs",
-                  "v2/resources/support"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "API reference",
-            "icon": "square-terminal",
-            "openapi": {
-              "source": "https://api.coinvoyage.io/v2/openapi.json",
-              "directory": "v2/api-reference"
             }
           }
         ]

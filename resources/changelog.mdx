@@ -10,7 +10,8 @@ layout:
 Integration-facing changes to the CoinVoyage SDK, API, and platform behavior are documented here. Internal implementation details are omitted unless they change what you configure, call, receive, or need to handle in production. Releases follow [Semantic Versioning](https://semver.org/): major versions for breaking changes, minor for new backward-compatible functionality, and patch for bug fixes.
 
 <Info>
-  Current docs describe the v3 API and PayKit `^3` surface. If you are upgrading from v2, start with the [v2 to v3 migration guide](/resources/migration-v2-to-v3). Older entries below are retained for historical context.
+  Current docs describe the v3 API and PayKit `^3` surface. Older entries below
+  are retained for historical context.
 </Info>
 
 ---
@@ -83,8 +84,6 @@ Integration-facing changes to the CoinVoyage SDK, API, and platform behavior are
 - **PayButton lifecycle callbacks**: Payment lifecycle callbacks are now split into `onAwaitingPayment`, `onConfirmingPayment`, `onExecutingPayment`, `onPaymentCompleted`, and `onPaymentBounced`.
 - **Off-ramp API naming**: Verification and fiat payout APIs use `createOffRampVerification()`, `getOffRampVerificationStatus()`, `listOffRampIntents()`, and `createOffRampIntent()`.
 - **Webhook payloads**: Webhook deliveries now use the v3 envelope `{ event, delivered_at, order }` with uppercase `ORDER_*` event identifiers.
-
-See the [v2 to v3 migration guide](/resources/migration-v2-to-v3) for before-and-after examples.
 
 **Removed**
 
@@ -168,39 +167,6 @@ See the [v2 to v3 migration guide](/resources/migration-v2-to-v3) for before-and
 
 - **Deprecated `RequestData` / `request` field**: Removed from `PayOrderResponse`.
 - **Legacy transaction hash aliases**: Removed `SourceTransactionHash` and `DestinationTransactionHash` alias fields.
-
----
-
-## 2.0.0 — 2026-01-28
-
-<Warning>
-  This release contains breaking changes. See the [Migration Guide](/resources/migration-v1-to-v2) before upgrading.
-</Warning>
-
-**Added**
-
-- **List Pay Orders endpoint**: `GET /pay-orders` retrieves all pay orders for your organization with pagination and status filtering.
-- **Quote breakdown transparency**: Quotes now expose detailed fee breakdowns including `base`, `fees`, `gas`, and `total`.
-- **Multi-provider execution tracking**: `payment.execution` tracks execution status across multiple providers.
-- **`ApiClient` constructor options**: Added `sessionId` and `version` options.
-- **Dedicated PayOrder helpers**: `createDepositPayOrder()` and `createSalePayOrder()` provide clearer intent for each payment flow.
-
-**Changed**
-
-- **API base URL**: Updated to `https://api.coinvoyage.io/v2/`.
-- **Response structure**: Flat fields moved into nested `payment` and `fulfillment` objects.
-- **BigInt handling**: `raw_amount` fields now return strings instead of numbers to prevent precision loss.
-- **Authorization signature**: `generateAuthorizationSignature()` now uses HMAC-SHA256 and requires `method` and `path`.
-- **Sale and refund authorization**: `createSalePayOrder()` and `createRefundPayOrder()` now accept `apiSecret` directly instead of a pre-generated signature.
-- **Webhook event naming**: Webhook subscriptions use uppercase `ORDER_*` identifiers; delivered payloads use lowercase `payorder_*` values in the `type` field.
-
-**Removed**
-
-- **Process endpoint**: `/pay-orders/{payorder_id}/process` has been removed. Payment processing now happens automatically when funds are detected.
-
-**Deprecated**
-
-- **Top-level response fields**: `source_currency`, `source_amount`, `destination_currency`, `destination_amount`, `deposit_address`, `receiving_address`, `refund_address`, and `expires_at` are deprecated at the top level. Use the corresponding nested fields in `payment` and `fulfillment` instead.
 
 ---
 
