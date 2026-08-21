@@ -1,13 +1,23 @@
 ---
-title: "CoinVoyage PayKit SDK — overview and installation guide"
-sidebarTitle: "Overview"
-description: "Install @coin-voyage/paykit and learn how PayKitProvider, WalletProvider, PayButton, ApiClient, and status hooks fit into your integration."
+title: "CoinVoyage PayKit SDK — SALE and DEPOSIT payments"
+sidebarTitle: "PayKit overview"
+description: "Install @coin-voyage/paykit to add SALE and DEPOSIT payment flows with PayKitProvider, PayButton, ApiClient, and status hooks."
 layout:
   description:
     visible: false
 ---
 
-The `@coin-voyage/paykit` package is the recommended way to integrate CoinVoyage payments into your web application. It provides React context providers that manage wallet connections and order state, a ready-made button component with a built-in payment modal, and a server-side API client that abstracts every authenticated endpoint. You can use as much or as little of the SDK as your integration requires — reach for the UI components for the fastest path to production, or drop down to the `ApiClient` when you need full control over the payment flow.
+Use `@coin-voyage/paykit` when your application needs to create and fulfill CoinVoyage payment orders:
+
+- **SALE** — accept a customer payment and settle the funds to your configured destination.
+- **DEPOSIT** — let a user fund a specified wallet or account.
+
+PayKit provides React context providers that manage wallet connections and order state, a ready-made button component with a built-in payment modal, and a server-side API client that abstracts authenticated endpoints. Reach for the UI components for the fastest path to production, or use `ApiClient` when you need full control over the payment flow.
+
+<Note>
+  To add standalone token swaps to your application, use
+  [`@coin-voyage/swapkit`](/sdk/swapkit) instead.
+</Note>
 
 ## Installation
 

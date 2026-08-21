@@ -1,0 +1,82 @@
+---
+title: "CoinVoyage SwapKit — embeddable token swaps"
+sidebarTitle: "SwapKit"
+description: "Install @coin-voyage/swapkit to add a cross-chain token swap experience to your React application."
+layout:
+  description:
+    visible: false
+---
+
+Use `@coin-voyage/swapkit` when you want to add token swap capabilities to your application. It gives your users an embeddable interface for connecting a wallet, selecting source and destination tokens, requesting a quote, configuring slippage, executing the swap, and tracking its status.
+
+SwapKit is independent from the SALE and DEPOSIT payment flows provided by PayKit. If your application needs to accept customer payments or fund a specified wallet or account, use [`@coin-voyage/paykit`](/sdk/overview).
+
+## Installation
+
+Install SwapKit with its core peer dependencies:
+
+<CodeGroup>
+
+```bash npm
+npm i @coin-voyage/swapkit @tanstack/react-query react react-dom styled-components
+```
+
+```bash pnpm
+pnpm add @coin-voyage/swapkit @tanstack/react-query react react-dom styled-components
+```
+
+```bash yarn
+yarn add @coin-voyage/swapkit @tanstack/react-query react react-dom styled-components
+```
+
+```bash bun
+bun add @coin-voyage/swapkit @tanstack/react-query react react-dom styled-components
+```
+
+</CodeGroup>
+
+Install the wallet peer dependencies listed by `@coin-voyage/swapkit` for the chains your application supports. SwapKit uses `styled-components` and does not require Tailwind CSS.
+
+## Add the swap widget
+
+Wrap `Swap` with the re-exported `WalletProvider` and `SwapKitProvider`:
+
+```tsx
+"use client";
+
+import { Swap, SwapKitProvider, WalletProvider } from "@coin-voyage/swapkit";
+
+export function SwapWidget() {
+  return (
+    <WalletProvider>
+      <SwapKitProvider
+        apiKey={process.env.NEXT_PUBLIC_COIN_VOYAGE_API_KEY!}
+        environment="production"
+        mode="dark"
+      >
+        <Swap
+          defaultSourceCurrency={{ chain_id: 1 }}
+          defaultDestinationCurrency={{
+            chain_id: 30000000000001,
+            address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+          }}
+        />
+      </SwapKitProvider>
+    </WalletProvider>
+  );
+}
+```
+
+`defaultSourceCurrency` and `defaultDestinationCurrency` accept a chain ID and an optional token address. Defaults are read when the widget mounts; remount the widget with a new React `key` to apply changed defaults.
+
+## Configure the swap experience
+
+- Use `defaultSlippageBps` to start with a custom slippage tolerance. When you omit it, SwapKit lets the quote service choose the tolerance automatically.
+- Use `onComplete` to receive the completed swap's `orderId` and `transactionHash`.
+- Use `onError` to surface execution errors in your application.
+- Set `mode` on `SwapKitProvider` to `"light"`, `"dark"`, or `"auto"`, and pass `theme` to override individual widget colors.
+
+<Note>
+  `SwapKitProvider` uses the public API client and accepts an API key, but never an
+  admin signing key.
+</Note>
