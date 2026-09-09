@@ -53,6 +53,7 @@
                 "group": "Get started",
                 "pages": [
                   "introduction",
+                  "flows/overview",
                   "quickstart"
                 ]
               },
@@ -66,50 +67,19 @@
                 ]
               },
               {
-                "group": "Flows",
-                "pages": [
-                  "flows/overview"
-                ]
-              },
-              {
-                "group": "Invoices",
-                "pages": [
-                  "invoices/overview",
-                  "invoices/api"
-                ]
-              },
-              {
-                "group": "PAY",
+                "group": "PayKit",
                 "pages": [
                   "sdk/overview",
-                  "sdk/paykitprovider",
                   "sdk/walletprovider",
+                  "sdk/paykitprovider",
                   "sdk/paybutton",
-                  {
-                    "group": "ApiClient",
-                    "root": "sdk/apiclient",
-                    "expanded": false,
-                    "pages": [
-                      "sdk/apiclient/authentication",
-                      "sdk/apiclient/orders",
-                      "sdk/apiclient/wallets-and-search",
-                      "sdk/apiclient/on-ramp",
-                      "sdk/apiclient/off-ramp",
-                      "sdk/apiclient/invoices",
-                      "sdk/apiclient/fees",
-                      "sdk/apiclient/webhooks-and-websockets",
-                      "sdk/apiclient/types"
-                    ]
-                  },
-                  "sdk/useorderstatusws",
-                  "sdk/paykit-headless"
+                  "sdk/useorderstatusws"
                 ]
               },
               {
-                "group": "SWAP",
+                "group": "SwapKit",
                 "pages": [
-                  "sdk/swapkit",
-                  "sdk/apiclient/swaps"
+                  "sdk/swapkit"
                 ]
               },
               {
@@ -120,16 +90,43 @@
                 ]
               },
               {
-                "group": "API",
+                "group": "Invoices",
                 "pages": [
-                  "api/overview"
+                  "invoices/overview",
+                  "invoices/api"
                 ]
               },
               {
-                "group": "Webhooks",
+                "group": "API integration",
+                "pages": [
+                  "api/overview",
+                  {
+                    "group": "ApiClient reference",
+                    "root": "sdk/apiclient",
+                    "expanded": false,
+                    "pages": [
+                      "sdk/apiclient/authentication",
+                      "sdk/apiclient/orders",
+                      "sdk/apiclient/swaps",
+                      "sdk/apiclient/wallets-and-search",
+                      "sdk/apiclient/on-ramp",
+                      "sdk/apiclient/off-ramp",
+                      "sdk/apiclient/invoices",
+                      "sdk/apiclient/fees",
+                      "sdk/apiclient/webhooks-and-websockets",
+                      "sdk/apiclient/types"
+                    ]
+                  },
+                  "resources/rate-limits",
+                  "sdk/paykit-headless"
+                ]
+              },
+              {
+                "group": "Going live",
                 "pages": [
                   "webhooks/overview",
-                  "webhooks/events"
+                  "webhooks/events",
+                  "guides/production-checklist"
                 ]
               },
               {
@@ -145,16 +142,9 @@
                 ]
               },
               {
-                "group": "Guides",
-                "pages": [
-                  "guides/production-checklist"
-                ]
-              },
-              {
                 "group": "Resources",
                 "pages": [
                   "resources/pricing",
-                  "resources/rate-limits",
                   "resources/changelog",
                   "resources/faqs",
                   "resources/support"

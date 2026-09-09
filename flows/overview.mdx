@@ -1,6 +1,6 @@
 ---
 title: "CoinVoyage integration flows"
-sidebarTitle: "Overview"
+sidebarTitle: "Choose an integration"
 description: "Choose the right CoinVoyage flow for wallet deposits, merchant checkout, swaps, optional fiat off-ramp payouts, dashboard invoices, and x402 payments."
 layout:
   description:
@@ -163,7 +163,7 @@ Use this pattern when you want a wallet to exchange one supported on-chain asset
 - Show slippage, fees, source asset, destination asset, and destination chain before the user signs.
 - Keep swap execution separate from fiat off-ramp payouts. A swap changes on-chain assets; an off-ramp intent moves eligible settlement funds to a linked bank account.
 
-Read next: [ApiClient](/sdk/apiclient), [Supported networks](/concepts/supported-networks), and [Pricing](/resources/pricing).
+Read next: [SwapKit widget](/sdk/swapkit), [Swap API methods](/sdk/apiclient/swaps), and [Supported networks](/concepts/supported-networks).
 
 ## Example 4: Off-ramp settlement funds to a bank account
 
@@ -240,7 +240,7 @@ Use this pattern when an operator wants to request payment without building a cu
 - Use clear line items and due dates so finance and support can reconcile payments later.
 - If invoices need to update an internal system, subscribe to webhook events and store invoice identifiers in metadata.
 
-Read next: [Invoices](/dashboard/invoices), [Transactions](/dashboard/transactions), and [Pricing](/resources/pricing).
+Read next: [Invoice lifecycle](/invoices/overview), [Create invoices in the dashboard](/dashboard/invoices), and [Automate invoices through the API](/invoices/api).
 
 ## Example 6: Pay protected resources with x402 (Preview)
 
