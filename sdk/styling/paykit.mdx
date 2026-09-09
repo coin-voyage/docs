@@ -1,0 +1,60 @@
+---
+title: "PayKit styling and theming"
+sidebarTitle: "PayKit"
+description: "Customize the PayKit payment modal with colors, button styles, and light or dark themes."
+---
+
+Use `mode` to choose the modal's base color scheme and `customTheme` to match your branding. Set `mode="light"` or `mode="dark"` for a fixed appearance, or use `mode="auto"` (the default) to follow the user's OS preference.
+
+Pass CSS custom properties directly to `customTheme`. All properties are optional and accept CSS values as strings, including units where needed (for example, `"12px"`). Properties you omit keep their built-in styles for the selected mode.
+
+In the [provider setup](/sdk/paykitprovider#setup), add your theme to `PayKitProvider`:
+
+```tsx
+<PayKitProvider
+  apiKey={process.env.NEXT_PUBLIC_COIN_VOYAGE_API_KEY!}
+  mode="light"
+  customTheme={{
+    "--ck-body-background": "#ffffff",
+    "--ck-body-background-secondary": "#f3f4f6",
+    "--ck-body-color": "#111827",
+    "--ck-body-color-muted": "#6b7280",
+    "--ck-primary-button-background": "#d6296f",
+    "--ck-primary-button-hover-background": "#b8225f",
+    "--ck-primary-button-color": "#ffffff",
+    "--ck-primary-button-border-radius": "12px",
+    "--ck-secondary-button-background": "#d6296f",
+    "--ck-secondary-button-hover-background": "#b8225f",
+    "--ck-secondary-button-color": "#ffffff",
+    "--ck-secondary-button-border-radius": "12px",
+    "--ck-focus-color": "#d6296f",
+    "--ck-overlay-background": "rgba(17, 24, 39, 0.6)",
+  }}
+>
+  {children}
+</PayKitProvider>
+```
+
+## Common theme properties
+
+| Area | CSS custom properties |
+| --- | --- |
+| Modal surfaces | `--ck-body-background`, `--ck-body-background-secondary`, `--ck-body-background-tertiary` |
+| Text | `--ck-body-color`, `--ck-body-color-muted`, `--ck-body-color-muted-hover` |
+| Dividers | `--ck-body-divider`, `--ck-body-divider-secondary` |
+| Primary buttons | `--ck-primary-button-background`, `--ck-primary-button-color`, `--ck-primary-button-border-radius`, `--ck-primary-button-font-weight`, `--ck-primary-button-box-shadow` |
+| Primary button hover | `--ck-primary-button-hover-background`, `--ck-primary-button-hover-box-shadow` |
+| Secondary buttons | `--ck-secondary-button-background`, `--ck-secondary-button-color`, `--ck-secondary-button-border-radius`, `--ck-secondary-button-font-weight`, `--ck-secondary-button-box-shadow` |
+| Secondary button hover | `--ck-secondary-button-hover-background` |
+| Overlay and shadow | `--ck-overlay-background`, `--ck-modal-box-shadow` |
+| Status and focus | `--ck-body-color-danger`, `--ck-body-color-valid`, `--ck-focus-color`, `--ck-spinner-color` |
+| Tooltips | `--ck-tooltip-background`, `--ck-tooltip-color`, `--ck-tooltip-shadow` |
+| Disclaimer | `--ck-body-disclaimer-background`, `--ck-body-disclaimer-color`, `--ck-body-disclaimer-link-color`, `--ck-body-disclaimer-link-hover-color` |
+| QR code | `--ck-qr-dot-color`, `--ck-qr-border-color` |
+
+Use `options.overlayBlur` to control the background blur in pixels separately from the overlay color.
+
+## Light and dark themes
+
+Custom values override the base theme in both light and dark modes. With `mode="auto"`, only properties you leave unset change with the OS preference. If you override backgrounds and text colors, choose values that work together in both modes, or pass a different `customTheme` when your application's theme changes and set `mode` to match.
+

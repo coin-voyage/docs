@@ -74,7 +74,7 @@ export function SwapWidget() {
 - Use `defaultSlippageBps` to start with a custom slippage tolerance. When you omit it, SwapKit lets the quote service choose the tolerance automatically.
 - Use `onComplete` to receive the completed swap's `orderId` and `transactionHash`.
 - Use `onError` to surface execution errors in your application.
-- Set `mode` on `SwapKitProvider` to `"light"`, `"dark"`, or `"auto"`, and pass `theme` to override individual widget colors.
+- Set `mode` on `SwapKitProvider` to `"light"`, `"dark"`, or `"auto"`, and pass `theme` to customize the widget. See [Styling / Theme](/sdk/styling/swapkit) for an example and all theme properties.
 
 <Note>
   `SwapKitProvider` uses the public API client and accepts an API key, but never an

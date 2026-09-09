@@ -1,0 +1,77 @@
+---
+title: "SwapKit styling and theming"
+sidebarTitle: "SwapKit"
+description: "Customize the SwapKit widget with colors, typography, rounded corners, and light or dark themes."
+---
+
+Use `mode` on `SwapKitProvider` to choose the widget's base color scheme and `theme` to match your branding. The `theme` prop accepts a `Partial<SwapKitTheme>` object: every property is optional and takes a CSS value as a string.
+
+SwapKit uses named properties such as `accent` and `radius`. [PayKit](/sdk/styling/paykit) uses `--ck-*` CSS custom properties through its `customTheme` prop.
+
+## Apply a custom theme
+
+After [installing SwapKit](/sdk/swapkit#installation), pass your theme to the provider:
+
+```tsx
+"use client";
+
+import {
+  Swap,
+  SwapKitProvider,
+  WalletProvider,
+  type SwapKitTheme,
+} from "@coin-voyage/swapkit";
+
+const theme: Partial<SwapKitTheme> = {
+  fontFamily: "Arial, Helvetica, sans-serif",
+  accent: "#d6296f",
+  accentHover: "#b8225f",
+  accentText: "#ffffff",
+  radius: "16px",
+};
+
+export function BrandedSwap() {
+  return (
+    <WalletProvider>
+      <SwapKitProvider
+        apiKey={process.env.NEXT_PUBLIC_COIN_VOYAGE_API_KEY!}
+        mode="auto"
+        theme={theme}
+      >
+        <Swap />
+      </SwapKitProvider>
+    </WalletProvider>
+  );
+}
+```
+
+## Theme properties
+
+SwapKit maps these properties to CSS custom properties inside the widget. Use the property names in the first column when passing `theme`.
+
+| Property | CSS custom property | Controls |
+| --- | --- | --- |
+| `fontFamily` | `--sk-font-family` | Font family for the widget and its controls. Load any custom font in your application. |
+| `background` | `--sk-background` | Widget background. |
+| `surface` | `--sk-surface` | Surface background. |
+| `surfaceElevated` | `--sk-surface-elevated` | Elevated surface background. |
+| `border` | `--sk-border` | Border color. |
+| `text` | `--sk-text` | Main text color. |
+| `textMuted` | `--sk-text-muted` | Secondary text color. |
+| `accent` | `--sk-accent` | Accent color for actions and focus outlines. |
+| `accentHover` | `--sk-accent-hover` | Accent color on hover. |
+| `accentText` | `--sk-accent-text` | Text color on accent backgrounds. |
+| `danger` | `--sk-danger` | Error color. |
+| `warning` | `--sk-warning` | Warning color. |
+| `success` | `--sk-success` | Success color. |
+| `overlay` | `--sk-overlay` | Overlay background. |
+| `shadow` | `--sk-shadow` | Box shadow. |
+| `radius` | `--sk-radius` | Base corner radius, including a CSS unit such as `"16px"`. |
+
+## Light and dark themes
+
+Set `mode="light"` or `mode="dark"` for a fixed appearance. With `mode="auto"` (the default), SwapKit follows the user's OS color scheme preference.
+
+Your `theme` overrides are applied to both built-in themes. Properties you omit retain their light or dark defaults. The example above customizes the accent, font, and corner radius while letting backgrounds and text adapt automatically.
+
+If you override backgrounds and text colors, choose values that work together in both modes, or pass a different `theme` when your application's theme changes and set `mode` to match.
