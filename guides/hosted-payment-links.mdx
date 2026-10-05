@@ -1,0 +1,70 @@
+---
+title: "Hosted payment links"
+description: "Customize hosted payment and invoice checkout with PayKit query parameters."
+---
+
+Use a hosted payment link to collect payment through CoinVoyage without embedding PayKit in your app:
+
+```text
+https://pay.coinvoyage.io/pay/<order_id>
+```
+
+For invoices, use the `payment_url` returned by the [Invoices API](/invoices/api). Both hosted order and invoice links support the query options below.
+
+## Query parameters
+
+| Parameter | Accepted values | Behavior |
+| --- | --- | --- |
+| `paymentMethod` | `card`, `wallet`, `address`; also `CARD`, `WALLET`, `DEPOSIT_ADDRESS` | Selects the initial PayKit payment method. Automatically opens payable orders unless `defaultOpen=false`. |
+| `defaultOpen` | `true`, `false` | Controls automatic modal opening for payable orders and partial-payment details. |
+| `intent` | Text, up to 80 characters after trimming | Changes the payable button label, for example `Donate` or `Purchase`. Status and retry labels stay unchanged. |
+| `resetOnSuccess` | `true`, `false` | Controls PayKit's option to reset payment state after a successful payment. |
+
+All parameters are optional. Boolean values accept only lowercase `true` or `false`; unsupported values are ignored. Empty or excessively long intent values are ignored.
+
+`method=card|wallet|address` remains a compatibility alias. When both parameters are present, `paymentMethod` takes precedence, even if its value is unsupported.
+
+## Examples
+
+Open directly on wallet payment:
+
+```text
+https://pay.coinvoyage.io/pay/<order_id>?paymentMethod=wallet
+```
+
+Select card payment but let the customer open the modal by clicking the button:
+
+```text
+https://pay.coinvoyage.io/pay/<order_id>?paymentMethod=card&defaultOpen=false
+```
+
+Open a donation payment automatically and reset PayKit state after success:
+
+```text
+https://pay.coinvoyage.io/pay/<order_id>?paymentMethod=wallet&defaultOpen=true&intent=Donate&resetOnSuccess=true
+```
+
+Build URLs with `URL.searchParams` to encode labels and preserve existing invoice query parameters:
+
+```typescript
+const url = new URL(paymentUrl);
+url.searchParams.set("paymentMethod", "address");
+url.searchParams.set("defaultOpen", "true");
+url.searchParams.set("intent", "Pay invoice");
+
+const checkoutUrl = url.toString();
+```
+
+## Opening and payment availability
+
+Without an explicit `defaultOpen`, a pending order stays on the hosted page until the customer clicks the button, unless a valid payment method is selected. Orders awaiting payment automatically open to continue payment. Partial-payment details open automatically only with `defaultOpen=true` or when continuing an invoice retry.
+
+`defaultOpen=false` suppresses automatic opening, including method selection, awaiting-payment continuation, and invoice retries. Customers can still open the modal using the hosted button.
+
+Completed, refunded, expired, failed, and processing orders keep their existing status actions and do not automatically open, even with `defaultOpen=true`. Expired and failed orders offer a restart action; validated query options are preserved on the new payment link.
+
+Selecting a method does not restrict the other available methods. PayKit still checks eligibility for the order. Card selection is ignored when authenticated order metadata contains `card_payments: false`; the URL cannot enable cards against that setting.
+
+The hosted page closes the modal after a successful payment. `resetOnSuccess` controls PayKit state reset and does not change the order status or merchant callback destination.
+
+For embedded React buttons, see the [PayButton reference](/sdk/paybutton).

@@ -62,6 +62,8 @@ An invoice response includes:
 
 Use the linked order status—not invoice timestamps—to decide whether to fulfill goods or services. Fulfill only after the order reaches `COMPLETED`.
 
+Customize the hosted invoice checkout using [payment-link query options](/guides/hosted-payment-links), including the initial payment method, automatic modal opening, button label, and reset behavior.
+
 ## Partial payments
 
 If a customer underpays through **Pay to Address**, the linked order enters `PARTIAL_PAYMENT`. The same flow can accept additional deposits until the required amount is received. Funding progress is available under `order.payment.funding`:

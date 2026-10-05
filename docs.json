@@ -62,6 +62,7 @@
                 "pages": [
                   "concepts/how-it-works",
                   "concepts/pay-orders",
+                  "guides/hosted-payment-links",
                   "concepts/supported-networks",
                   "concepts/supported-regions"
                 ]
