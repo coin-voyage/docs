@@ -16,6 +16,53 @@ Integration-facing changes to the CoinVoyage SDK, API, and platform behavior are
 
 ---
 
+## 3.6.0 - 2026-10-05
+
+Released as `@coin-voyage/shared`, `@coin-voyage/crypto`, and `@coin-voyage/paykit` 3.6.0, and `@coin-voyage/swapkit` 0.4.0.
+
+<Warning>
+  Off-ramp verification now requires an email challenge, and
+  `AddBankAccountRequest` is validated per account type. Server integrations
+  that call `createOffRampVerification()` or `addBankAccount()` need to update
+  their request payloads before upgrading.
+</Warning>
+
+**Added**
+
+- **Browser-safe ApiClient entry point**: `@coin-voyage/shared/api/browser` exports an `ApiClient` without Node `crypto`, for client bundles. The server `ApiClient` in `@coin-voyage/shared/api` extends it and keeps every secret-signed method.
+- **Off-ramp email challenge**: `ApiClient.issueOffRampVerificationEmailChallenge()` issues the challenge that must be completed before creating an off-ramp verification. The returned code is sensitive and must only be delivered from a trusted server.
+- **Verification requirement link**: `OffRampVerificationResponse` now includes an optional `requirement_url`.
+- **Invoice note and visibility**: `CreateInvoiceParams`, `SaveInvoiceDraftParams`, and `InvoiceData` accept `note` and `is_public`.
+- **GBP and COP bank rails**: `BankOnrampPaymentRail` now includes `faster_payments` and `bre_b`, and the `cop` endorsement maps to COP.
+- **Masked bank account details**: `BankAccountMaskedDetails` now includes `bank_code` and `account_type_detail`.
+- **WalletConnect modal connector**: `createWalletConnectModalConnector()` in `@coin-voyage/crypto/connectors` builds a WalletConnect connector with the QR modal enabled from an existing connector.
+- **BTC fee rate helpers**: `estimateFeeRate()` returns a priority fee rate in whole sat/vB, and `sendBtc()` accepts an optional `feeRate`.
+- **SwapKit custom recipient on same-chain swaps**: The destination wallet selector is always available with "Paste Address", and now sits in the BUY card header.
+- **SwapKit destination balance**: The BUY card shows the balance of the connected destination wallet.
+
+**Changed**
+
+- **Off-ramp verification requests**: `OffRampVerificationRequest` now requires `email_challenge_id` and `email_challenge_code`. Issue a challenge first, then create the verification.
+- **Off-ramp request signing**: `createOffRampVerification()` now signs the request body as well as the path. No caller changes are needed.
+- **Bank account request types**: `AddBankAccountRequest` is now a strict union per account type. `bank_name` is required for every account type except Bre-B and Colombian bank transfer; `address` is also required except for those two and GB accounts; `first_name` and `last_name` are required when `account_owner_type` is `individual`. Fields that belong to another account type are rejected. `buildAddBankAccountRequest()` enforces the same rules.
+- **SWIFT account details**: `SWIFTAccountInfo` now requires at least one of `account_number` or `bic`.
+- **PayKit package exports**: The `exports` map lists `types` first and uses a `default` condition instead of `import`.
+- **SwapKit theming**: The root background is transparent unless `theme.background` is set, and the light theme `surface` color is now `#f4f5f7`.
+- **Peer dependency**: `@bigmi/react` is now `^0.9.4` for crypto, PayKit, and SwapKit.
+
+**Fixed**
+
+- **Mobile WalletConnect**: Mobile WalletConnect flows work again in PayKit and SwapKit, keeping the configured project metadata and modal options. In SwapKit the wallet is labelled "Mobile Wallets" and its modal renders above the swap UI.
+- **BTC wallet deposit fees**: UniSat, OneKey, and OKX deposits now request a priority fee rate instead of the wallet's cheapest default, so deposits confirm within provider deadlines. If the estimate fails, the wallet default is used.
+- **WalletConnect modal options**: `createWalletConnectConnector()` merges caller `qrModalOptions` with the default z-index instead of replacing it.
+- **PayKit primary button hover color**: The hover color now reads `--ck-primary-button-hover-color`. Themes that set the misnamed `--ck-button-primary-hover-color` need to rename it.
+- **SwapKit amount precision**: Swap amounts and balances keep full precision, so Max and percentage buttons no longer round.
+- **SwapKit same-chain progress**: Same-chain swaps no longer show a redundant "Receive" step in the transaction details.
+- **SwapKit balance refresh**: Balances refresh after a refund, and are refetched shortly after a swap settles to catch lagging chain data.
+- **SwapKit token matching**: Held tokens match the token list regardless of address casing on EVM and Sui.
+
+---
+
 ## 3.4.0 - 2026-08-03
 
 **Added**
