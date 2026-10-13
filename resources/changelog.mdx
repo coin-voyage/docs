@@ -16,6 +16,36 @@ Integration-facing changes to the CoinVoyage SDK, API, and platform behavior are
 
 ---
 
+## 3.7.0 - 2026-10-13
+
+Released as `@coin-voyage/shared`, `@coin-voyage/crypto`, and `@coin-voyage/paykit` 3.7.0, and `@coin-voyage/swapkit` 0.5.0.
+
+**Added**
+
+- **Zcash support**: Added `ChainId.ZEC` (`20000000000002`), chain metadata, explorer links, and address validation. Only mainnet transparent addresses starting with `t1` or `t3` are supported; shielded, unified, TEX, and testnet addresses are excluded.
+- **Zcash payments and swap destinations**: PayKit supports ZEC through Pay to Address, with a $10 minimum when the order's USD amount is known. SwapKit supports ZEC as a destination with a pasted recipient address. Zcash has no connected-wallet payment support and cannot be selected as a SwapKit source. Availability follows the configured token list.
+- **Preview token lists**: `fetchTokenList()` now accepts `{ preview: true }` to load preview chains, or `{ url }` to use a custom list. Existing URL-string calls remain supported, and a custom URL takes precedence over `preview`.
+- **Vue and Nuxt integration**: Added `@coin-voyage/vue` 0.1.0 with `CoinVoyagePay`, `CoinVoyageSwap`, and `useCoinVoyage()` for Vue 3.3 and later. The widgets load in the browser after mount and use the newly publishable `@coin-voyage/embed` runtime.
+
+**Changed**
+
+- **Environment-aware token lists**: PayKit and SwapKit load preview tokens in `development` and `local` environments, while `production` keeps the production list. Production and preview caches are separate.
+- **PayKit payment flow**: Removed the legacy onboarding screen and replaced the About screen with CoinVoyage information and website/documentation links. Wallet download buttons now open the wallet's download page or iOS/Android links directly.
+- **Sale payment summaries**: SALE orders show the order total and a payment reference that copies the full order ID. Deposit orders retain network-cost and estimated-duration details.
+- **SwapKit transaction progress**: Transaction Details shows an estimated duration when provided and a separate cross-chain execution step between source confirmation and receipt.
+
+**Fixed**
+
+- **PayKit order state**: Delayed payment responses and wallet submissions no longer overwrite newer order updates or terminal states. In-flight payment requests are isolated per API client.
+- **Payment address matching**: EVM and Sui addresses match regardless of casing, while Solana, Bitcoin, Zcash, and Tron addresses retain case-sensitive matching when reusing payment details.
+- **Sale confirmation links**: PayKit falls back to a funding transaction hash when the payment has no source transaction hash, so receipts can still link to the explorer.
+- **PayKit navigation**: Fixed modal heading flicker and stuck back navigation. Navigating or reopening the modal clears stale errors, and order monitoring resets connection state when subscriptions change.
+- **Clipboard feedback**: Copy controls report success only after copying succeeds and use a fallback when the Clipboard API is unavailable.
+- **EVM transaction fees**: Incomplete or inconsistent EIP-1559 fee pairs are re-estimated. Zero-priority-fee results let the wallet estimate both fee fields, avoiding wallet rejection of a zero tip.
+- **Solana wallet connections**: Wallet connection waits for adapter listeners to be installed after selection, avoiding missed synchronous connection events.
+
+---
+
 ## 3.6.0 - 2026-10-05
 
 Released as `@coin-voyage/shared`, `@coin-voyage/crypto`, and `@coin-voyage/paykit` 3.6.0, and `@coin-voyage/swapkit` 0.4.0.
