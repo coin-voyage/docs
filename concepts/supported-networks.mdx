@@ -1,7 +1,7 @@
 ---
 title: "Blockchain networks and chain IDs supported by CoinVoyage"
 sidebarTitle: "Supported networks"
-description: "Complete list of every blockchain CoinVoyage supports for payments and settlement, including chain IDs, testnet availability, and upcoming networks."
+description: "Complete list of every blockchain CoinVoyage supports for payments and settlement, including chain IDs and upcoming networks."
 layout:
   description:
     visible: false
@@ -14,15 +14,22 @@ CoinVoyage accepts payments from and settles to a growing set of blockchain netw
 | Chain                     | Chain ID         |
 | ------------------------- | ---------------- |
 | Bitcoin                   | `20000000000001` |
+| Zcash                     | `20000000000002` |
 | Solana                    | `30000000000001` |
 | Ethereum Mainnet          | `1`              |
 | Optimism                  | `10`             |
-| Arbitrum                  | `42161`          |
+| Arbitrum One              | `42161`          |
 | Base                      | `8453`           |
-| Binance Smart Chain (BSC) | `56`             |
+| BNB Smart Chain (BSC)     | `56`             |
 | Polygon                   | `137`            |
 | Robinhood Chain           | `4663`           |
 | Sui                       | `30000000000002` |
+
+All of these are mainnets. The CoinVoyage token list does not include testnet networks, so there are no testnet chain IDs.
+
+Zcash is available through Pay to Address and as a swap destination, using mainnet transparent addresses that start with `t1` or `t3`. Shielded and unified addresses are not supported.
+
+The tokens available on each network come from the public [CoinVoyage token list](https://github.com/coin-voyage/token-list).
 
 ## Using chain IDs in your integration
 
@@ -34,6 +41,7 @@ import { ChainId } from "@coin-voyage/paykit/server";
 // ChainId.SUI === 30000000000002
 // ChainId.ETH  === 1
 // ChainId.SOL  === 30000000000001
+// ChainId.ZEC  === 20000000000002
 
 const { data } = await apiClient.createDepositOrder({
   amount: "10",
