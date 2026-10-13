@@ -51,11 +51,11 @@ Your application should handle every outcome and recovery state, not just succes
 ## Webhooks
 
 - [ ] A production webhook endpoint is configured in the [Developers dashboard](https://dashboard.coinvoyage.io/developers).
-- [ ] The endpoint uses HTTPS.
-- [ ] The raw request body is verified with `CoinVoyage-Webhook-Signature` before parsing or processing.
+- [ ] The endpoint uses HTTPS and is reachable from the public internet.
+- [ ] The raw request body is verified with `CoinVoyage-Webhook-Signature-V2` and `CoinVoyage-Webhook-Timestamp` before parsing or processing, and timestamps more than 5 minutes from the current time are rejected.
 - [ ] The webhook secret is stored in a server-side secret store.
 - [ ] The endpoint returns a `2xx` response quickly and moves heavy work to a queue or background job.
-- [ ] Event processing is idempotent by event type, delivery timestamp, and CoinVoyage order ID.
+- [ ] Event processing is idempotent by the `X-Event-ID` header, which is stable across [retries](/webhooks/overview#retries).
 - [ ] Unknown event types are logged and acknowledged instead of breaking delivery.
 - [ ] Webhook failures trigger alerts.
 

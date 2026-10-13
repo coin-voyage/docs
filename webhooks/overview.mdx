@@ -1,7 +1,7 @@
 ---
 title: "Set up webhooks for real-time payment notifications"
 sidebarTitle: "Set up webhooks"
-description: "Register a CoinVoyage webhook endpoint, verify HMAC-SHA256 delivery signatures, and handle order lifecycle events in your server."
+description: "Register a CoinVoyage webhook endpoint, verify timestamped HMAC-SHA256 delivery signatures, handle retries, and process order lifecycle events in your server."
 layout:
   description:
     visible: false
@@ -24,7 +24,7 @@ Register and manage webhook endpoints in the CoinVoyage Dashboard under the **De
     Provide the URL of your publicly accessible webhook handler.
 
     <Warning>
-      Your endpoint must use HTTPS in production. HTTP endpoints are not accepted.
+      Your endpoint must use HTTPS and be reachable from the public internet. HTTP URLs, `localhost`, and private or internal addresses are rejected. To test against a machine on your own network, expose it through a public HTTPS tunnel.
     </Warning>
   </Step>
   <Step title="Select the events to subscribe to">
@@ -40,7 +40,7 @@ Register and manage webhook endpoints in the CoinVoyage Dashboard under the **De
 </Steps>
 
 <Info>
-  Your endpoint must be publicly accessible and respond with a `2xx` status code within 30 seconds. Responses outside this window are treated as delivery failures.
+  Your endpoint must be publicly accessible and respond with a `2xx` status code within 30 seconds. A slower response, any other status code, or a network error counts as a failed delivery and is [retried](#retries).
 </Info>
 
 ## Delivery payload
@@ -64,17 +64,39 @@ CoinVoyage v3 delivers the same event envelope to registered webhooks and `/v3/w
 
 Use `event` to dispatch business logic and `order.id` as the CoinVoyage payment lifecycle ID. Use `order.metadata` to reconcile back to your internal order, invoice, account, or customer.
 
+## Delivery headers
+
+Every webhook request, including each retry, carries these headers:
+
+| Header | Value |
+|---|---|
+| `CoinVoyage-Webhook-Timestamp` | Unix time in seconds at which this attempt was sent. |
+| `CoinVoyage-Webhook-Signature-V2` | Base64-encoded HMAC-SHA256 of `<timestamp>.<raw body>`, keyed with your Webhook Secret. |
+| `CoinVoyage-Webhook-Signature` | Legacy signature: Base64-encoded HMAC-SHA256 of the raw body alone. Kept for existing integrations. |
+| `X-Event-ID` | ID of the event. It stays the same across every retry of that event. |
+| `X-Event-Type` | Event identifier of the delivery, for example `ORDER_COMPLETED`. |
+
 ## Verify webhook signatures
 
-Every webhook request includes a `CoinVoyage-Webhook-Signature` header containing an HMAC-SHA256 signature of the raw request body, encoded in Base64. Always verify this signature before parsing or acting on the payload.
+Always verify the signature before parsing or acting on the payload:
+
+1. Read the raw request body exactly as it was received. Do not parse and re-serialize it first.
+2. Compute `base64(HMAC-SHA256(secret, "<timestamp>.<raw body>"))`, using the value of the `CoinVoyage-Webhook-Timestamp` header as the timestamp.
+3. Compare the result with the `CoinVoyage-Webhook-Signature-V2` header using a constant-time comparison.
+4. Reject the request if the timestamp is more than 5 minutes away from your server's current time.
+
+Because the timestamp is part of the signed content, a captured request cannot be sent again later with a fresh timestamp.
+
+### With the SDK
+
+`verifyWebhookSignature`, exported from `@coin-voyage/paykit/server`, performs all four steps. It takes the raw body, the request headers, and your Webhook Secret.
 
 The example below shows a complete Next.js Route Handler that verifies the signature and dispatches on the event identifier:
 
 ```typescript app/api/webhook/route.ts
-import { Buffer } from "buffer";
-import { createHmac, timingSafeEqual } from "crypto";
+import { verifyWebhookSignature } from "@coin-voyage/paykit/server";
 
-const webhookSecret = process.env.COIN_VOYAGE_WEBHOOK_SECRET!;
+const webhookSecret = process.env.COIN_VOYAGE_WEBHOOK_SECRET;
 
 type CoinVoyageWebhookEvent = {
   event: string;
@@ -88,33 +110,26 @@ type CoinVoyageWebhookEvent = {
 
 export const POST = async (req: Request) => {
   const rawBody = await req.text();
-  const signature = req.headers.get("CoinVoyage-Webhook-Signature");
 
-  const expected = createHmac("sha256", webhookSecret)
-    .update(rawBody)
-    .digest("base64");
-
-  const signatureBytes = Buffer.from(signature ?? "");
-  const expectedBytes = Buffer.from(expected);
-
-  if (
-    signatureBytes.length !== expectedBytes.length ||
-    !timingSafeEqual(signatureBytes, expectedBytes)
-  ) {
+  const result = verifyWebhookSignature(rawBody, req.headers, webhookSecret);
+  if (!result.valid) {
+    console.warn("Rejected webhook:", result.error.code);
     return new Response("Unauthorized", { status: 401 });
   }
 
+  // Stable across retries of the same event: skip IDs you have already processed.
+  const eventId = req.headers.get("X-Event-ID");
   const event = JSON.parse(rawBody) as CoinVoyageWebhookEvent;
 
   switch (event.event) {
     case "ORDER_COMPLETED":
-      console.log("Order completed", event.order.id);
+      console.log("Order completed", eventId, event.order.id);
       break;
     case "ORDER_REFUNDED":
-      console.log("Order refunded", event.order.id);
+      console.log("Order refunded", eventId, event.order.id);
       break;
     case "ORDER_EXPIRED":
-      console.log("Order expired", event.order.id);
+      console.log("Order expired", eventId, event.order.id);
       break;
     default:
       console.log("Unhandled webhook", event.event, event.order.id);
@@ -124,16 +139,94 @@ export const POST = async (req: Request) => {
 };
 ```
 
+The helper never throws. It returns an object, so check `result.valid` rather than the result itself. On failure, `result.error.code` is one of `missing_secret`, `invalid_body`, `invalid_options`, `missing_headers`, `invalid_timestamp`, `invalid_signature` or `timestamp_out_of_tolerance`.
+
+The helper accepts an options object as its last argument:
+
+| Option | Default | Description |
+|---|---|---|
+| `toleranceSeconds` | `300` | Maximum allowed difference, in seconds, between `CoinVoyage-Webhook-Timestamp` and the current time. |
+| `allowLegacy` | `false` | Accept a request that carries only the legacy `CoinVoyage-Webhook-Signature` header and no timestamp. Such a request has no replay protection, so leave this off. |
+
 <Note>
   Read the raw request body with `req.text()` before calling `JSON.parse`. Web Fetch API request bodies can only be read once, so read once as text, verify the signature, then parse.
 </Note>
 
+### Without the SDK
+
+The same check needs only Node's built-in `crypto` module:
+
+```javascript webhook-server.mjs
+import { createHmac, timingSafeEqual } from "node:crypto";
+import { createServer } from "node:http";
+
+const webhookSecret = process.env.COIN_VOYAGE_WEBHOOK_SECRET;
+const TOLERANCE_SECONDS = 300;
+
+function isValidWebhook(rawBody, headers) {
+  const timestamp = headers["coinvoyage-webhook-timestamp"];
+  const signature = headers["coinvoyage-webhook-signature-v2"];
+  if (typeof timestamp !== "string" || !/^\d+$/.test(timestamp)) return false;
+  if (typeof signature !== "string") return false;
+
+  // Reject attempts sent more than 5 minutes before or after the current time.
+  const now = Math.floor(Date.now() / 1000);
+  if (Math.abs(now - Number(timestamp)) > TOLERANCE_SECONDS) return false;
+
+  const expected = createHmac("sha256", webhookSecret)
+    .update(`${timestamp}.`)
+    .update(rawBody)
+    .digest();
+  const received = Buffer.from(signature, "base64");
+
+  return received.length === expected.length && timingSafeEqual(received, expected);
+}
+
+createServer((req, res) => {
+  const chunks = [];
+  req.on("data", (chunk) => chunks.push(chunk));
+  req.on("end", () => {
+    const rawBody = Buffer.concat(chunks); // the exact bytes that were signed
+
+    if (!isValidWebhook(rawBody, req.headers)) {
+      res.writeHead(401).end("Unauthorized");
+      return;
+    }
+
+    const eventId = req.headers["x-event-id"];
+    const event = JSON.parse(rawBody.toString("utf8"));
+    console.log(event.event, eventId, event.order.id);
+
+    res.writeHead(200).end("Webhook received");
+  });
+}).listen(3000);
+```
+
+Node lowercases incoming header names, which is why the example reads `coinvoyage-webhook-timestamp`. In frameworks that parse JSON for you, such as Express, configure the route to give you the raw body. A re-serialized body does not match the signature.
+
+### Legacy signature
+
+`CoinVoyage-Webhook-Signature` is still sent on every delivery so existing endpoints keep working. It covers only the body and has no timestamp, so it cannot tell a fresh delivery from an old one that is sent again. Verify `CoinVoyage-Webhook-Signature-V2` in new integrations and move existing ones to it.
+
+## Retries
+
+A delivery fails when your endpoint returns anything other than a `2xx` status code, does not respond within 30 seconds, or cannot be reached. CoinVoyage retries a failed delivery after 1 minute, 5 minutes, 15 minutes, 1 hour, 2 hours, and 4 hours, then every 8 hours.
+
+Retries stop at the first `2xx` response. A delivery that has not succeeded 72 hours after the event was created is abandoned and is not attempted again.
+
+Each attempt is a fresh `POST` with a new `CoinVoyage-Webhook-Timestamp` and a new `CoinVoyage-Webhook-Signature-V2`, so a retry that arrives hours after the event still passes the 5-minute check. `X-Event-ID` does not change between attempts. Check freshness against the timestamp header, not against `delivered_at` in the body, which is the time the event was published.
+
+<Warning>
+  Deliveries are at-least-once. The same event can arrive more than once, for example when your endpoint processed a request but responded too late. Record each `X-Event-ID` you have processed and acknowledge repeats with a `2xx` without processing them again.
+</Warning>
+
 ## Security best practices
 
 - Verify the signature before parsing or acting on the payload.
+- Verify `CoinVoyage-Webhook-Signature-V2` and reject timestamps more than 5 minutes from the current time.
 - Use a constant-time comparison such as `timingSafeEqual` for signature checks.
-- Use HTTPS in production.
+- Keep your server clock synchronized so the timestamp check does not reject valid deliveries.
 - Store your Webhook Secret securely in a server-side secret store.
 - Return a `2xx` response quickly and move heavy work to a queue or background job.
-- Make event handling idempotent by `event`, `delivered_at`, and `order.id`, plus your own internal ID from `order.metadata`.
-- Return `200` for event types you intentionally ignore so delivery does not retry forever.
+- Make event handling idempotent by de-duplicating on the `X-Event-ID` header, and use your own internal ID from `order.metadata` to reconcile.
+- Return `200` for event types you intentionally ignore so they are not retried for 72 hours.

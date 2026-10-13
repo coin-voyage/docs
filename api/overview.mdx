@@ -211,7 +211,7 @@ Network requests can time out after CoinVoyage receives them. Design your integr
 
 - Store your internal order ID in order `metadata`.
 - Before creating a replacement order, check whether your internal order already has an active CoinVoyage order.
-- Treat webhook deliveries as at-least-once events and order IDs as payment lifecycle IDs.
+- Treat webhook deliveries as at-least-once events, de-duplicate them by the `X-Event-ID` header, and treat order IDs as payment lifecycle IDs.
 - Make fulfillment idempotent by recording the CoinVoyage order ID and terminal status before shipping goods, crediting balances, or updating inventory.
 
 For server retries, use exponential backoff with jitter. Retry read operations freely. Retry create or mutation operations only when your application can detect duplicates by metadata, order ID, or its own internal state.
@@ -227,7 +227,7 @@ Production integrations should use webhooks for payment state changes:
 5. Update internal state from outcome and recovery events such as `ORDER_COMPLETED`, `ORDER_REFUNDED`, `ORDER_EXPIRED`, `ORDER_ERROR`, or `ORDER_PARTIAL_PAYMENT`.
 6. Run a scheduled reconciliation job that compares your internal state with the CoinVoyage API.
 
-See [Webhooks overview](/webhooks/overview) and [Webhook events](/webhooks/events) for delivery setup and payload examples.
+See [Webhooks overview](/webhooks/overview) and [Webhook events](/webhooks/events) for delivery setup, signature verification, retries, and payload examples.
 
 ## Go-live requirements
 

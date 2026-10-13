@@ -1,7 +1,7 @@
 ---
 title: "ApiClient webhooks and WebSocket subscriptions"
 sidebarTitle: "Webhooks and WebSockets"
-description: "Manage CoinVoyage webhook subscriptions and listen for real-time order events with ApiClient."
+description: "Manage CoinVoyage webhook subscriptions, verify incoming webhook deliveries, and listen for real-time order events with ApiClient."
 layout:
   description:
     visible: false
@@ -17,6 +17,17 @@ All webhook-management methods are signed server-side operations.
 | `createWebhook(params, apiSecret)` | Creates a webhook subscription. |
 | `updateWebhook(webhookId, params, apiSecret)` | Updates a webhook subscription. |
 | `deleteWebhook(webhookId, apiSecret)` | Deletes a webhook subscription. |
+
+## Verify incoming webhooks
+
+`@coin-voyage/paykit/server` also exports `verifyWebhookSignature` for the endpoint that receives deliveries. It takes the raw request body, the request headers, and your Webhook Secret, checks `CoinVoyage-Webhook-Signature-V2` in constant time, and rejects deliveries whose `CoinVoyage-Webhook-Timestamp` is too far from the current time. It returns `{ valid: true, ... }` or `{ valid: false, error: { code, message } }` and never throws, so check `result.valid`.
+
+| Option | Default | Description |
+|---|---|---|
+| `toleranceSeconds` | `300` | Maximum allowed difference, in seconds, between the delivery timestamp and the current time. |
+| `allowLegacy` | `false` | Accept a request that carries only the legacy `CoinVoyage-Webhook-Signature` header and no timestamp. |
+
+Pass the body exactly as received, before any JSON parsing. For a complete Route Handler, see [Verify webhook signatures](/webhooks/overview#verify-webhook-signatures).
 
 ## Order-scoped WebSocket subscriptions
 

@@ -67,7 +67,7 @@ Every webhook delivery uses this envelope:
 | Field | Description |
 |---|---|
 | `event` | Uppercase `ORDER_*` identifier for the lifecycle event. |
-| `delivered_at` | Event publish time. The value is stable across webhook retries and WebSocket pushes for the same event. |
+| `delivered_at` | Event publish time. The value is stable across webhook retries and WebSocket pushes for the same event. To de-duplicate webhook deliveries, use the `X-Event-ID` [delivery header](/webhooks/overview#delivery-headers). |
 | `order` | Current order snapshot in the v3 `OrderResponse` shape. |
 | `order.id` | CoinVoyage order ID. Store this for reconciliation and idempotency. |
 | `order.status` | Current lifecycle status. |
