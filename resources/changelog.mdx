@@ -16,6 +16,51 @@ Integration-facing changes to the CoinVoyage SDK, API, and platform behavior are
 
 ---
 
+## WooCommerce plugin 0.1.5 - 2026-10-14
+
+Released as CoinVoyage Payments `coinvoyage-payments-0.1.5.zip`, alongside the WordPress widgets plugin, Framer component, and `@coin-voyage/embed` 0.1.5.
+
+**Fixed**
+
+- **Webhook replay protection**: The plugin now accepts only deliveries signed with `CoinVoyage-Webhook-Signature-V2` and rejects deliveries whose `CoinVoyage-Webhook-Timestamp` is more than five minutes old. Earlier versions also accepted the body-only legacy signature, which a captured delivery could replay. Upload the new ZIP under Plugins > Add New Plugin > Upload Plugin and choose "Replace current with uploaded"; saved settings and secrets are kept.
+
+---
+
+## 3.7.2 - 2026-10-14
+
+Released as `@coin-voyage/shared`, `@coin-voyage/crypto`, and `@coin-voyage/paykit` 3.7.2, and `@coin-voyage/swapkit` 0.5.1.
+
+<Warning>
+  Upgrade if you use `verifyMessage` from `@coin-voyage/crypto` for Bitcoin
+  sign-in or ownership checks. Earlier versions accepted a valid signature from
+  any key for a P2PKH or native SegWit address.
+</Warning>
+
+**Fixed**
+
+- **Bitcoin message verification**: `verifyMessage` now checks that the signing key belongs to the given address. P2PKH (compressed and uncompressed keys) and native SegWit (P2WPKH) addresses are verified against the recovered key, and P2SH addresses keep their existing verification. Taproot and other address types return `false`.
+
+---
+
+## 3.7.1 - 2026-10-13
+
+Released as `@coin-voyage/shared`, `@coin-voyage/crypto`, and `@coin-voyage/paykit` 3.7.1.
+
+**Added**
+
+- **Webhook signature verification**: `verifyWebhookSignature(rawBody, headers, secret, options?)` is exported from `@coin-voyage/paykit/server` and `@coin-voyage/shared/api`. It checks `CoinVoyage-Webhook-Signature-V2` in constant time and rejects deliveries whose `CoinVoyage-Webhook-Timestamp` is more than 300 seconds from the current time (configurable with `toleranceSeconds`). It never throws; check `result.valid`. See [Webhooks](/webhooks/overview).
+
+**Changed**
+
+- **Pinned token list**: The production and preview token lists now load from the token list's `v1` tag instead of `main`, so list changes reach integrations only after they are validated and tagged.
+
+**Fixed**
+
+- **Order amounts in fiat currency**: PayKit shows a SALE order's amount in its own fiat currency (for example EUR) instead of formatting the USD valuation with that currency's symbol.
+- **Exponent notation in amounts**: Very small or very large numeric amounts passed to `fromReadableAmount` and to Pay button deposit props are no longer serialized as `1e-7`, which failed to parse.
+
+---
+
 ## 3.7.0 - 2026-10-13
 
 Released as `@coin-voyage/shared`, `@coin-voyage/crypto`, and `@coin-voyage/paykit` 3.7.0, and `@coin-voyage/swapkit` 0.5.0.
