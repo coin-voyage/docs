@@ -7,7 +7,7 @@ layout:
     visible: false
 ---
 
-CoinVoyage invoices turn line items and customer details into a hosted crypto payment request. Publishing an invoice creates a linked `SALE` order, emails the recipient a PDF invoice, and includes a hosted payment link. Settlement follows your organization's configured settlement currencies and wallets.
+CoinVoyage invoices turn line items and customer details into a hosted crypto payment request. Publishing an invoice creates a linked `SALE` order and a hosted payment link, and emails the recipient a PDF invoice with that link. Settlement follows your organization's configured settlement currencies and wallets.
 
 <CardGroup cols={2}>
   <Card title="Dashboard invoices" icon="display" href="/dashboard/invoices">
@@ -23,6 +23,14 @@ CoinVoyage invoices turn line items and customer details into a hosted crypto pa
 - Configure your organization profile. Its sender details appear on the invoice and customer email.
 - Configure at least one [settlement currency and wallet](/dashboard/settlement).
 - For API integrations, keep your API secret on the server.
+
+<Note>
+  Invoices are emailed only for verified organizations: those that completed
+  verification in the dashboard, or that CoinVoyage support enabled for invoice
+  emails. Other organizations can still publish invoices and share the payment
+  link with their customer directly. The email's sender name and reply-to address
+  come from your organization profile, not from the invoice.
+</Note>
 
 ## Invoice lifecycle
 

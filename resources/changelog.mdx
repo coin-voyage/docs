@@ -16,6 +16,15 @@ Integration-facing changes to the CoinVoyage SDK, API, and platform behavior are
 
 ---
 
+## Invoice emails - 2026-10-14
+
+**Changed**
+
+- **Invoice emails require a verified organization**: Published invoices, from the dashboard or `POST /invoices`, are emailed only for organizations that completed verification or that CoinVoyage support enabled. Other organizations still get the invoice and its payment link, and the API response is unchanged.
+- **Sender details from the organization profile**: The invoice email's sender name ("Name via CoinVoyage") and reply-to address now come from your saved organization profile instead of the invoice's `from` field.
+
+---
+
 ## WooCommerce plugin 0.1.5 - 2026-10-14
 
 Released as CoinVoyage Payments `coinvoyage-payments-0.1.5.zip`, alongside the WordPress widgets plugin, Framer component, and `@coin-voyage/embed` 0.1.5.

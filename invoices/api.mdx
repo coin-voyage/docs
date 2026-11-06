@@ -38,7 +38,7 @@ const authorization = apiClient.generateAuthorizationSignature(
 
 ## Create and publish
 
-`POST /invoices` validates the complete invoice, creates a linked `SALE` order, and emails the recipient a PDF and hosted payment link.
+`POST /invoices` validates the complete invoice, creates a linked `SALE` order, and emails the recipient a PDF and hosted payment link. The email is sent only for [verified organizations](/invoices/overview#before-you-start); the response is the same either way.
 
 ```json
 {
