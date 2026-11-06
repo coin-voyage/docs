@@ -16,6 +16,21 @@ Integration-facing changes to the CoinVoyage SDK, API, and platform behavior are
 
 ---
 
+## 3.7.4 - 2026-11-06
+
+Released as `@coin-voyage/paykit` 3.7.4.
+
+**Fixed**
+
+- **Card payment identity form for EU customers**: Before Stripe assigns a customer's KYC region, PayKit picked the identity form from the browser language and fell back to the US form. EU customers could submit it and be classified by Stripe as US customers. The country of residence now decides the form, so EU residents get the EU fields (nationality, date and place of birth) with an optional state or region.
+- **Residence country sent to Stripe**: PayKit sends the country the customer selects. Earlier versions could send the country of the customer's Link phone number instead.
+
+**Changed**
+
+- **Country of residence field**: The card identity form now starts with a country list of the United States and EU countries. It's preselected from a country in the order metadata, such as `country` or `billing_country`, or from the customer's Link phone number, and no longer from the browser language.
+
+---
+
 ## Invoice emails - 2026-10-14
 
 **Changed**
