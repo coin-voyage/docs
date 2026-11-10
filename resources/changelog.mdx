@@ -16,6 +16,26 @@ Integration-facing changes to the CoinVoyage SDK, API, and platform behavior are
 
 ---
 
+## 3.7.5 - 2026-11-10
+
+Released as `@coin-voyage/shared` 3.7.3 and `@coin-voyage/paykit` 3.7.5.
+
+**Added**
+
+- **Fee review before card payment**: After the customer picks a card or bank account, PayKit shows the amount, Stripe's processing fee, the network fee, and the total, and charges only when the customer clicks **Pay** with that total. Earlier versions charged as soon as the payment method was chosen, so the fees were only visible after payment. If the quote expires and the total changes before checkout, PayKit shows the new total and asks the customer to confirm again.
+- **Session quote in the API**: `createOnrampSession` and `refreshStripeOnrampSessionQuote` now return a `quote` object with `source_currency`, `source_amount`, `transaction_fee_amount`, `network_fee_amount`, and `source_total_amount` (the amount charged, including fees), and fill in `quote_expires_at` in Unix seconds. The type is exported as `OnrampSessionQuote` from `@coin-voyage/shared/types`. See [ApiClient on-ramp methods](/sdk/apiclient/on-ramp).
+
+**Changed**
+
+- **Deposit confirmation**: Completed deposits show "Deposit completed" instead of "Payment completed", and card-funded deposits link to the transaction that delivered the funds.
+- **Card checkout steps**: The progress steps are now Login, Verify, Payment, and Review. After an error, the progress stays on the step that failed.
+
+**Fixed**
+
+- **Modal height after page changes**: The PayKit modal keeps resizing to its content after the customer moves between pages, so content that loads later, such as Stripe's card form, is no longer cut off at the bottom of the modal.
+
+---
+
 ## 3.7.4 - 2026-11-06
 
 Released as `@coin-voyage/paykit` 3.7.4.
